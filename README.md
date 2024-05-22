@@ -1,16 +1,6 @@
 # letterboxd_porto_3
+Its my portfolio on flutter mobile apps. coverage implementation of getx, sqflite, and firebase.
 
-A new Flutter project.
+UI Design by: https://www.figma.com/community/file/1082338445005530991/redesigning-letterboxd-ui
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+This application is a portfolio project designed to showcase my skills in mobile development. It incorporates various elements from Letterboxd, including the logo, branding, and data. All rights to these materials are owned by Letterboxd. For more information, please visit Letterboxd.com
