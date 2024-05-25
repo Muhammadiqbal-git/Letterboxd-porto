@@ -6,8 +6,8 @@ class DiagonalClipper extends CustomClipper<Path>{
     final path = Path();
     path.moveTo(0.0, 0.0);
     path.lineTo(size.width, 0);
-    path.lineTo(size.width, size.height*0.5);
-    path.lineTo(0, size.height*0.8);
+    path.lineTo(size.width, size.height*0.55);
+    path.lineTo(0, size.height);
 
     path.close();
     return path;

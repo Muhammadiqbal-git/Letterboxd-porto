@@ -12,4 +12,4 @@ const TextStyle italicText = TextStyle(
 const TextStyle boldText = TextStyle(
     fontFamily: "Open Sans", fontWeight: FontWeight.bold, color: Color(0xFFFFFFFF));
 const TextStyle semiBoldText = TextStyle(
-    fontFamily: "Open Sans", fontWeight: FontWeight.w500, color: Color(0xFFFFFFFF));
+    fontFamily: "Open Sans", fontWeight: FontWeight.w600, color: Color(0xFFFFFFFF));

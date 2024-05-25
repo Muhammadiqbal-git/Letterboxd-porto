@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:letterboxd_porto_3/controllers/login_controller.dart';
+import 'package:letterboxd_porto_3/controllers/register_controller.dart';
 import 'package:letterboxd_porto_3/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/diagonal_clipper.dart';
 import 'package:letterboxd_porto_3/style.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_button.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_form.dart';
 
-class LoginScreen extends GetView<LoginController> {
-  const LoginScreen({super.key});
+class RegisterScreen extends GetView<RegisterController> {
+  const RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class LoginScreen extends GetView<LoginController> {
         children: [
           Positioned(
             top: 0,
-            height: getHeight(context, 60),
+            height: getHeight(context, 38) + 20,
             width: getWidth(context, 100),
             child: ClipPath(
                 clipper: DiagonalClipper(),
@@ -42,14 +42,14 @@ class LoginScreen extends GetView<LoginController> {
                     height: getHeight(context, 5),
                   ),
                   Text(
-                    "Login",
+                    "Sign Up",
                     style: boldText.copyWith(fontSize: 22),
                   ),
                   const SizedBox(
                     height: 3,
                   ),
                   const Text(
-                    "Please sign in to continue",
+                    "Create an accoutn to continue.",
                     style: normalText,
                   ),
                   const SizedBox(
@@ -72,6 +72,20 @@ class LoginScreen extends GetView<LoginController> {
                   ),
                   Obx(
                     () => CustomForm(
+                        hintText: "Email",
+                        hintStyle: normalText.copyWith(
+                          color: context.colors.whiteCr.withOpacity(0.5),
+                        ),
+                        logo: const AssetImage(
+                          "assets/icons/email.png",
+                        ),
+                        textEditingController: controller.emailText.value),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Obx(
+                    () => CustomForm(
                         hintText: "Password",
                         hintStyle: normalText.copyWith(
                           color: context.colors.whiteCr.withOpacity(0.5),
@@ -82,31 +96,17 @@ class LoginScreen extends GetView<LoginController> {
                         ),
                         textEditingController: controller.passText.value),
                   ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: InkWell(
-                      overlayColor:
-                          const MaterialStatePropertyAll(Colors.transparent),
-                      child: Text(
-                        "Forgot Password?",
-                        style: normalText.copyWith(
-                            fontSize: 12, color: context.colors.secondaryCr),
-                      ),
-                    ),
-                  ),
+
                   const SizedBox(
                     height: 20,
                   ),
                   CustomButton(
                     onTap: () {
-                      controller.login();
+                      controller.register();
                     },
                     width: 80 + getWidth(context, 10),
                     child: Text(
-                      "Login",
+                      "Register",
                       style: boldText.copyWith(color: context.colors.primaryCr),
                     ),
                   ),
@@ -117,26 +117,21 @@ class LoginScreen extends GetView<LoginController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Don't have an account? Please ",
+                        "Already have an account? Go to the ",
                         style: normalText.copyWith(
                             fontSize: 12, color: context.colors.secondaryCr),
                       ),
                       InkWell(
                           onTap: () {
-                            Get.offNamed('/register');
+                            Get.offNamed('/login');
                           },
                           overlayColor:
                               MaterialStatePropertyAll(Colors.transparent),
                           child: Text(
-                            "Sign Up ",
+                            "Login Page.",
                             style: normalText.copyWith(
                                 fontSize: 12, color: context.colors.accentCr),
                           )),
-                      Text(
-                        "first",
-                        style: normalText.copyWith(
-                            fontSize: 12, color: context.colors.secondaryCr),
-                      ),
                     ],
                   )
                 ],

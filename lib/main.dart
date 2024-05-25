@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:letterboxd_porto_3/app_color.dart';
 import 'package:letterboxd_porto_3/controllers/getx_binding.dart';
-import 'views/login.dart';
-import 'views/onboarding.dart';
-import 'views/register.dart';
+import 'package:letterboxd_porto_3/views/film_detail_screen.dart';
+import 'package:letterboxd_porto_3/views/main_screen.dart';
+import 'package:letterboxd_porto_3/views/login_screen.dart';
+import 'views/onboarding_screen.dart';
+import 'views/register_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,11 +38,21 @@ class MyApp extends StatelessWidget {
           page: () => const OnboardingScreen(),
         ),
         GetPage(
-            name: '/login', page: () => const LoginScreen(), binding: LoginBinding()),
+          name: '/login',
+          page: () => const LoginScreen(),
+          binding: LoginBinding(),
+        ),
         GetPage(
-            name: '/register',
-            page: () => const RegisterScreen(),
-            binding: RegisterBinding()),
+          name: '/register',
+          page: () => const RegisterScreen(),
+          binding: RegisterBinding(),
+        ),
+        GetPage(
+          name: '/home',
+          page: () => const MainScreen(),
+          binding: MainScreenBinding(),
+        ),
+        GetPage(name: '/film_detail', page: () => FilmDetailScreen(),)
       ],
     );
   }
