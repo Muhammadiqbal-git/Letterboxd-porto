@@ -7,12 +7,14 @@ class CustomButton extends StatelessWidget {
   final Function()? onTap;
   final Color? bgColor;
   final Widget child;
+  final EdgeInsets? padding;
   const CustomButton(
       {super.key,
       this.width,
       this.height,
       this.onTap,
       this.bgColor,
+      this.padding,
       required this.child});
 
   @override
@@ -27,6 +29,7 @@ class CustomButton extends StatelessWidget {
       child: Ink(
         width: width ?? double.infinity,
         height: height ?? 48,
+        padding: padding,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             color: bgColor ?? context.colors.secondaryCr),

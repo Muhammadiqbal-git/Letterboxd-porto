@@ -5,14 +5,20 @@ class CustomReviewCard extends StatelessWidget {
   final double? width;
   final double? height;
   final Color? bgColor;
+  final bool withImage;
 
-  const CustomReviewCard({super.key, this.width, this.height, this.bgColor});
+  const CustomReviewCard(
+      {super.key,
+      this.width,
+      this.height,
+      this.bgColor,
+      this.withImage = true});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: width ?? double.maxFinite,
-      height: height ?? 100,
+      height: height ?? 125,
       margin: EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
           color: context.colors.secondaryCr.withOpacity(0.1),
@@ -35,6 +41,7 @@ class CustomReviewCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                    const SizedBox(height: 3,),
                 Row(
                   children: [
                     Text(
@@ -70,10 +77,23 @@ class CustomReviewCard extends StatelessWidget {
                     const SizedBox(
                       width: 2,
                     ),
-                    Text(
-                      "D 2",
-                      style:
-                          normalText.copyWith(fontSize: 10, color: Colors.grey),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ImageIcon(
+                          AssetImage("assets/icons/reply.png"),
+                          size: 10,
+                          color: context.colors.whiteCr,
+                        ),
+                        const SizedBox(
+                          width: 2,
+                        ),
+                        Text(
+                          "2",
+                          style: normalText.copyWith(
+                              fontSize: 10, color: Colors.grey),
+                        ),
+                      ],
                     )
                   ],
                 ),
@@ -87,19 +107,30 @@ class CustomReviewCard extends StatelessWidget {
                   textAlign: TextAlign.justify,
                   overflow: TextOverflow.ellipsis,
                 ),
+                const SizedBox(height: 8,),
+                Row(children: [
+                  Text("Read more", style: normalText.copyWith( fontSize: 10, color: context.colors.accentCr),),
+                  Icon(Icons.arrow_forward_ios, size: 10, color: context.colors.accentCr,)
+                ],)
               ],
             ),
           ),
-          Spacer(flex: 1,),
-          Container(
-            height: double.maxFinite,
-            width: 70,
-            decoration: BoxDecoration(
-              color: context.colors.whiteCr,
-              borderRadius: BorderRadius.circular(7),
-              image: DecorationImage(image: AssetImage("assets/imgs/poster1.png"), fit: BoxFit.fitWidth)
+          if (withImage) ...[
+            Spacer(
+              flex: 1,
             ),
-          )
+            Container(
+              height: double.maxFinite,
+              width: 77,
+              decoration: BoxDecoration(
+                  color: context.colors.whiteCr,
+                  borderRadius: BorderRadius.circular(7),
+                  image: DecorationImage(
+                      image: AssetImage("assets/imgs/poster1.png"),
+                      fit: BoxFit.cover)),
+            )
+          ],
+          if (!withImage) const SizedBox(width: 20,)
         ],
       ),
     );

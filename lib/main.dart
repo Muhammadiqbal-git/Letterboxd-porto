@@ -5,6 +5,7 @@ import 'package:letterboxd_porto_3/controllers/getx_binding.dart';
 import 'package:letterboxd_porto_3/views/film_detail_screen.dart';
 import 'package:letterboxd_porto_3/views/main_screen.dart';
 import 'package:letterboxd_porto_3/views/login_screen.dart';
+import 'package:letterboxd_porto_3/views/review_screen.dart';
 import 'views/onboarding_screen.dart';
 import 'views/register_screen.dart';
 
@@ -52,7 +53,14 @@ class MyApp extends StatelessWidget {
           page: () => const MainScreen(),
           binding: MainScreenBinding(),
         ),
-        GetPage(name: '/film_detail', page: () => FilmDetailScreen(),)
+        GetPage(
+          name: '/film_detail',
+          page: () => const FilmDetailScreen(),
+        ),
+        GetPage(
+          name: '/add_review',
+          page: () => const ReviewScreen(),
+        )
       ],
     );
   }

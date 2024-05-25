@@ -72,13 +72,13 @@ class HomeScreen extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               shrinkWrap: true,
               itemCount: 4,
-              itemBuilder: (context, index) => InkWell(
+              itemBuilder: (context, index) => Container(
+                width: 50,
+                height: 50,
+                margin: const EdgeInsets.only(right: 10),
+                color: context.colors.whiteCr,
+                child: InkWell(
                 onTap: () => Get.toNamed('/film_detail'),
-                child: Container(
-                  width: 50,
-                  height: 50,
-                  margin: const EdgeInsets.only(right: 10),
-                  color: context.colors.whiteCr,
                 ),
               ),
             ),
