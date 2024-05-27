@@ -4,9 +4,11 @@ import 'package:letterboxd_porto_3/style.dart';
 class CustomForm extends StatefulWidget {
   final TextEditingController textEditingController;
   final TextInputAction? textInputAction;
+  final TextAlignVertical? textAlignVertical;
   final double? width;
   final double? height;
   final String? hintText;
+  final TextStyle? hintStyle;
   final Color? backgroundColor;
   final double? borderRadius;
   final bool? isObsecure;
@@ -14,18 +16,20 @@ class CustomForm extends StatefulWidget {
   final FocusNode? focusNode;
   final TextStyle? inputStyle;
   final TextAlign? textAlign;
-  final TextStyle? hintStyle;
   final BoxBorder? borders;
+  final EdgeInsets? contentPadding;
   final bool? enabled;
   final void Function(String)? onChanged;
   final void Function()? onEdittingComplete;
   const CustomForm({
     super.key,
     required this.textEditingController,
+    this.textAlignVertical,
     this.textInputAction,
     this.width,
     this.height,
     this.hintText,
+    this.hintStyle,
     this.backgroundColor,
     this.borderRadius,
     this.isObsecure,
@@ -33,8 +37,8 @@ class CustomForm extends StatefulWidget {
     this.focusNode,
     this.inputStyle,
     this.textAlign,
-    this.hintStyle,
     this.borders,
+    this.contentPadding,
     this.enabled,
     this.onChanged,
     this.onEdittingComplete,
@@ -72,7 +76,10 @@ class _CustomFormState extends State<CustomForm> {
               : const SizedBox(),
           Expanded(
             child: TextFormField(
-              textAlignVertical: TextAlignVertical.center,
+              textAlignVertical: widget.textAlignVertical ?? TextAlignVertical.center,
+              expands: obscured ? false : true,
+              maxLines: obscured ? 1 : null,
+              minLines: null,
               enabled: widget.enabled,
               onChanged: widget.onChanged,
               onEditingComplete: widget.onEdittingComplete,
@@ -84,6 +91,7 @@ class _CustomFormState extends State<CustomForm> {
               textAlign: widget.textAlign ?? TextAlign.start,
               decoration: InputDecoration(
                   // contentPadding: EdgeInsets.zero,
+                  contentPadding: widget.contentPadding ?? const EdgeInsets.symmetric(vertical: 10),
                   hintText: widget.hintText,
                   hintStyle: widget.hintStyle ??
                       normalText.copyWith(fontSize: 13, color: Colors.black45),

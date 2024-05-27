@@ -41,20 +41,29 @@ class CustomReviewCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                    const SizedBox(height: 3,),
-                Row(
-                  children: [
-                    Text(
-                      "The Irishman ",
-                      style: boldText.copyWith(fontSize: 12),
-                    ),
-                    Text(
-                      "2020",
-                      style:
-                          normalText.copyWith(fontSize: 10, color: Colors.grey),
-                    ),
-                  ],
+                const SizedBox(
+                  height: 3,
                 ),
+                if (withImage)
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Text(
+                        "The Irishman ",
+                        style: boldText.copyWith(fontSize: 12),
+                      ),
+                      Text(
+                        "2020",
+                        style: normalText.copyWith(
+                            fontSize: 10, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                if (!withImage)
+                  const SizedBox(
+                    height: 6,
+                  ),
                 const SizedBox(
                   height: 3,
                 ),
@@ -107,11 +116,23 @@ class CustomReviewCard extends StatelessWidget {
                   textAlign: TextAlign.justify,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 8,),
-                Row(children: [
-                  Text("Read more", style: normalText.copyWith( fontSize: 10, color: context.colors.accentCr),),
-                  Icon(Icons.arrow_forward_ios, size: 10, color: context.colors.accentCr,)
-                ],)
+                const SizedBox(
+                  height: 8,
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "Read more",
+                      style: normalText.copyWith(
+                          fontSize: 10, color: context.colors.accentCr),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 10,
+                      color: context.colors.accentCr,
+                    )
+                  ],
+                )
               ],
             ),
           ),
@@ -130,7 +151,10 @@ class CustomReviewCard extends StatelessWidget {
                       fit: BoxFit.cover)),
             )
           ],
-          if (!withImage) const SizedBox(width: 20,)
+          if (!withImage)
+            const SizedBox(
+              width: 20,
+            )
         ],
       ),
     );

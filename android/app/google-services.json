@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "773476503273",
+    "project_id": "porto3-57801",
+    "storage_bucket": "porto3-57801.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773476503273:android:77ff330d1d10028a3d2a78",
+        "android_client_info": {
+          "package_name": "com.example.letterboxd_porto_3"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtduJ0-cvn5NQazjRMP7PACNoGIcsOUdU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

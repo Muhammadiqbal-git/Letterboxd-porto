@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:letterboxd_porto_3/controllers/login_controller.dart';
 import 'package:letterboxd_porto_3/controllers/register_controller.dart';
 import 'package:letterboxd_porto_3/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/diagonal_clipper.dart';
@@ -58,43 +59,49 @@ class RegisterScreen extends GetView<RegisterController> {
                   // CustomForm(textEditingController: textEditingController)
                   Obx(
                     () => CustomForm(
-                        hintText: "Username",
-                        hintStyle: normalText.copyWith(
-                          color: context.colors.whiteCr.withOpacity(0.5),
-                        ),
-                        logo: const AssetImage(
-                          "assets/icons/person.png",
-                        ),
-                        textEditingController: controller.usernameText.value),
+                      hintText: "Username",
+                      hintStyle: normalText.copyWith(
+                        color: context.colors.whiteCr.withOpacity(0.5),
+                      ),
+                      logo: const AssetImage(
+                        "assets/icons/person.png",
+                      ),
+                      textEditingController: controller.usernameText.value,
+                      textInputAction: TextInputAction.next,
+                    ),
                   ),
                   const SizedBox(
                     height: 15,
                   ),
                   Obx(
                     () => CustomForm(
-                        hintText: "Email",
-                        hintStyle: normalText.copyWith(
-                          color: context.colors.whiteCr.withOpacity(0.5),
-                        ),
-                        logo: const AssetImage(
-                          "assets/icons/email.png",
-                        ),
-                        textEditingController: controller.emailText.value),
+                      hintText: "Email",
+                      hintStyle: normalText.copyWith(
+                        color: context.colors.whiteCr.withOpacity(0.5),
+                      ),
+                      logo: const AssetImage(
+                        "assets/icons/email.png",
+                      ),
+                      textEditingController: controller.emailText.value,
+                      textInputAction: TextInputAction.next,
+                    ),
                   ),
                   const SizedBox(
                     height: 15,
                   ),
                   Obx(
                     () => CustomForm(
-                        hintText: "Password",
-                        hintStyle: normalText.copyWith(
-                          color: context.colors.whiteCr.withOpacity(0.5),
-                        ),
-                        isObsecure: true,
-                        logo: const AssetImage(
-                          "assets/icons/pass.png",
-                        ),
-                        textEditingController: controller.passText.value),
+                      hintText: "Password",
+                      hintStyle: normalText.copyWith(
+                        color: context.colors.whiteCr.withOpacity(0.5),
+                      ),
+                      isObsecure: true,
+                      logo: const AssetImage(
+                        "assets/icons/pass.png",
+                      ),
+                      textEditingController: controller.passText.value,
+                      textInputAction: TextInputAction.done,
+                    ),
                   ),
 
                   const SizedBox(

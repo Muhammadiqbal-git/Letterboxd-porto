@@ -1,10 +1,32 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:letterboxd_porto_3/controllers/firebase_auth_services.dart';
 
 class RegisterController extends GetxController {
+  FirebaseAuthService _service = FirebaseAuthService();
   Rx<TextEditingController> usernameText = TextEditingController().obs;
   Rx<TextEditingController> emailText = TextEditingController().obs;
   Rx<TextEditingController> passText = TextEditingController().obs;
+  Rx<User?> userData = Rx<User?>(null);
+  Rx<bool> loading = false.obs;
+
+  @override
+  void onInit() {
+    ever(loading, (callback) {
+      if (callback) {
+        Get.dialog(
+          const Center(
+            child: CircularProgressIndicator(),
+          ),
+          barrierDismissible: false,
+        );
+      } else {
+        Get.back();
+      }
+    });
+    super.onInit();
+  }
 
   @override
   void onClose() {
@@ -13,7 +35,13 @@ class RegisterController extends GetxController {
     super.onClose();
   }
 
-  void register() {
+  void register() async {
     print(emailText.value.text);
+    loading.value = true;
+    // await Future.delayed(Duration(seconds: 2));
+    userData.value = await _service.signUpEmailPass(
+        usernameText.value.text, emailText.value.text, passText.value.text);
+    print("a");
+    loading.value = false;
   }
 }

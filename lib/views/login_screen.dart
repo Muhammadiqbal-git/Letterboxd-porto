@@ -65,7 +65,10 @@ class LoginScreen extends GetView<LoginController> {
                         logo: const AssetImage(
                           "assets/icons/person.png",
                         ),
-                        textEditingController: controller.usernameText.value),
+                        textEditingController: controller.usernameText.value,
+                        textInputAction: TextInputAction.next,
+                        
+                        ),
                   ),
                   const SizedBox(
                     height: 15,
@@ -80,7 +83,9 @@ class LoginScreen extends GetView<LoginController> {
                         logo: const AssetImage(
                           "assets/icons/pass.png",
                         ),
-                        textEditingController: controller.passText.value),
+                        textEditingController: controller.passText.value,
+                        textInputAction: TextInputAction.done,
+                        ),
                   ),
                   const SizedBox(
                     height: 5,
@@ -103,7 +108,6 @@ class LoginScreen extends GetView<LoginController> {
                   CustomButton(
                     onTap: () {
                       controller.login();
-                      Get.toNamed('/home');
                     },
                     width: 80 + getWidth(context, 10),
                     child: Text(

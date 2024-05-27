@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:letterboxd_porto_3/app_color.dart';
 import 'package:letterboxd_porto_3/controllers/getx_binding.dart';
+import 'package:letterboxd_porto_3/firebase_options.dart';
 import 'package:letterboxd_porto_3/views/film_detail_screen.dart';
 import 'package:letterboxd_porto_3/views/main_screen.dart';
 import 'package:letterboxd_porto_3/views/login_screen.dart';
@@ -9,7 +11,9 @@ import 'package:letterboxd_porto_3/views/review_screen.dart';
 import 'views/onboarding_screen.dart';
 import 'views/register_screen.dart';
 
-void main() {
+Future<void> main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -24,7 +28,6 @@ class MyApp extends StatelessWidget {
       initialRoute: '/onboarding',
       defaultTransition: Transition.native,
       theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
           extensions: const [
             AppColors(
@@ -40,18 +43,18 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: '/login',
-          page: () => const LoginScreen(),
           binding: LoginBinding(),
+          page: () => const LoginScreen(),
         ),
         GetPage(
           name: '/register',
-          page: () => const RegisterScreen(),
           binding: RegisterBinding(),
+          page: () => const RegisterScreen(),
         ),
         GetPage(
           name: '/home',
-          page: () => const MainScreen(),
           binding: MainScreenBinding(),
+          page: () => const MainScreen(),
         ),
         GetPage(
           name: '/film_detail',
@@ -59,6 +62,7 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: '/add_review',
+          binding: ReviewScreenBinding(),
           page: () => const ReviewScreen(),
         )
       ],

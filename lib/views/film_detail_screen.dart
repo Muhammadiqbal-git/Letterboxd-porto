@@ -118,25 +118,28 @@ class FilmDetailScreen extends StatelessWidget {
                                 width: 105,
                                 height: 25,
                                 padding: const EdgeInsets.all(5),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ImageIcon(
-                                      const AssetImage(
-                                          "assets/icons/review.png"),
-                                      color: context.colors.primaryCr,
-                                      size: 14,
-                                    ),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(
-                                      "Rate or Review",
-                                      style: boldText.copyWith(
-                                          fontSize: 8,
-                                          color: context.colors.primaryCr),
-                                    )
-                                  ],
+                                child: InkWell(
+                                  onTap: () => Get.toNamed('/add_review'),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ImageIcon(
+                                        const AssetImage(
+                                            "assets/icons/review.png"),
+                                        color: context.colors.primaryCr,
+                                        size: 14,
+                                      ),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text(
+                                        "Rate or Review",
+                                        style: boldText.copyWith(
+                                            fontSize: 8,
+                                            color: context.colors.primaryCr),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                               const SizedBox(
@@ -208,7 +211,8 @@ class FilmDetailScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
                               children: [
                                 Text(
                                   "The Batman ",
@@ -267,12 +271,13 @@ class FilmDetailScreen extends StatelessWidget {
                                     ),
                                     Row(
                                       children: List.generate(
-                                          5,
-                                          (index) => const Icon(
-                                                Icons.star,
-                                                size: 10,
-                                                color: Colors.red,
-                                              )),
+                                        5,
+                                        (index) => const Icon(
+                                          Icons.star,
+                                          size: 10,
+                                          color: Colors.red,
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 )
@@ -393,8 +398,12 @@ class FilmDetailScreen extends StatelessWidget {
                     margin: EdgeInsets.only(top: 3),
                     color: context.colors.whiteCr.withOpacity(0.3),
                   ),
-                  const SizedBox(height: 20,),
-                  CustomReviewCard(withImage: false,)
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  CustomReviewCard(
+                    withImage: false,
+                  )
                 ],
               )),
           // BACK BUTTON
