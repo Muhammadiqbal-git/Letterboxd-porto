@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:letterboxd_porto_3/style.dart';
+import 'package:letterboxd_porto_3/helpers/style.dart';
 
 class CustomDrawerOption extends StatelessWidget {
   final Color? textColor;

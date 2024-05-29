@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letterboxd_porto_3/controllers/firebase_auth_services.dart';
 
+import '../views/widgets/custom_loading_dialog.dart';
+
 class RegisterController extends GetxController {
   FirebaseAuthService _service = FirebaseAuthService();
   Rx<TextEditingController> usernameText = TextEditingController().obs;
@@ -16,9 +18,7 @@ class RegisterController extends GetxController {
     ever(loading, (callback) {
       if (callback) {
         Get.dialog(
-          const Center(
-            child: CircularProgressIndicator(),
-          ),
+          const CustomLoadingDialog(),
           barrierDismissible: false,
         );
       } else {

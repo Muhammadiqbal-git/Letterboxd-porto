@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:letterboxd_porto_3/app_color.dart';
+import 'package:letterboxd_porto_3/helpers/app_color.dart';
 
 extension BuildContextExt on BuildContext{
   AppColors get colors => Theme.of(this).extension<AppColors>()!;

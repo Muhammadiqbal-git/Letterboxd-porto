@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:letterboxd_porto_3/dimension.dart';
-import 'package:letterboxd_porto_3/style.dart';
+import 'package:letterboxd_porto_3/helpers/dimension.dart';
+import 'package:letterboxd_porto_3/helpers/style.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_review_card.dart';
 
 class ProfileScreen extends StatelessWidget {

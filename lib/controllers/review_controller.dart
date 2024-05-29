@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:letterboxd_porto_3/dimension.dart';
+import 'package:letterboxd_porto_3/helpers/dimension.dart';
 
 class ReviewController extends GetxController {
   Rx<DateTime> selectedDate = DateTime.now().obs;

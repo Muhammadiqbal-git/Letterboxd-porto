@@ -2,6 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letterboxd_porto_3/controllers/firebase_auth_services.dart';
+import 'package:letterboxd_porto_3/controllers/tmdb_services.dart';
+import 'package:letterboxd_porto_3/envied_helper.dart';
+import 'package:letterboxd_porto_3/views/widgets/custom_alert_dialog.dart';
+import 'package:letterboxd_porto_3/views/widgets/custom_loading_dialog.dart';
 
 class LoginController extends GetxController {
   FirebaseAuthService _service = FirebaseAuthService();
@@ -15,11 +19,17 @@ class LoginController extends GetxController {
     ever(loading, (callback) {
       if (callback) {
         Get.dialog(
-          const Center(
-            child: CircularProgressIndicator(),
-          ),
+          const CustomLoadingDialog(),
           barrierDismissible: false,
-        );
+        ).then((value) {
+          if (usernameText.value.text.isEmpty || passText.value.text.isEmpty) {
+            Get.dialog(const CustomAlertDialog(
+                text: "Email atau Password tidak boleh kosong"));
+          } else if(userData.value is !User) {
+            Get.dialog(
+                const CustomAlertDialog(text: "Email atau Password tidak cocok"));
+          }
+        });
       } else {
         Get.back();
       }

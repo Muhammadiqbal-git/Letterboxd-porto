@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:letterboxd_porto_3/app_color.dart';
+import 'package:letterboxd_porto_3/helpers/app_color.dart';
 import 'package:letterboxd_porto_3/controllers/getx_binding.dart';
-import 'package:letterboxd_porto_3/firebase_options.dart';
-import 'package:letterboxd_porto_3/views/film_detail_screen.dart';
-import 'package:letterboxd_porto_3/views/main_screen.dart';
-import 'package:letterboxd_porto_3/views/login_screen.dart';
-import 'package:letterboxd_porto_3/views/review_screen.dart';
-import 'views/onboarding_screen.dart';
-import 'views/register_screen.dart';
+import 'package:letterboxd_porto_3/helpers/firebase_options.dart';
+import 'views/screens/film_detail_screen.dart';
+import 'views/screens/login_screen.dart';
+import 'views/screens/main_screen.dart';
+import 'views/screens/onboarding_screen.dart';
+import 'views/screens/register_screen.dart';
+import 'views/screens/review_screen.dart';
 
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();

@@ -3,9 +3,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:letterboxd_porto_3/controllers/login_controller.dart';
 import 'package:letterboxd_porto_3/controllers/register_controller.dart';
-import 'package:letterboxd_porto_3/dimension.dart';
+import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/diagonal_clipper.dart';
-import 'package:letterboxd_porto_3/style.dart';
+import 'package:letterboxd_porto_3/helpers/style.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_button.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_form.dart';
 

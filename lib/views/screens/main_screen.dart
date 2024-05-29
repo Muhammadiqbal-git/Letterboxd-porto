@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:letterboxd_porto_3/controllers/home_controller.dart';
 import 'package:letterboxd_porto_3/controllers/main_screen_controller.dart';
-import 'package:letterboxd_porto_3/dimension.dart';
-import 'package:letterboxd_porto_3/style.dart';
-import 'package:letterboxd_porto_3/views/home_screen.dart';
-import 'package:letterboxd_porto_3/views/profile_screen.dart';
-import 'package:letterboxd_porto_3/views/under_work.dart';
+import 'package:letterboxd_porto_3/helpers/dimension.dart';
+import 'package:letterboxd_porto_3/helpers/style.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_drawer_opt.dart';
 import 'package:lazy_load_indexed_stack/lazy_load_indexed_stack.dart';
+
+import 'home_screen.dart';
+import 'profile_screen.dart';
+import 'under_work.dart';
 
 class MainScreen extends GetView<MainScreenController> {
   const MainScreen({super.key});
@@ -20,6 +22,8 @@ class MainScreen extends GetView<MainScreenController> {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(HomeController());
+    print("main built");
     return SafeArea(
       child: Obx(() {
         return Scaffold(
@@ -37,7 +41,9 @@ class MainScreen extends GetView<MainScreenController> {
             ),
             child: BottomNavigationBar(
               currentIndex: controller.index.value,
-              onTap: (value) => controller.changeIndex(value),
+              onTap: (value) {
+                controller.changeIndex(value);
+              } ,
               backgroundColor: context.colors.primaryCr,
               selectedIconTheme:
                   IconThemeData(color: context.colors.secondaryCr, size: 28),
