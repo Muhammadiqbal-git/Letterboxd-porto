@@ -1,6 +1,7 @@
 
 import 'package:get/get.dart';
 import 'package:letterboxd_porto_3/controllers/main_screen_controller.dart';
+import 'package:letterboxd_porto_3/controllers/movie_detail_controller.dart';
 import 'package:letterboxd_porto_3/controllers/review_controller.dart';
 import 'login_controller.dart';
 import 'register_controller.dart';
@@ -29,5 +30,12 @@ class ReviewScreenBinding extends Bindings{
   @override
   void dependencies() {
     Get.lazyPut<ReviewController>(() => ReviewController());
+  }
+}
+
+class MovieDetailBinding extends Bindings{
+  @override
+  void dependencies() {
+    Get.lazyPut<MovieController>(() => MovieController());
   }
 }

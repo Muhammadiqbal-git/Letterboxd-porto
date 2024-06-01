@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:letterboxd_porto_3/controllers/movie_detail_controller.dart';
 import 'package:letterboxd_porto_3/controllers/review_controller.dart';
 import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/style.dart';
@@ -8,6 +9,7 @@ import 'package:letterboxd_porto_3/views/widgets/custom_form.dart';
 
 class ReviewScreen extends GetView<ReviewController> {
   const ReviewScreen({super.key});
+  MovieController get movieController => Get.find<MovieController>();
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +116,7 @@ class ReviewScreen extends GetView<ReviewController> {
                       color: context.colors.whiteCr.withOpacity(0.5)),
                   textAlignVertical: TextAlignVertical.top,
                   height: double.maxFinite,
-                  textEditingController: TextEditingController()),
+                  textEditingController: controller.reviewText.value),
             ),
             const SizedBox(
               height: 20,
@@ -122,6 +124,15 @@ class ReviewScreen extends GetView<ReviewController> {
             Align(
               alignment: Alignment.centerRight,
               child: CustomButton(
+                  onTap: () {
+                    if (movieController.state.value == MovieState.done) {
+                      movieController.addReview(
+                          id: movieController.detailData.value!.id,
+                          review: controller.reviewText.value.text,
+                          date: controller.selectedDate.value,
+                          rate: 4);
+                    }
+                  },
                   width: 80,
                   child: Text(
                     "Publish",
@@ -134,6 +145,4 @@ class ReviewScreen extends GetView<ReviewController> {
       ),
     );
   }
-
-
 }

@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:letterboxd_porto_3/helpers/app_color.dart';
 import 'package:letterboxd_porto_3/controllers/getx_binding.dart';
 import 'package:letterboxd_porto_3/helpers/firebase_options.dart';
-import 'views/screens/film_detail_screen.dart';
+import 'views/screens/movie_detail_screen.dart';
 import 'views/screens/login_screen.dart';
 import 'views/screens/main_screen.dart';
 import 'views/screens/onboarding_screen.dart';
@@ -57,8 +57,9 @@ class MyApp extends StatelessWidget {
           page: () => const MainScreen(),
         ),
         GetPage(
-          name: '/film_detail',
-          page: () => const FilmDetailScreen(),
+          name: '/movie_detail',
+          binding: MovieDetailBinding(),
+          page: () => const MovieDetailScreen(),
         ),
         GetPage(
           name: '/add_review',

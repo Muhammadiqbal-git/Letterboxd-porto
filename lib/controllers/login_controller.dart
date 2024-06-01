@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,7 @@ class LoginController extends GetxController {
   Rx<TextEditingController> passText = TextEditingController().obs;
   Rx<User?> userData = Rx<User?>(null);
   Rx<bool> loading = false.obs;
+  
 
   @override
   void onInit() {

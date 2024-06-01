@@ -4,6 +4,7 @@ import 'package:letterboxd_porto_3/helpers/dimension.dart';
 
 class ReviewController extends GetxController {
   Rx<DateTime> selectedDate = DateTime.now().obs;
+  Rx<TextEditingController> reviewText = TextEditingController().obs;
 
   Future<void> datePicker(BuildContext context) async {
     DateTime now = selectedDate.value;

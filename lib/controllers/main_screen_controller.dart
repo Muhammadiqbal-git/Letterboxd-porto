@@ -13,7 +13,6 @@ class MainScreenController extends GetxController{
     index.value = i;
     if (index.value == 0) {
       _homeController.getData();
-      print(HomeController.loading);
     }
     else{
       print("do nothing");

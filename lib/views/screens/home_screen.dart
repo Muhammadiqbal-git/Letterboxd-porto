@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:letterboxd_porto_3/controllers/home_controller.dart';
 import 'package:letterboxd_porto_3/controllers/tmdb_services.dart';
+import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/style.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_img_widget.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -76,10 +77,10 @@ class HomeScreen extends GetView<HomeController> {
                   height: 15,
                 ),
                 SizedBox(
-                    height: 90,
+                    height: 90 + getWidth(context, 5),
                     child: Obx(() {
-                      print(HomeController.loading);
-                      if (HomeController.loading.value) {
+                      print(controller.loading);
+                      if (controller.loading.value) {
                         return Center(
                           child: CircularProgressIndicator(
                             color: context.colors.secondaryCr,
@@ -92,15 +93,16 @@ class HomeScreen extends GetView<HomeController> {
                           itemCount: controller.data.value!.results.length,
                           addAutomaticKeepAlives: true,
                           itemBuilder: (context, index) => Container(
-                            width: 58,
-                            height: 82,
+                            width: 58 + getWidth(context, 5),
+                            height: 82 + getWidth(context, 5),
                             margin: const EdgeInsets.only(right: 10),
                             child: InkWell(
-                              onTap: () => Get.toNamed('/film_detail'),
+                              onTap: () => Get.toNamed('/movie_detail', arguments: {"id": controller.data.value!.results[index].id}),
                               child: CustomImgNetwork(
                                 path: TMDBServices().imgUrl(
                                   pathUrl: controller
                                       .data.value!.results[index].posterPath,
+                                      width: 500
                                 ),
                               ),
                             ),

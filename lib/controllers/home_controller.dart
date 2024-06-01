@@ -4,7 +4,7 @@ import 'tmdb_services.dart';
 
 class HomeController extends GetxController {
   Rx<MovieData?> data = Rx<MovieData?>(null);
-  static final Rx<bool> loading = false.obs;
+  Rx<bool> loading = false.obs;
 
   @override
   void onInit() {
