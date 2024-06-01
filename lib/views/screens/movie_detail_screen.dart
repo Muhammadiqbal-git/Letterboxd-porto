@@ -28,9 +28,17 @@ class MovieDetailScreen extends GetView<MovieController> {
             width: getWidth(context, 100),
             child: ClipPath(
               clipper: DiagonalClipper(),
-              child: Image.asset(
-                "assets/imgs/banner.png",
-                fit: BoxFit.cover,
+              child: Obx(() {
+                if (controller.state.value == MovieState.done) {
+                  return CustomImgNetwork(path: TMDBServices().imgUrl(
+                    width: 1280,
+                    pathUrl: controller.detailData.value?.backdropPath ?? ""));
+                }
+                  return Image.asset(
+                    "assets/imgs/banner.png",
+                    fit: BoxFit.cover,
+                  );
+                }
               ),
             ),
           ),
@@ -135,7 +143,7 @@ class MovieDetailScreen extends GetView<MovieController> {
                       alignment: Alignment.centerLeft,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: 5,
+                        itemCount: controller.castData.value.length >= 5 ? 5:controller.castData.value.length,
                         itemBuilder: (context, index) => Container(
                           height: 45,
                           width: 45,

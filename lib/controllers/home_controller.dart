@@ -16,6 +16,7 @@ class HomeController extends GetxController {
     print("getdata");
     loading.value = true;
     data.value = await TMDBServices().getMovieOfTheMonth();
+    print(data.value);
     loading.value = false;
   }
 }

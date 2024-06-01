@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:letterboxd_porto_3/controllers/movie_detail_controller.dart';
 import 'package:letterboxd_porto_3/controllers/review_controller.dart';
+import 'package:letterboxd_porto_3/controllers/tmdb_services.dart';
 import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/style.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_button.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_form.dart';
+import 'package:letterboxd_porto_3/views/widgets/custom_img_widget.dart';
+import 'package:letterboxd_porto_3/views/widgets/custom_text.dart';
 
 class ReviewScreen extends GetView<ReviewController> {
   const ReviewScreen({super.key});
@@ -39,20 +43,43 @@ class ReviewScreen extends GetView<ReviewController> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text(
-                            "The Batman ",
-                            style: boldText.copyWith(fontSize: 20),
-                          ),
-                          Text(
-                            "2022",
-                            style: normalText.copyWith(fontSize: 12),
-                          ),
-                        ],
-                      ),
+                      Obx(() {
+                        if (movieController.state.value == MovieState.done) {
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              Flexible(
+                                child: CustomText(
+                                  movieController.detailData.value!.title,
+                                  multiLine: false,
+                                  style: boldText.copyWith(fontSize: 20),
+                                ),
+                              ),
+                              Text(
+                                DateFormat("yyyy").format(movieController
+                                    .detailData.value!.releaseDate),
+                                style: normalText.copyWith(fontSize: 12),
+                              ),
+                            ],
+                          );
+                        } else {
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              Text(
+                                "Film Name",
+                                style: boldText.copyWith(fontSize: 20),
+                              ),
+                              Text(
+                                "2022",
+                                style: normalText.copyWith(fontSize: 12),
+                              ),
+                            ],
+                          );
+                        }
+                      }),
                       const SizedBox(height: 20),
                       Text(
                         "Specify the date you watched it",
@@ -64,9 +91,15 @@ class ReviewScreen extends GetView<ReviewController> {
                         child: Container(
                           height: 28,
                           width: double.maxFinite,
+                          alignment: Alignment.center,
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(7),
-                              color: Color(0xffC4C4C4).withOpacity(0.35)),
+                            borderRadius: BorderRadius.circular(7),
+                            color: Color(0xffC4C4C4).withOpacity(0.35),
+                          ),
+                          child: Text(
+                            DateFormat("yyyy-MM-dd").format(controller.selectedDate.value),
+                            style: semiBoldText.copyWith(fontSize: 12),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 15),
@@ -91,16 +124,17 @@ class ReviewScreen extends GetView<ReviewController> {
                 const SizedBox(
                   width: 45,
                 ),
-                Container(
-                  width: 110 + getWidth(context, 2),
-                  height: 170 + getWidth(context, 2),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(7),
-                      image: DecorationImage(
-                        image: AssetImage("assets/imgs/poster1.png"),
-                        fit: BoxFit.cover,
-                      )),
-                ),
+                Obx(() {
+                  return Container(
+                    width: 110 + getWidth(context, 2),
+                    height: 170 + getWidth(context, 2),
+                    child: CustomImgNetwork(
+                        path: TMDBServices().imgUrl(
+                            pathUrl:
+                                movieController.detailData.value?.posterPath ??
+                                    "")),
+                  );
+                }),
               ],
             ),
             const SizedBox(

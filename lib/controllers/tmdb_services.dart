@@ -19,6 +19,7 @@ class TMDBServices {
   }
 
   Future<MovieData?> getMovieOfTheMonth({DateTime? date}) async {
+    print(Env.apiKey);
     dateNow = date ?? dateNow;
     String dateGte = DateFormat("yyyy-MM").format(dateNow);
     String dateLte =
@@ -40,6 +41,7 @@ class TMDBServices {
     } catch (e) {
       print("error");
       print(e);
+      throw e;
       return null;
     }
   }
