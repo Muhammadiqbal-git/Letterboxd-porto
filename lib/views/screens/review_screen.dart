@@ -97,7 +97,8 @@ class ReviewScreen extends GetView<ReviewController> {
                             color: Color(0xffC4C4C4).withOpacity(0.35),
                           ),
                           child: Text(
-                            DateFormat("yyyy-MM-dd").format(controller.selectedDate.value),
+                            DateFormat("yyyy-MM-dd")
+                                .format(controller.selectedDate.value),
                             style: semiBoldText.copyWith(fontSize: 12),
                           ),
                         ),
@@ -160,11 +161,15 @@ class ReviewScreen extends GetView<ReviewController> {
               child: CustomButton(
                   onTap: () {
                     if (movieController.state.value == MovieState.done) {
-                      movieController.addReview(
-                          id: movieController.detailData.value!.id,
+                      controller.addReview(
+                          filmId: movieController.detailData.value!.id,
                           review: controller.reviewText.value.text,
                           date: controller.selectedDate.value,
-                          rate: 4);
+                          rate: 4,
+                          favorite: true,
+                          posterPath: movieController.detailData.value!.posterPath,
+                          );
+                      // controller.getAllReview(filmId: 1022789);
                     }
                   },
                   width: 80,

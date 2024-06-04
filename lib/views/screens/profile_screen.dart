@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:letterboxd_porto_3/controllers/profile_controller.dart';
 import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/style.dart';
+import 'package:letterboxd_porto_3/views/widgets/custom_img_widget.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_review_card.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends GetView<ProfileController> {
   const ProfileScreen({super.key});
 
   @override
@@ -31,17 +34,40 @@ class ProfileScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              CircleAvatar(
-                backgroundColor: context.colors.whiteCr,
-                radius: 40,
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: context.colors.whiteCr),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(50),
+                  onTap: () {
+                    controller.imgPicker();
+                  },
+                  child: Obx(() {
+                    if (controller.imgPath.value != "") {
+                      return CustomImgNetwork(
+                          radius: BorderRadius.circular(50),
+                          path: controller.imgPath.value!);
+                    } else {
+                      return CircleAvatar(
+                        backgroundColor: context.colors.whiteCr,
+                        radius: 40,
+                      );
+                    }
+                  }),
+                ),
               ),
               const SizedBox(
                 height: 5,
               ),
-              const Text(
-                "Nama",
-                style: boldText,
-              ),
+              Obx(() {
+                return Text(
+                  controller.user.value?.uName ?? "No Name",
+                  style: boldText.copyWith(fontSize: 16),
+                );
+              }),
               const SizedBox(
                 height: 5,
               ),
@@ -54,10 +80,18 @@ class ProfileScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Text(
-                            "500 Followers",
-                            style: normalText,
-                          ),
+                          Obx(() {
+                            if (controller.user.value != null) {
+                              return Text(
+                                "${controller.user.value!.follower} Followers",
+                                style: normalText.copyWith(fontSize: 12),
+                              );
+                            }
+                            return Text(
+                              "0 Followers",
+                              style: normalText.copyWith(fontSize: 12),
+                            );
+                          }),
                           Container(
                             height: 2,
                             width: 60,
@@ -76,10 +110,18 @@ class ProfileScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Text(
-                            "500 Following",
-                            style: normalText,
-                          ),
+                          Obx(() {
+                            if (controller.user.value != null) {
+                              return Text(
+                                "${controller.user.value!.following} Following",
+                                style: normalText.copyWith(fontSize: 12),
+                              );
+                            }
+                            return Text(
+                              "0 Following",
+                              style: normalText.copyWith(fontSize: 12),
+                            );
+                          }),
                           Container(
                             height: 2,
                             width: 60,
@@ -99,11 +141,13 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   Column(
                     children: [
-                      Text(
-                        "455",
-                        style: boldText.copyWith(
-                            fontSize: 20, color: context.colors.secondaryCr),
-                      ),
+                      Obx(() {
+                        return Text(
+                          "${controller.user.value?.rec?.length ?? "0"}",
+                          style: boldText.copyWith(
+                              fontSize: 20, color: context.colors.secondaryCr),
+                        );
+                      }),
                       const SizedBox(
                         height: 3,
                       ),
@@ -118,11 +162,13 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   Column(
                     children: [
-                      Text(
-                        "33",
-                        style: boldText.copyWith(
-                            fontSize: 20, color: context.colors.accentCr),
-                      ),
+                      Obx(() {
+                        return Text(
+                          "${controller.user.value?.rec?.length ?? "0"}",
+                          style: boldText.copyWith(
+                              fontSize: 20, color: context.colors.accentCr),
+                        );
+                      }),
                       const SizedBox(
                         height: 3,
                       ),
@@ -138,7 +184,7 @@ class ProfileScreen extends StatelessWidget {
                   Column(
                     children: [
                       Text(
-                        "4",
+                        "0",
                         style: boldText.copyWith(
                             fontSize: 20, color: context.colors.secondaryCr),
                       ),
@@ -156,11 +202,13 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   Column(
                     children: [
-                      Text(
-                        "30",
-                        style: boldText.copyWith(
-                            fontSize: 20, color: context.colors.accentCr),
-                      ),
+                      Obx(() {
+                        return Text(
+                          "${controller.user.value?.rec?.length ?? "0"}",
+                          style: boldText.copyWith(
+                              fontSize: 20, color: context.colors.accentCr),
+                        );
+                      }),
                       const SizedBox(
                         height: 3,
                       ),
@@ -220,10 +268,12 @@ class ProfileScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "Nama's Recent Watched",
-                style: semiBoldText.copyWith(fontSize: 12),
-              ),
+              Obx(() {
+                return Text(
+                  "${controller.user.value?.uName ?? "Name"}'s Recent Watched",
+                  style: semiBoldText.copyWith(fontSize: 12),
+                );
+              }),
               Text(
                 "See All",
                 style: semiBoldText.copyWith(
@@ -294,10 +344,12 @@ class ProfileScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "Nama's Recent Reviewed",
-                style: semiBoldText.copyWith(fontSize: 12),
-              ),
+              Obx(() {
+                return Text(
+                  "${controller.user.value?.uName ?? "Name"}'s Recent Reviews",
+                  style: semiBoldText.copyWith(fontSize: 12),
+                );
+              }),
               Text(
                 "See All",
                 style: semiBoldText.copyWith(
@@ -308,7 +360,24 @@ class ProfileScreen extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
-          CustomReviewCard(),
+          Obx(() {
+            if (controller.user.value != null && controller.user.value!.rec!.isNotEmpty) {
+              return ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: controller.user.value!.rec!.length,
+                itemBuilder: (context, index) => CustomReviewCard(
+                    titleFilm: controller.user.value!.rec![index].id,
+                    author: controller.user.value!.uName,
+                    yearFilm: controller.user.value!.follower.toString(),
+                    review: controller.user.value!.rec![index].review,
+                    rate: controller.user.value!.rec![index].rate),
+              );
+            }
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }),
         ],
       ),
     );

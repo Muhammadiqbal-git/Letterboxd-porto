@@ -15,7 +15,6 @@ class CustomImgNetwork extends StatefulWidget {
 class _CustomImgNetworkState extends State<CustomImgNetwork> {
   @override
   Widget build(BuildContext context) {
-    print("pasd");
     if (widget.path == "") {
       return ClipRRect(
         borderRadius: widget.radius ?? BorderRadius.circular(7),

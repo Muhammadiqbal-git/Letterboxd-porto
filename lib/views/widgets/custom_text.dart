@@ -19,28 +19,26 @@ class CustomText extends StatelessWidget {
       builder: (context, constraint) {
         var indexBreak = 0;
         var lastIndexBreak = 0;
-        print(constraint.maxWidth);
+        double maxWidth = 0;
+        if (multiLine) {
+        maxWidth = constraint.maxWidth - 60;
+        } else {
+        maxWidth = constraint.maxWidth - 100;
+        }
         for (var i = 0; i < data.length; i++) {
-          if (constraint.maxWidth - 55 <=
+          if (maxWidth <=
               _textSize(data.substring(0, i), style).width) {
-            indexBreak = i;
+            indexBreak = i-1;
             break;
           }
         }
         for (var i = 0; i < data.length; i++) {
-          print(_textSize(data.substring(i), style).width +
-              _textSize(data.substring(0, indexBreak), style).width);
-          if (constraint.maxWidth -
+          if (maxWidth +
                   _textSize(data.substring(0, indexBreak), style).width <=
               _textSize(data.substring(i), style).width ) {
             lastIndexBreak = i;
           }
         }
-        print("sasd");
-        print(indexBreak);
-        print(lastIndexBreak);
-
-
         if (constraint.maxWidth <= _textSize(data, style).width &&
             data.length > indexBreak) {
           String endPart = "";
@@ -49,7 +47,7 @@ class CustomText extends StatelessWidget {
           } else {
             endPart = data.trim().substring(data.length - lastIndexBreak);
           }
-          var startPart = data.trim().substring(0, data.length - indexBreak);
+          var startPart = data.trim().substring(0, indexBreak);
           if (multiLine) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,

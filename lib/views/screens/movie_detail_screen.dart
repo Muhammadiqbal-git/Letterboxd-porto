@@ -206,6 +206,11 @@ class MovieDetailScreen extends GetView<MovieController> {
                 ),
                 Obx(() {
                   return CustomReviewCard(
+                    titleFilm: "tt",
+                    yearFilm: "2024",
+                    author: "jon",
+                    rate: 4,
+                    review: "asdasd",                    
                     loading: controller.state.value == MovieState.loading,
                     withImage: false,
                   );

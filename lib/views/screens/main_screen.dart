@@ -22,7 +22,6 @@ class MainScreen extends GetView<MainScreenController> {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(HomeController());
     print("main built");
     return SafeArea(
       child: Obx(() {

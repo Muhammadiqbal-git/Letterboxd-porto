@@ -63,7 +63,6 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: '/add_review',
-          binding: ReviewScreenBinding(),
           page: () => const ReviewScreen(),
         )
       ],

@@ -3,15 +3,24 @@ import 'package:letterboxd_porto_3/helpers/style.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class CustomReviewCard extends StatelessWidget {
+  final String titleFilm;
+  final String author;
+  final String yearFilm;
+  final String review;
+  final double rate;
   final double? width;
   final double? height;
   final Color? bgColor;
   final bool withImage;
   final bool loading;
 
-
   const CustomReviewCard(
       {super.key,
+      required this.titleFilm,
+      required this.author,
+      required this.yearFilm,
+      required this.review,
+      required this.rate,
       this.width,
       this.height,
       this.bgColor,
@@ -59,11 +68,11 @@ class CustomReviewCard extends StatelessWidget {
                       textBaseline: TextBaseline.alphabetic,
                       children: [
                         Text(
-                          "The Irishman ",
+                          "$titleFilm",
                           style: boldText.copyWith(fontSize: 12),
                         ),
                         Text(
-                          "2020",
+                          " $yearFilm",
                           style: normalText.copyWith(
                               fontSize: 10, color: Colors.grey),
                         ),
@@ -81,7 +90,7 @@ class CustomReviewCard extends StatelessWidget {
                       Text("Review by ",
                           style: semiBoldText.copyWith(fontSize: 12)),
                       Text(
-                        "Namess",
+                        "$author",
                         style: semiBoldText.copyWith(
                             fontSize: 12, color: context.colors.secondaryCr),
                       ),
@@ -118,7 +127,7 @@ class CustomReviewCard extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    "working stiffs. \nnot sure i've ever mentioned this before but i have a very personal fear of not... feeling... correctly. like enormously important things are happening around you in a matter-of-fact, dissociative way that you can understand the significance of but you can't shake..",
+                    review,
                     style: normalText.copyWith(
                       fontSize: 10,
                       color: context.colors.whiteCr,

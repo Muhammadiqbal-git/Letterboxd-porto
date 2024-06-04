@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:letterboxd_porto_3/controllers/login_controller.dart';
 import 'package:letterboxd_porto_3/controllers/register_controller.dart';
 import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/diagonal_clipper.dart';

@@ -14,13 +14,11 @@ class MovieController extends GetxController {
 
   Rx<String> director = "".obs;
 
-  FirebaseFirestore db = FirebaseFirestore.instance;
   MovieCast? _cast;
   TMDBServices services = TMDBServices();
 
   @override
   void onInit() {
-    // call getDetai()l but i cant pass the id
     getDetail(Get.arguments['id']);
     super.onInit();
   }
@@ -50,20 +48,7 @@ class MovieController extends GetxController {
     }
   }
 
-  addReview({
-    required int id,
-    required String review,
-    required DateTime date,
-    required int rate,
-  }) async {
-    await db
-        .collection("/film_review")
-        .doc("$id")
-        .collection("review")
-        .doc(FirebaseAuthService().userId)
-        .set({"date": "$date", "review": review, "rate": "$rate"}).then(
-            (value) => print("dones")).onError((error, stackTrace) => print("error cuy $error"));
-  }
+
 }
 
 enum MovieState { loading, done, error }

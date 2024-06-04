@@ -1,17 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class FirebaseAuthService{
+class FirebaseAuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  String get userId => _firebaseAuth.currentUser!.uid;
+  String? get userId => _firebaseAuth.currentUser?.uid;
 
-  Future<User?> signUpEmailPass(String userName, String email, String pass) async{
+  Future<User?> signUpEmailPass(
+      String userName, String email, String pass) async {
     try {
-      UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: pass);
+      UserCredential userCredential = await _firebaseAuth
+          .createUserWithEmailAndPassword(email: email, password: pass);
       User? user = userCredential.user;
       if (user != null) {
         await user.updateDisplayName(userName);
         user = _firebaseAuth.currentUser;
+        _firestore.collection("/profile").doc(user!.uid).set({
+          "u_name": userName,
+          "photo_path": "",
+          "follower": 0,
+          "following": 0,
+          "favorite": {},
+        });
       }
       return user;
     } catch (e) {
@@ -21,9 +32,10 @@ class FirebaseAuthService{
     }
   }
 
-  Future<User?> loginEmailPass(String email, String pass)async{
+  Future<User?> loginEmailPass(String email, String pass) async {
     try {
-      UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: pass);
+      UserCredential userCredential = await _firebaseAuth
+          .signInWithEmailAndPassword(email: email, password: pass);
       return userCredential.user;
     } catch (e) {
       print("error terjadi saat login");
