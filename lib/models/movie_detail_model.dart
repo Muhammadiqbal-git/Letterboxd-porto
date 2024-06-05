@@ -11,7 +11,7 @@ String movieDetailToJson(MovieDetail data) => json.encode(data.toJson());
 
 class MovieDetail {
   bool adult;
-  String backdropPath;
+  String? backdropPath;
   BelongsToCollection? belongsToCollection;
   int budget;
   List<Genre> genres;

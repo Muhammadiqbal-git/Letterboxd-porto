@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:letterboxd_porto_3/controllers/home_controller.dart';
+import 'package:letterboxd_porto_3/controllers/profile_controller.dart';
 import 'package:letterboxd_porto_3/controllers/tmdb_services.dart';
 import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/style.dart';
@@ -14,7 +15,7 @@ class HomeScreen extends GetView<HomeController> {
   const HomeScreen({
     super.key,
   });
-
+  ProfileController get _profileController => Get.find();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -34,9 +35,20 @@ class HomeScreen extends GetView<HomeController> {
                     AssetImage("assets/icons/burger.png"),
                     color: context.colors.whiteCr,
                   )),
-              CircleAvatar(
-                backgroundColor: context.colors.whiteCr,
-              )
+              Obx(() {
+                if (_profileController.user.value != null) {
+                  return SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: CustomImgNetwork(
+                      radius: BorderRadius.circular(50),
+                      path: _profileController.user.value!.photo_path),
+                  );
+                }
+                return CircleAvatar(
+                  backgroundColor: context.colors.whiteCr,
+                );
+              })
             ],
           ),
           const SizedBox(
@@ -49,10 +61,14 @@ class HomeScreen extends GetView<HomeController> {
                 style: boldText.copyWith(
                     fontSize: 18, color: context.colors.whiteCr),
               ),
-              Text(
-                "Name",
-                style: boldText.copyWith(
-                    fontSize: 18, color: context.colors.secondaryCr),
+              Obx(
+                 () {
+                  return Text(
+                    (_profileController.user.value?.uName) ?? "name",
+                    style: boldText.copyWith(
+                        fontSize: 18, color: context.colors.secondaryCr),
+                  );
+                }
               ),
               Text(
                 "!",
@@ -111,29 +127,6 @@ class HomeScreen extends GetView<HomeController> {
                   );
                 }
               })),
-          const SizedBox(
-            height: 20,
-          ),
-          const Text(
-            "Popular List This Month",
-            style: boldText,
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          SizedBox(
-            height: 90,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 10,
-              itemBuilder: (context, index) => Container(
-                width: 50,
-                height: 50,
-                margin: const EdgeInsets.only(right: 10),
-                color: context.colors.whiteCr,
-              ),
-            ),
-          ),
           const SizedBox(
             height: 20,
           ),

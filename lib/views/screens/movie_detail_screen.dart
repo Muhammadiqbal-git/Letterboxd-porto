@@ -224,7 +224,8 @@ class MovieDetailScreen extends GetView<MovieController> {
                         itemBuilder: (context, index) => CustomReviewCard(
                           reviewData:
                               controller.reviewData.value!.reviewData[index],
-                          withImage: true,
+                          withImage: false,
+                          
                         ),
                       );
                     }

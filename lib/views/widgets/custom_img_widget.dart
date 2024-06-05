@@ -19,7 +19,7 @@ class _CustomImgNetworkState extends State<CustomImgNetwork> {
       return ClipRRect(
         borderRadius: widget.radius ?? BorderRadius.circular(7),
         child: Container(
-          decoration: BoxDecoration(color: context.colors.whiteCr),
+          decoration: BoxDecoration(color: context.colors.whiteCr.withOpacity(0.8)),
           alignment: Alignment.center,
           child: Icon(
             Icons.no_accounts,
