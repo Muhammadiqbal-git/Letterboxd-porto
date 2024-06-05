@@ -32,11 +32,9 @@ class ProfileController extends GetxController {
         .collection("recent")
         .orderBy("date", descending: true)
         .get();
-    DocumentSnapshot<Map<String, dynamic>> profile = await profileRef.get();
-    if (profile.exists) {
-      print("s");
+    await profileRef.get().then((value) async {
       ProfileModel data =
-          ProfileModel.fromFirestore(profile, recent, SnapshotOptions());
+          ProfileModel.fromFirestore(value, recent, SnapshotOptions());
       user.value = data;
       imgPath.value = data.photo_path;
       if (update) {
@@ -48,7 +46,7 @@ class ProfileController extends GetxController {
         }
         await batch.commit().then((value) => print("success"));
       }
-    }
+    });
   }
 
   imgPicker() async {

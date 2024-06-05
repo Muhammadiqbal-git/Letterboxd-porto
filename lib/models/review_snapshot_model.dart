@@ -4,19 +4,22 @@ class ReviewModel {
   final List<ReviewEntityModel> reviewData;
   ReviewModel({required this.reviewData});
   factory ReviewModel.fromFirestore(
-    QuerySnapshot review,
+    QuerySnapshot<Map<String, dynamic>> review,
+    DocumentSnapshot<Map<String, dynamic>>? film,
   ) {
     final data = review.docs;
+    final filmData = film?.data();
     return ReviewModel(
-        reviewData: List.from(data.map((e) => ReviewEntityModel())));
+        reviewData: List.from(data.map<ReviewEntityModel>(
+            (e) => ReviewEntityModel.fromFirestore(e.data(), filmData))));
   }
 }
 
 class ReviewEntityModel {
-  final String? moviePosterPath;
-  final String? movieBackdropPath;
-  final String? movieTitle;
-  final DateTime? movieYear;
+  final String? filmPosterPath;
+  final String? filmBackdropPath;
+  final String? filmTitle;
+  final DateTime? filmYear;
   final String uId;
   final String uName;
   final DateTime reviewDate;
@@ -25,10 +28,10 @@ class ReviewEntityModel {
   final String photoPath;
 
   ReviewEntityModel(
-      {this.moviePosterPath,
-      this.movieBackdropPath,
-      this.movieTitle,
-      this.movieYear,
+      {this.filmPosterPath,
+      this.filmBackdropPath,
+      this.filmTitle,
+      this.filmYear,
       required this.uId,
       required this.uName,
       required this.reviewDate,
@@ -37,16 +40,22 @@ class ReviewEntityModel {
       required this.photoPath});
 
   factory ReviewEntityModel.fromFirestore(
-    QuerySnapshot<Map<String, dynamic>> data,
-    DocumentSnapshot<Map<String, dynamic>> dataFilm,
+    Map<String, dynamic> data,
+    Map<String, dynamic>? dataFilm,
   ) {
-    data.d
     return ReviewEntityModel(
-        uId: uId,
-        uName: uName,
-        reviewDate: reviewDate,
-        rate: rate,
-        reviewText: reviewText,
-        photoPath: photoPath);
+      filmPosterPath: dataFilm != null ? dataFilm["poster_path"] : null,
+      filmBackdropPath: dataFilm != null ? dataFilm["backdrop_path"] : null,
+      filmTitle: dataFilm != null ? dataFilm["title"] : null,
+      filmYear: dataFilm != null
+          ? (dataFilm["year_release"] as Timestamp).toDate()
+          : null,
+      uId: data['u_id'],
+      uName: data['u_name'],
+      reviewDate: (data['date'] as Timestamp).toDate(),
+      rate: (data['rate'] as num).toDouble(),
+      reviewText: data['review'],
+      photoPath: data['photo_path'],
+    );
   }
 }

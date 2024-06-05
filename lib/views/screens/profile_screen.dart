@@ -367,11 +367,9 @@ class ProfileScreen extends GetView<ProfileController> {
                 shrinkWrap: true,
                 itemCount: controller.user.value!.rec!.length,
                 itemBuilder: (context, index) => CustomReviewCard(
-                    titleFilm: controller.user.value!.rec![index].id,
-                    author: controller.user.value!.uName,
-                    yearFilm: controller.user.value!.follower.toString(),
-                    review: controller.user.value!.rec![index].review,
-                    rate: controller.user.value!.rec![index].rate),
+                          reviewData: null,
+
+                ),
               );
             }
             return Center(

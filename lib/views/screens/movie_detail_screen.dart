@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:letterboxd_porto_3/controllers/movie_detail_controller.dart';
+import 'package:letterboxd_porto_3/controllers/review_controller.dart';
 import 'package:letterboxd_porto_3/controllers/tmdb_services.dart';
 import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/diagonal_clipper.dart';
@@ -14,7 +15,6 @@ import 'package:skeletonizer/skeletonizer.dart';
 
 class MovieDetailScreen extends GetView<MovieController> {
   const MovieDetailScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     print(controller.state.value);
@@ -30,16 +30,17 @@ class MovieDetailScreen extends GetView<MovieController> {
               clipper: DiagonalClipper(),
               child: Obx(() {
                 if (controller.state.value == MovieState.done) {
-                  return CustomImgNetwork(path: TMDBServices().imgUrl(
-                    width: 1280,
-                    pathUrl: controller.detailData.value?.backdropPath ?? ""));
+                  return CustomImgNetwork(
+                      path: TMDBServices().imgUrl(
+                          width: 1280,
+                          pathUrl:
+                              controller.detailData.value?.backdropPath ?? ""));
                 }
-                  return Image.asset(
-                    "assets/imgs/banner.png",
-                    fit: BoxFit.cover,
-                  );
-                }
-              ),
+                return Image.asset(
+                  "assets/imgs/banner.png",
+                  fit: BoxFit.cover,
+                );
+              }),
             ),
           ),
           Positioned(
@@ -143,7 +144,9 @@ class MovieDetailScreen extends GetView<MovieController> {
                       alignment: Alignment.centerLeft,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: controller.castData.value.length >= 5 ? 5:controller.castData.value.length,
+                        itemCount: controller.castData.value.length >= 5
+                            ? 5
+                            : controller.castData.value.length,
                         itemBuilder: (context, index) => Container(
                           height: 45,
                           width: 45,
@@ -204,17 +207,38 @@ class MovieDetailScreen extends GetView<MovieController> {
                 const SizedBox(
                   height: 20,
                 ),
-                Obx(() {
-                  return CustomReviewCard(
-                    titleFilm: "tt",
-                    yearFilm: "2024",
-                    author: "jon",
-                    rate: 4,
-                    review: "asdasd",                    
-                    loading: controller.state.value == MovieState.loading,
-                    withImage: false,
-                  );
-                }),
+                Flexible(
+                  child: Obx(() {
+                    if (controller.reviewData.value != null &&
+                        controller.state.value == MovieState.done) {
+                      if (controller.reviewData.value!.reviewData.isEmpty) {
+                        return Text(
+                          "No review yet",
+                          style: semiBoldText,
+                        );
+                      }
+                      return ListView.builder(
+                        padding: EdgeInsets.zero,
+                        itemCount:
+                            controller.reviewData.value!.reviewData.length,
+                        itemBuilder: (context, index) => CustomReviewCard(
+                          reviewData:
+                              controller.reviewData.value!.reviewData[index],
+                          withImage: true,
+                        ),
+                      );
+                    }
+                    return ListView.builder(
+                      padding: EdgeInsets.zero,
+                      itemCount: 2,
+                      itemBuilder: (context, index) => CustomReviewCard(
+                        reviewData: null,
+                        loading: controller.state.value == MovieState.loading,
+                        withImage: false,
+                      ),
+                    );
+                  }),
+                ),
               ],
             ),
           ),

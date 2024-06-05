@@ -145,14 +145,12 @@ class HomeScreen extends GetView<HomeController> {
             height: 15,
           ),
           Expanded(
-              child: ListView.builder(
-                  itemBuilder: (context, index) => const CustomReviewCard(
-                        titleFilm: "tt",
-                        yearFilm: "2024",
-                        author: "jon",
-                        rate: 4,
-                        review: "asdasd",
-                      )))
+            child: ListView.builder(
+              itemBuilder: (context, index) => const CustomReviewCard(
+                reviewData: null,
+              ),
+            ),
+          )
         ],
       ),
     );

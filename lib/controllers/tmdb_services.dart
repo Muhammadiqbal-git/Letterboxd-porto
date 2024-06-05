@@ -11,6 +11,11 @@ class TMDBServices {
   DateTime dateNow = DateTime.now();
   final Dio _dio = Dio();
 
+  ///width of poster consist of [92, 154, 185, 342, 500, 700]
+  ///
+  ///width of backdrop consist of [300, 780, 1280]
+  ///
+  ///width of profile consist of [45, 185, 632]
   String imgUrl({required String pathUrl, int? width}) {
     if (pathUrl == "") {
       return "";

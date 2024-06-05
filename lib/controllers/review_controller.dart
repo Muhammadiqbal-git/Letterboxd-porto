@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -5,6 +7,7 @@ import 'package:letterboxd_porto_3/controllers/movie_detail_controller.dart';
 import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:letterboxd_porto_3/models/profile_model.dart';
+import 'package:letterboxd_porto_3/models/review_snapshot_model.dart';
 import 'tmdb_services.dart';
 import 'firebase_auth_services.dart';
 
@@ -38,15 +41,10 @@ class ReviewController extends GetxController {
     }
   }
 
-  addReview({
-    required int filmId,
-    required String review,
-    required DateTime date,
-    required int rate,
-    required String posterPath,
-    bool favorite = false,
-  }) async {
+  addReview() async {
     String userId = FirebaseAuthService().userId!;
+    int filmId = movieController.detailData.value!.id;
+
     DocumentReference filmRef = db.collection("/film_info").doc("$filmId");
     DocumentReference reviewRef = db
         .collection("/film_review")
@@ -75,9 +73,9 @@ class ReviewController extends GetxController {
     batch.set(
         reviewRef,
         {
-          "date": date,
-          "review": review,
-          "rate": rate,
+          "date": selectedDate.value,
+          "review": reviewText.value.text,
+          "rate": 4,
           "u_id": profileModel.uId,
           "u_name": profileModel.uName,
           "photo_path": profileModel.photo_path
@@ -86,19 +84,21 @@ class ReviewController extends GetxController {
     batch.set(
         profileWatchedRef,
         {
-          "date": date,
-          "review": review,
-          "rate": rate,
+          "date": selectedDate.value,
+          "review": reviewText.value.text,
+          "rate": 4.5,
         },
         SetOptions(merge: true));
 
-    if (favorite) {
+    if (true) {
       DocumentReference favoriteRef =
           db.collection("/profile").doc(FirebaseAuthService().userId);
       batch.set(
           favoriteRef,
           {
-            "favorite": {"$filmId": posterPath}
+            "favorite": {
+              "$filmId": movieController.detailData.value!.posterPath
+            }
           },
           SetOptions(merge: true));
     }
@@ -110,7 +110,7 @@ class ReviewController extends GetxController {
     }
   }
 
-  getRecentReview({required int filmId}) async {
+  Future<ReviewModel> getRecentReview({required int filmId}) async {
     QuerySnapshot<Map<String, dynamic>> reviewData = await db
         .collection("/film_review")
         .doc("$filmId")
@@ -119,8 +119,11 @@ class ReviewController extends GetxController {
         .get();
     DocumentSnapshot<Map<String, dynamic>> filmDetail =
         await db.collection("/film_info").doc("$filmId").get();
-    reviewData.do
-
+    ReviewModel data = ReviewModel.fromFirestore(reviewData, filmDetail);
+    inspect(data);
+    return data;
+    // filmDetail
+  }
   // getAllReview({required int filmId}) async {
   //   DocumentSnapshot filmData =
   //   QuerySnapshot reviewData = await db

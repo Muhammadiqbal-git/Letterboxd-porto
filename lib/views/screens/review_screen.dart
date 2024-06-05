@@ -161,14 +161,7 @@ class ReviewScreen extends GetView<ReviewController> {
               child: CustomButton(
                   onTap: () {
                     if (movieController.state.value == MovieState.done) {
-                      controller.addReview(
-                          filmId: movieController.detailData.value!.id,
-                          review: controller.reviewText.value.text,
-                          date: controller.selectedDate.value,
-                          rate: 4,
-                          favorite: true,
-                          posterPath: movieController.detailData.value!.posterPath,
-                          );
+                      controller.addReview();
                       // controller.getAllReview(filmId: 1022789);
                     }
                   },
