@@ -5,13 +5,16 @@ import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/style.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_drawer_opt.dart';
 import 'package:lazy_load_indexed_stack/lazy_load_indexed_stack.dart';
+import 'package:letterboxd_porto_3/views/widgets/custom_img_widget.dart';
 
+import '../../controllers/profile_controller.dart';
 import 'home_screen.dart';
 import 'profile_screen.dart';
 import 'under_work.dart';
 
 class MainScreen extends GetView<MainScreenController> {
   const MainScreen({super.key});
+  ProfileController get _profileController => Get.find();
   final List<Widget> screens = const [
     HomeScreen(),
     UnderWorkScreen(),
@@ -41,7 +44,7 @@ class MainScreen extends GetView<MainScreenController> {
               currentIndex: controller.index.value,
               onTap: (value) {
                 controller.changeIndex(value);
-              } ,
+              },
               backgroundColor: context.colors.primaryCr,
               selectedIconTheme:
                   IconThemeData(color: context.colors.secondaryCr, size: 28),
@@ -79,72 +82,84 @@ class MainScreen extends GetView<MainScreenController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              CircleAvatar(
-                backgroundColor: context.colors.whiteCr,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Name",
-                    style: boldText.copyWith(
-                        fontSize: 14, color: context.colors.secondaryCr),
-                  ),
-                  Text("email@mail.com",style: normalText.copyWith(fontSize: 12, color: Colors.grey),)
-                ],
-              )
-            ],
-          ),
+          Obx(() {
+            return Row(
+              children: [
+                SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: CustomImgNetwork(
+                        radius: BorderRadius.circular(50),
+                        path: _profileController.user.value?.photo_path ?? "")),
+                const SizedBox(
+                  width: 10,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _profileController.user.value?.uName ?? "name",
+                      style: boldText.copyWith(
+                          fontSize: 14, color: context.colors.secondaryCr),
+                    ),
+                    Text(
+                      _profileController.userEmail.value?? "email@gmail.com",
+                      style:
+                          normalText.copyWith(fontSize: 12, color: Colors.grey),
+                    ),
+                  ],
+                )
+              ],
+            );
+          }),
           const SizedBox(
             height: 20,
           ),
-          Row(
-            children: [
-              Expanded(
-                flex: 10,
-                child: Container(
-                  height: 24,
-                  decoration: BoxDecoration(
-                    border:
-                        Border.all(color: context.colors.accentCr, width: 2),
-                    borderRadius: BorderRadius.circular(10),
+          Obx( () {
+              return Row(
+                children: [
+                  Expanded(
+                    flex: 10,
+                    child: Container(
+                      height: 24,
+                      decoration: BoxDecoration(
+                        border:
+                            Border.all(color: context.colors.accentCr, width: 2),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        "${(_profileController.user.value?.follower) ?? "0"} Follower",
+                        style: normalText.copyWith(
+                            fontSize: 10, color: context.colors.whiteCr),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                   ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    "500 Follower",
-                    style: normalText.copyWith(
-                        fontSize: 10, color: context.colors.whiteCr),
-                    overflow: TextOverflow.ellipsis,
+                  const Spacer(
+                    flex: 1,
                   ),
-                ),
-              ),
-              const Spacer(
-                flex: 1,
-              ),
-              Expanded(
-                flex: 10,
-                child: Container(
-                  height: 24,
-                  decoration: BoxDecoration(
-                    border:
-                        Border.all(color: context.colors.accentCr, width: 2),
-                    borderRadius: BorderRadius.circular(10),
+                  Expanded(
+                    flex: 10,
+                    child: Container(
+                      height: 24,
+                      decoration: BoxDecoration(
+                        border:
+                            Border.all(color: context.colors.accentCr, width: 2),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        "${(_profileController.user.value?.following) ?? "0"} Following",
+                        style: normalText.copyWith(
+                            fontSize: 10, color: context.colors.whiteCr),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                   ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    "500 Following",
-                    style: normalText.copyWith(
-                        fontSize: 10, color: context.colors.whiteCr),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ),
-            ],
+                ],
+              );
+            }
           ),
           const SizedBox(
             height: 20,

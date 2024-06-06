@@ -109,21 +109,50 @@ class ReviewScreen extends GetView<ReviewController> {
                         style: normalText.copyWith(fontSize: 10),
                       ),
                       const SizedBox(height: 5),
-                      Row(
-                        children: List.generate(
-                            5,
-                            (index) => Icon(
-                                  Icons.star,
-                                  size: 22,
-                                  color:
-                                      context.colors.whiteCr.withOpacity(0.3),
-                                )),
-                      )
+                      Obx(() {
+                        return Row(children: [
+                          ...List.generate(5, (index) {
+                            print(controller.rate.value);
+                            return InkWell(
+                              onTap: () {
+                                controller.rate.value = index + 1;
+                              },
+                              borderRadius: BorderRadius.circular(50),
+                              child: Icon(
+                                Icons.star,
+                                size: 26,
+                                color: controller.rate.value >= index + 1
+                                    ? Colors.red
+                                    : context.colors.whiteCr.withOpacity(0.3),
+                              ),
+                            );
+                          }),
+                          Spacer(),
+                          InkWell(
+                            // customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                            onTap: () {
+                              controller.fav.value = !controller.fav.value;
+                            },
+                            borderRadius: BorderRadius.circular(50),
+                            child: Container(
+                              margin: EdgeInsets.all(4),
+                              width: 24,
+                              height: 24,
+                              child: Image.asset(
+                                "assets/icons/liked.png",
+                                color: controller.fav.value
+                                    ? Colors.red
+                                    : context.colors.whiteCr.withOpacity(0.3),
+                              ),
+                            ),
+                          )
+                        ]);
+                      })
                     ],
                   ),
                 ),
-                const SizedBox(
-                  width: 45,
+                SizedBox(
+                  width: 25 + getWidth(context, 10),
                 ),
                 Obx(() {
                   return Container(
@@ -161,6 +190,7 @@ class ReviewScreen extends GetView<ReviewController> {
               child: CustomButton(
                   onTap: () {
                     if (movieController.state.value == MovieState.done) {
+                      FocusScope.of(context).unfocus();
                       controller.addReview();
                       // controller.getAllReview(filmId: 1022789);
                     }

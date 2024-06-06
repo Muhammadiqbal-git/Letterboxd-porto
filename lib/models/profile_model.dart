@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:letterboxd_porto_3/models/review_snapshot_model.dart';
 
 class ProfileModel {
   final String uId;
@@ -6,8 +7,9 @@ class ProfileModel {
   final String photo_path;
   final int following;
   final int follower;
-  final Map<String, dynamic>? favorite;
-  final List<RecentMovieModel>? rec;
+  final Map<String, dynamic> favorite;
+  final List<RecentMovieModel>? recentMovie;
+  final List<ReviewEntityModel>? recentRev;
 
   ProfileModel(
       {required this.uId,
@@ -15,23 +17,32 @@ class ProfileModel {
       required this.photo_path,
       required this.following,
       required this.follower,
-      this.favorite,
-      this.rec});
-  factory ProfileModel.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot,
-      QuerySnapshot? recent, SnapshotOptions? options) {
+      required this.favorite,
+      required this.recentMovie,
+      required this.recentRev
+      });
+  factory ProfileModel.fromFirestore(
+      DocumentSnapshot<Map<String, dynamic>> snapshot,
+      QuerySnapshot<Map<String, dynamic>>? recent,
+      List<ReviewEntityModel>? recentReview,
+      SnapshotOptions? options) {
     final data = snapshot.data();
     final rec = recent?.docs;
     return ProfileModel(
-        uId: snapshot.id,
-        uName: data?['u_name'],
-        photo_path: data?['photo_path'],
-        following: data?['follower'],
-        follower: data?['follower'],
-        favorite: data?['favorite'] is Map ? data!['favorite'] : null,
-        rec: rec != null
-            ? List.from(rec.map((e) => RecentMovieModel.fromFirestore(
-                e.id, e.data() as Map<String, dynamic>)))
-            : null);
+      uId: snapshot.id,
+      uName: data?['u_name'],
+      photo_path: data?['photo_path'],
+      following: data?['follower'],
+      follower: data?['follower'],
+      favorite: data?['favorite'],
+      recentMovie: rec != null
+          ? List<RecentMovieModel>.from(
+              rec.map<RecentMovieModel>(
+                  (e) => RecentMovieModel.fromFirestore(e.id, e.data())),
+            )
+          : null,
+      recentRev:  recentReview
+    );
   }
   Map<String, Object?> toFirestore() {
     return {
@@ -49,11 +60,14 @@ class RecentMovieModel {
   DateTime? date;
   double rate;
   String review;
-  RecentMovieModel(
-      {required this.id,
-      required this.date,
-      required this.rate,
-      required this.review});
+  String? posterPath;
+  RecentMovieModel({
+    required this.id,
+    required this.date,
+    required this.rate,
+    required this.review,
+    required this.posterPath,
+  });
 
   factory RecentMovieModel.fromFirestore(String id, Map<String, dynamic> data) {
     return RecentMovieModel(
@@ -62,7 +76,8 @@ class RecentMovieModel {
             ? (data['date'] as Timestamp).toDate()
             : null,
         rate: (data['rate'] as num).toDouble(),
-        review: data['review']);
+        review: data['review'],
+        posterPath: data['poster_path']);
   }
 }
 // class Favorite{

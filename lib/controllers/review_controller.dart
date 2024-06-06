@@ -1,22 +1,32 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:letterboxd_porto_3/controllers/movie_detail_controller.dart';
 import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:letterboxd_porto_3/models/profile_model.dart';
 import 'package:letterboxd_porto_3/models/review_snapshot_model.dart';
-import 'tmdb_services.dart';
+import 'package:letterboxd_porto_3/views/widgets/custom_alert_dialog.dart';
 import 'firebase_auth_services.dart';
 
 class ReviewController extends GetxController {
-  FirebaseFirestore db = FirebaseFirestore.instance;
-  TMDBServices services = TMDBServices();
-  Rx<DateTime> selectedDate = DateTime.now().obs;
-  Rx<TextEditingController> reviewText = TextEditingController().obs;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
   MovieController movieController = Get.find<MovieController>();
+  ProfileModel? _profileModel;
+  Rx<DateTime> selectedDate = DateTime.now().obs;
+  Rx<int> rate = 0.obs;
+  Rx<bool> fav = false.obs;
+  Rx<TextEditingController> reviewText = TextEditingController().obs;
+
+  @override
+  onInit() async {
+    DocumentSnapshot<Map<String, dynamic>> profileSnapshot = await _db
+        .collection("/profile")
+        .doc(FirebaseAuthService().userId)
+        .get();
+    _profileModel =
+        ProfileModel.fromFirestore(profileSnapshot, null, null, SnapshotOptions());
+    super.onInit();
+  }
 
   Future<void> datePicker(BuildContext context) async {
     DateTime now = selectedDate.value;
@@ -42,43 +52,39 @@ class ReviewController extends GetxController {
   }
 
   addReview() async {
+    if (_profileModel == null) {
+      print("profile model null");
+      return;
+    }
     String userId = FirebaseAuthService().userId!;
     int filmId = movieController.detailData.value!.id;
-
-    DocumentReference filmRef = db.collection("/film_info").doc("$filmId");
-    DocumentReference reviewRef = db
+    DocumentReference reviewRef = _db
         .collection("/film_review")
         .doc("$filmId")
         .collection("review")
         .doc(userId);
-    DocumentReference profileWatchedRef = db
+    DocumentReference profileWatchedRef = _db
         .collection("/profile")
         .doc(userId)
         .collection("recent")
         .doc("$filmId");
-    DocumentSnapshot<Map<String, dynamic>> profileSnapshot =
-        await db.collection("/profile").doc(FirebaseAuthService().userId).get();
-    ProfileModel profileModel =
-        ProfileModel.fromFirestore(profileSnapshot, null, SnapshotOptions());
-    WriteBatch batch = db.batch();
-    batch.set(
-        filmRef,
-        {
-          "poster_path": movieController.detailData.value?.posterPath ?? "",
-          "backdrop_path": movieController.detailData.value?.backdropPath,
-          "title": movieController.detailData.value?.title,
-          "year_release": movieController.detailData.value?.releaseDate,
-        },
-        SetOptions(merge: true));
+
+    WriteBatch batch = _db.batch();
     batch.set(
         reviewRef,
         {
+          "u_id": _profileModel!.uId,
+          "u_name": _profileModel!.uName,
+          "photo_path": _profileModel!.photo_path,
           "date": selectedDate.value,
           "review": reviewText.value.text,
-          "rate": 4,
-          "u_id": profileModel.uId,
-          "u_name": profileModel.uName,
-          "photo_path": profileModel.photo_path
+          "rate": rate.value,
+          "film_info": {
+            "poster_path": movieController.detailData.value?.posterPath ?? "",
+            "backdrop_path": movieController.detailData.value?.backdropPath,
+            "title": movieController.detailData.value?.title,
+            "year_release": movieController.detailData.value?.releaseDate,
+          }
         },
         SetOptions(merge: true));
     batch.set(
@@ -86,13 +92,13 @@ class ReviewController extends GetxController {
         {
           "date": selectedDate.value,
           "review": reviewText.value.text,
-          "rate": 4.5,
+          "rate": rate.value,
+          "poster_path": movieController.detailData.value!.posterPath
         },
         SetOptions(merge: true));
-
-    if (true) {
+    if (fav.value) {
       DocumentReference favoriteRef =
-          db.collection("/profile").doc(FirebaseAuthService().userId);
+          _db.collection("/profile").doc(FirebaseAuthService().userId);
       batch.set(
           favoriteRef,
           {
@@ -102,46 +108,26 @@ class ReviewController extends GetxController {
           },
           SetOptions(merge: true));
     }
-
     try {
-      await batch.commit().then((value) => print("sukes"));
+      await batch.commit().then((value) =>
+          Get.dialog(CustomAlertDialog(text: "Berhasil menambah review"))
+              .then((value) async {
+            movieController.reviewData.value =
+                await getRecentReview(filmId: filmId);
+            Get.back();
+          }));
     } catch (e) {
       print("error while performing batch write to firestore: \n$e");
     }
   }
 
   Future<ReviewModel> getRecentReview({required int filmId}) async {
-    QuerySnapshot<Map<String, dynamic>> reviewData = await db
+    QuerySnapshot<Map<String, dynamic>> reviewData = await _db
         .collection("/film_review")
         .doc("$filmId")
         .collection("review")
         .orderBy("date", descending: true)
         .get();
-    DocumentSnapshot<Map<String, dynamic>> filmDetail =
-        await db.collection("/film_info").doc("$filmId").get();
-    ReviewModel data = ReviewModel.fromFirestore(reviewData, filmDetail);
-    inspect(data);
-    return data;
-    // filmDetail
+    return ReviewModel.fromFirestore(reviewData, null);
   }
-  // getAllReview({required int filmId}) async {
-  //   DocumentSnapshot filmData =
-  //   QuerySnapshot reviewData = await db
-  //       .collection("film_review")
-  //       .doc("$filmId")
-  //       .collection("review")
-  //       .orderBy("date", descending: true)
-  //       .get();
-  //   // CollectionReference recentWatch =
-  //   //     db.collection("profile").doc("${FirebaseAuthService().userId}").collection("recent");
-  //   try {
-  //     // var data = await recentWatch.orderBy("date", descending: false).get();
-  //     // for (var d in data.docs) {
-  //     //   print(d.id);
-  //     //   print(d.data());
-  //     // }
-  //     var data = await allReviewRef.get();
-  //     print(data.data());
-  //   } catch (e) {}
-  // }
 }

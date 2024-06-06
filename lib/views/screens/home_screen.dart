@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:letterboxd_porto_3/controllers/home_controller.dart';
+import 'package:letterboxd_porto_3/controllers/main_screen_controller.dart';
 import 'package:letterboxd_porto_3/controllers/profile_controller.dart';
+import 'package:letterboxd_porto_3/controllers/review_controller.dart';
 import 'package:letterboxd_porto_3/controllers/tmdb_services.dart';
 import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/style.dart';
@@ -37,12 +39,17 @@ class HomeScreen extends GetView<HomeController> {
                   )),
               Obx(() {
                 if (_profileController.user.value != null) {
-                  return SizedBox(
-                    width: 40,
-                    height: 40,
-                    child: CustomImgNetwork(
-                      radius: BorderRadius.circular(50),
-                      path: _profileController.user.value!.photo_path),
+                  return InkWell(
+                    onTap: () {
+                      Get.find<MainScreenController>().changeIndex(3);
+                    },
+                    child: SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: CustomImgNetwork(
+                        radius: BorderRadius.circular(50),
+                        path: _profileController.user.value!.photo_path),
+                    ),
                   );
                 }
                 return CircleAvatar(
@@ -138,10 +145,22 @@ class HomeScreen extends GetView<HomeController> {
             height: 15,
           ),
           Expanded(
-            child: ListView.builder(
-              itemBuilder: (context, index) => const CustomReviewCard(
-                reviewData: null,
-              ),
+            child: Obx(() {
+              if (controller.reviewData.value != null) {
+                return ListView.builder(
+                  itemCount: controller.reviewData.value!.reviewData.length,
+                  itemBuilder: (context, index) => CustomReviewCard(
+                    reviewData: controller.reviewData.value!.reviewData[index],
+                  ),
+                );
+              }
+                return ListView.builder(
+                  itemCount: 2,
+                  itemBuilder: (context, index) => const CustomReviewCard(
+                    reviewData: null,
+                  ),
+                );
+              }
             ),
           )
         ],

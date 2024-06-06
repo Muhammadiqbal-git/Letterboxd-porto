@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letterboxd_porto_3/controllers/profile_controller.dart';
+import 'package:letterboxd_porto_3/controllers/tmdb_services.dart';
 import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/style.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_img_widget.dart';
@@ -46,16 +47,9 @@ class ProfileScreen extends GetView<ProfileController> {
                     controller.imgPicker();
                   },
                   child: Obx(() {
-                    if (controller.imgPath.value != "") {
-                      return CustomImgNetwork(
-                          radius: BorderRadius.circular(50),
-                          path: controller.imgPath.value!);
-                    } else {
-                      return CircleAvatar(
-                        backgroundColor: context.colors.whiteCr,
-                        radius: 40,
-                      );
-                    }
+                    return CustomImgNetwork(
+                        radius: BorderRadius.circular(50),
+                        path: controller.user.value!.photo_path);
                   }),
                 ),
               ),
@@ -143,7 +137,7 @@ class ProfileScreen extends GetView<ProfileController> {
                     children: [
                       Obx(() {
                         return Text(
-                          "${controller.user.value?.rec?.length ?? "0"}",
+                          "${controller.user.value?.recentMovie?.length ?? "0"}",
                           style: boldText.copyWith(
                               fontSize: 20, color: context.colors.secondaryCr),
                         );
@@ -164,7 +158,7 @@ class ProfileScreen extends GetView<ProfileController> {
                     children: [
                       Obx(() {
                         return Text(
-                          "${controller.user.value?.rec?.length ?? "0"}",
+                          "${controller.user.value?.recentMovie?.length ?? "0"}",
                           style: boldText.copyWith(
                               fontSize: 20, color: context.colors.accentCr),
                         );
@@ -204,7 +198,7 @@ class ProfileScreen extends GetView<ProfileController> {
                     children: [
                       Obx(() {
                         return Text(
-                          "${controller.user.value?.rec?.length ?? "0"}",
+                          "${controller.user.value?.recentMovie?.length ?? "0"}",
                           style: boldText.copyWith(
                               fontSize: 20, color: context.colors.accentCr),
                         );
@@ -223,8 +217,8 @@ class ProfileScreen extends GetView<ProfileController> {
               const SizedBox(
                 height: 15,
               ),
-              const Text(
-                "Nama's Favorite Films",
+              Text(
+                "${controller.user.value?.uName ?? ""}'s Favorite Films",
                 style: semiBoldText,
               ),
               const SizedBox(
@@ -232,16 +226,23 @@ class ProfileScreen extends GetView<ProfileController> {
               ),
               SizedBox(
                 height: 90,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 4,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) => Container(
-                    width: 60,
-                    color: context.colors.whiteCr,
-                    margin: EdgeInsets.only(right: index == 3 ? 0 : 10),
-                  ),
-                ),
+                child: Obx(() {
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: controller.favoriteLength.value,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) => Container(
+                      width: 60,
+                      margin: EdgeInsets.only(right: index == 3 ? 0 : 10),
+                      child: CustomImgNetwork(
+                          path: TMDBServices().imgUrl(
+                              width: 154,
+                              pathUrl: controller.user.value?.favorite.values
+                                      .elementAtOrNull(index) ??
+                                  "")),
+                    ),
+                  );
+                }),
               ),
               const SizedBox(
                 height: 20,
@@ -261,7 +262,7 @@ class ProfileScreen extends GetView<ProfileController> {
 
   Widget recentSection(BuildContext context) {
     return SingleChildScrollView(
-      physics: AlwaysScrollableScrollPhysics(),
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(23),
       child: Column(
         children: [
@@ -284,60 +285,71 @@ class ProfileScreen extends GetView<ProfileController> {
           const SizedBox(
             height: 15,
           ),
-          SizedBox(
-            height: 120,
-            child: ListView.builder(
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemCount: 5,
-              itemBuilder: (context, index) => Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 80,
-                    width: 60,
-                    margin: EdgeInsets.only(right: index == 4 ? 0 : 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(7),
-                      image: const DecorationImage(
-                          image: AssetImage("assets/imgs/poster1.png"),
-                          fit: BoxFit.cover,
-                          alignment: Alignment.topCenter),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 2,
-                  ),
-                  Row(
-                    children: List.generate(
-                        5,
-                        (index) => const Icon(
-                              Icons.star,
-                              size: 10,
-                              color: Colors.red,
-                            )),
-                  ),
-                  const SizedBox(
-                    height: 3,
-                  ),
-                  Row(
+          Obx(() {
+            if (controller.recentState.value == RecentMovieState.loading && controller.user.value == null) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (controller.recentState.value == RecentMovieState.error) {
+              return const Text(
+                "No recent movie",
+                style: semiBoldText,
+              );
+            } else {
+              return SizedBox(
+                height: 120,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: controller.user.value!.recentMovie!.length,
+                  itemBuilder: (context, index) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Read Review",
-                        style: semiBoldText.copyWith(
-                            fontSize: 8, color: context.colors.accentCr),
+                      Container(
+                        height: 80,
+                        width: 60,
+                        margin: EdgeInsets.only(right: index == 4 ? 0 : 10),
+                        child: CustomImgNetwork(
+                          path: TMDBServices().imgUrl(
+                              width: 154,
+                              pathUrl: controller.user.value!
+                                      .recentMovie![index].posterPath ??
+                                  ""),
+                        ),
                       ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        size: 8,
-                        color: context.colors.accentCr,
+                      const SizedBox(
+                        height: 2,
+                      ),
+                      Row(
+                        children: List.generate(
+                            controller.user.value!.recentMovie![index].rate
+                                .toInt(),
+                            (index) => const Icon(Icons.star,
+                                size: 10, color: Colors.red)),
+                      ),
+                      const SizedBox(
+                        height: 3,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            "Read Review",
+                            style: semiBoldText.copyWith(
+                                fontSize: 8, color: context.colors.accentCr),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 8,
+                            color: context.colors.accentCr,
+                          )
+                        ],
                       )
                     ],
-                  )
-                ],
-              ),
-            ),
-          ),
+                  ),
+                ),
+              );
+            }
+          }),
           const SizedBox(
             height: 20,
           ),
@@ -361,20 +373,26 @@ class ProfileScreen extends GetView<ProfileController> {
             height: 20,
           ),
           Obx(() {
-            if (controller.user.value != null && controller.user.value!.rec!.isNotEmpty) {
+            if (controller.user.value == null) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (controller.user.value!.recentMovie == null ||
+                controller.user.value!.recentMovie!.isEmpty) {
+              return const Text(
+                "No review yet",
+                style: semiBoldText,
+              );
+            } else {
               return ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: controller.user.value!.rec!.length,
-                itemBuilder: (context, index) => CustomReviewCard(
-                          reviewData: null,
-
+                itemCount: controller.user.value!.recentMovie!.length,
+                itemBuilder: (context, index) =>  CustomReviewCard(
+                  reviewData: controller.user.value!.recentRev![index],
                 ),
               );
             }
-            return Center(
-              child: CircularProgressIndicator(),
-            );
           }),
         ],
       ),

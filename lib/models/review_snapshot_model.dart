@@ -16,46 +16,61 @@ class ReviewModel {
 }
 
 class ReviewEntityModel {
-  final String? filmPosterPath;
-  final String? filmBackdropPath;
-  final String? filmTitle;
-  final DateTime? filmYear;
   final String uId;
   final String uName;
   final DateTime reviewDate;
   final double rate;
   final String reviewText;
   final String photoPath;
+  final FilmInfoModel filmInfoModel;
 
   ReviewEntityModel(
-      {this.filmPosterPath,
-      this.filmBackdropPath,
-      this.filmTitle,
-      this.filmYear,
-      required this.uId,
+      {required this.uId,
       required this.uName,
       required this.reviewDate,
       required this.rate,
       required this.reviewText,
-      required this.photoPath});
+      required this.photoPath,
+      required this.filmInfoModel});
 
   factory ReviewEntityModel.fromFirestore(
     Map<String, dynamic> data,
     Map<String, dynamic>? dataFilm,
   ) {
+    print("sad");
+    print(data["film_info"]);
     return ReviewEntityModel(
-      filmPosterPath: dataFilm != null ? dataFilm["poster_path"] : null,
-      filmBackdropPath: dataFilm != null ? dataFilm["backdrop_path"] : null,
-      filmTitle: dataFilm != null ? dataFilm["title"] : null,
-      filmYear: dataFilm != null
-          ? (dataFilm["year_release"] as Timestamp).toDate()
-          : null,
       uId: data['u_id'],
       uName: data['u_name'],
       reviewDate: (data['date'] as Timestamp).toDate(),
       rate: (data['rate'] as num).toDouble(),
       reviewText: data['review'],
       photoPath: data['photo_path'],
+      filmInfoModel: FilmInfoModel.fromFirestore(data["film_info"])
     );
+  }
+}
+
+class FilmInfoModel {
+  final String? filmPosterPath;
+  final String? filmBackdropPath;
+  final String? filmTitle;
+  final DateTime? filmYear;
+
+  FilmInfoModel({
+    this.filmPosterPath,
+    this.filmBackdropPath,
+    this.filmTitle,
+    this.filmYear,
+  });
+
+  factory FilmInfoModel.fromFirestore(
+    Map<String, dynamic> data,
+  ) {
+    return FilmInfoModel(
+        filmPosterPath: data["poster_path"],
+        filmBackdropPath: data["backdrop_path"],
+        filmTitle: data["title"],
+        filmYear: (data["year_release"] as Timestamp).toDate());
   }
 }

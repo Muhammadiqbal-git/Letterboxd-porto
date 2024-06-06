@@ -6,6 +6,8 @@ class FirebaseAuthService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   String? get userId => _firebaseAuth.currentUser?.uid;
+  String? get userEmail => _firebaseAuth.currentUser?.email;
+
 
   Future<User?> signUpEmailPass(
       String userName, String email, String pass) async {

@@ -212,7 +212,7 @@ class MovieDetailScreen extends GetView<MovieController> {
                     if (controller.reviewData.value != null &&
                         controller.state.value == MovieState.done) {
                       if (controller.reviewData.value!.reviewData.isEmpty) {
-                        return Text(
+                        return const Text(
                           "No review yet",
                           style: semiBoldText,
                         );
@@ -388,7 +388,7 @@ class _RightSection extends GetView<MovieController> {
               ),
               Row(
                 children: [
-                  Spacer(),
+                  const Spacer(),
                   Column(
                     children: [
                       Text(
@@ -520,9 +520,18 @@ class _LeftSection extends GetView<MovieController> {
                         size: 14,
                         color: Colors.green,
                       ),
-                      Text(
-                        "40k",
-                        style: normalText.copyWith(fontSize: 8),
+                      Obx( () {
+                        if (controller.state.value == MovieState.done) {
+                          return Text(
+                            controller.detailData.value!.popularity,
+                            style: normalText.copyWith(fontSize: 8),
+                          );
+                        }
+                          return Text(
+                            "40k",
+                            style: normalText.copyWith(fontSize: 8),
+                          );
+                        }
                       ),
                     ],
                   ),
@@ -537,7 +546,7 @@ class _LeftSection extends GetView<MovieController> {
                         size: 14,
                       ),
                       Text(
-                        "40k",
+                        "0",
                         style: normalText.copyWith(fontSize: 8),
                       ),
                     ],
@@ -553,7 +562,7 @@ class _LeftSection extends GetView<MovieController> {
                         size: 14,
                       ),
                       Text(
-                        "40k",
+                        "0",
                         style: normalText.copyWith(fontSize: 8),
                       ),
                     ],

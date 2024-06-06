@@ -10,8 +10,8 @@ import 'package:letterboxd_porto_3/models/movie_detail_model.dart';
 import 'package:letterboxd_porto_3/models/review_snapshot_model.dart';
 
 class MovieController extends GetxController {
+  final TMDBServices _services = TMDBServices();
   MovieCast? _cast;
-  TMDBServices _services = TMDBServices();
   Rx<MovieState> state = Rx(MovieState.loading);
   Rx<MovieDetail?> detailData = Rx(null);
   Rx<ReviewModel?> reviewData = Rx(null);
@@ -27,7 +27,7 @@ class MovieController extends GetxController {
   getDetail(int id) async {
     state.value = MovieState.loading;
     detailData.value = await _services.getMovieDetail(id: id);
-    reviewData.value = await Get.find<ReviewController>().getRecentReview(filmId: id);
+    reviewData.value = await ReviewController().getRecentReview(filmId: id);
     // print(reviewData.value!.reviewData[0].photoPath);
     _cast = await _services.getMovieCast(id: id);
     if (detailData.value != null && _cast != null) {
@@ -42,8 +42,8 @@ class MovieController extends GetxController {
       );
       castData.value = _cast!.cast;
       director.value = _cast!.crew
-          .firstWhere((element) => element.job.toLowerCase() == "director")
-          .name;
+          .firstWhereOrNull((element) => element.job.toLowerCase() == "director")
+          ?.name ?? "Someone (no data)";
       state.value = MovieState.done;
     } else {
       state.value = MovieState.error;

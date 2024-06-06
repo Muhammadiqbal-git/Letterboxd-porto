@@ -46,8 +46,8 @@ class CustomReviewCard extends StatelessWidget {
               children: [
                 Skeleton.shade(
                   child: Container(
-                    width: 40,
-                    height: 40,
+                    width: 50,
+                    height: 50,
                     child: Builder(
                       builder: (context) {
                         return CustomImgNetwork(
@@ -58,52 +58,50 @@ class CustomReviewCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(
-                  width: 10,
+                  width: 20,
                 ),
                 Expanded(
                   flex: 10,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(
-                        height: 3,
-                      ),
+                       const SizedBox(
+                          height: 5,
+                        ),
                       if (withImage)
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.baseline,
                           textBaseline: TextBaseline.alphabetic,
                           children: [
                             Text(
-                              (reviewData?.filmTitle) ?? "Title",
+                              (reviewData?.filmInfoModel.filmTitle) ?? "Title",
                               style: boldText.copyWith(fontSize: 12),
                             ),
                             Builder(builder: (context) {
-                              if (reviewData?.filmYear != null) {
+                              if (reviewData?.filmInfoModel.filmYear != null) {
                                 return Text(
-                                  " ${DateFormat("yyyy").format(reviewData!.filmYear!)}",
+                                  " ${DateFormat("yyyy").format(reviewData!.filmInfoModel.filmYear!)}",
                                   style: normalText.copyWith(
                                       fontSize: 10, color: Colors.grey),
                                 );
                               }
                               return Text(
-                                " ${(reviewData?.filmYear) ?? " 2024"}",
+                                " ${(reviewData?.filmInfoModel.filmYear) ?? " 2024"}",
                                 style: normalText.copyWith(
                                     fontSize: 10, color: Colors.grey),
                               );
                             }),
                           ],
                         ),
-                      if (!withImage)
+                      if (withImage)
                         const SizedBox(
-                          height: 6,
+                          height: 3,
                         ),
-                      const SizedBox(
-                        height: 3,
-                      ),
+
                       Row(
                         children: [
                           Text("Review by ",
-                              style: semiBoldText.copyWith(fontSize: 12)),
+                              style: semiBoldText.copyWith(fontSize: 12, color: context.colors.whiteCr.withOpacity(0.6))),
                           Text(
                             reviewData?.uName ?? "Nama",
                             style: semiBoldText.copyWith(
@@ -169,7 +167,7 @@ class CustomReviewCard extends StatelessWidget {
                       return CustomImgNetwork(
                           path: TMDBServices().imgUrl(
                               width: 154,
-                              pathUrl: reviewData?.filmPosterPath ?? ""));
+                              pathUrl: reviewData?.filmInfoModel.filmPosterPath ?? ""));
                     }),
                   )
                 ],

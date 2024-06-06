@@ -34,8 +34,13 @@ class MainScreenBinding extends Bindings{
 class MovieDetailBinding extends Bindings{
   @override
   void dependencies() {
-    Get.put<MovieController>(MovieController());
-    Get.put<ReviewController>(ReviewController());
-
+    Get.lazyPut<MovieController>(() => MovieController(),);
+    Get.lazyPut<ReviewController>(() => ReviewController(),);
+  }
+}
+class ReviewBinding extends Bindings{
+  @override
+  void dependencies() {
+    Get.lazyPut<ReviewController>(() => ReviewController(),);
   }
 }
