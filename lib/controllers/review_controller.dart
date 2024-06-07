@@ -13,7 +13,7 @@ class ReviewController extends GetxController {
   MovieController movieController = Get.find<MovieController>();
   ProfileModel? _profileModel;
   Rx<DateTime> selectedDate = DateTime.now().obs;
-  Rx<int> rate = 0.obs;
+  Rx<int> rate = 1.obs;
   Rx<bool> fav = false.obs;
   Rx<TextEditingController> reviewText = TextEditingController().obs;
 
@@ -23,8 +23,8 @@ class ReviewController extends GetxController {
         .collection("/profile")
         .doc(FirebaseAuthService().userId)
         .get();
-    _profileModel =
-        ProfileModel.fromFirestore(profileSnapshot, null, null, SnapshotOptions());
+    _profileModel = ProfileModel.fromFirestore(
+        profileSnapshot, null, null, SnapshotOptions());
     super.onInit();
   }
 
@@ -71,23 +71,6 @@ class ReviewController extends GetxController {
 
     WriteBatch batch = _db.batch();
     batch.set(
-        reviewRef,
-        {
-          "u_id": _profileModel!.uId,
-          "u_name": _profileModel!.uName,
-          "photo_path": _profileModel!.photo_path,
-          "date": selectedDate.value,
-          "review": reviewText.value.text,
-          "rate": rate.value,
-          "film_info": {
-            "poster_path": movieController.detailData.value?.posterPath ?? "",
-            "backdrop_path": movieController.detailData.value?.backdropPath,
-            "title": movieController.detailData.value?.title,
-            "year_release": movieController.detailData.value?.releaseDate,
-          }
-        },
-        SetOptions(merge: true));
-    batch.set(
         profileWatchedRef,
         {
           "date": selectedDate.value,
@@ -96,6 +79,25 @@ class ReviewController extends GetxController {
           "poster_path": movieController.detailData.value!.posterPath
         },
         SetOptions(merge: true));
+    if (reviewText.value.text.isNotEmpty) {
+      batch.set(
+          reviewRef,
+          {
+            "u_id": _profileModel!.uId,
+            "u_name": _profileModel!.uName,
+            "photo_path": _profileModel!.photo_path,
+            "date": selectedDate.value,
+            "review": reviewText.value.text,
+            "rate": rate.value,
+            "film_info": {
+              "poster_path": movieController.detailData.value?.posterPath ?? "",
+              "backdrop_path": movieController.detailData.value?.backdropPath,
+              "title": movieController.detailData.value?.title,
+              "year_release": movieController.detailData.value?.releaseDate,
+            }
+          },
+          SetOptions(merge: true));
+    }
     if (fav.value) {
       DocumentReference favoriteRef =
           _db.collection("/profile").doc(FirebaseAuthService().userId);
@@ -109,9 +111,11 @@ class ReviewController extends GetxController {
           SetOptions(merge: true));
     }
     try {
-      await batch.commit().then((value) =>
-          Get.dialog(CustomAlertDialog(text: "Berhasil menambah review"))
-              .then((value) async {
+      await batch.commit().then((value) => Get.dialog(
+            CustomAlertDialog(
+                textAlign: TextAlign.center,
+                text: "Rating atau review berhasil ditambahkan"),
+          ).then((value) async {
             movieController.reviewData.value =
                 await getRecentReview(filmId: filmId);
             Get.back();

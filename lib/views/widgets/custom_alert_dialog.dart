@@ -3,7 +3,8 @@ import 'package:letterboxd_porto_3/helpers/style.dart';
 
 class CustomAlertDialog extends StatelessWidget {
   final String text;
-  const CustomAlertDialog({super.key, required this.text});
+  final TextAlign? textAlign;
+  const CustomAlertDialog({super.key, required this.text, this.textAlign});
 
   @override
   Widget build(BuildContext context) {
@@ -12,6 +13,7 @@ class CustomAlertDialog extends StatelessWidget {
       contentPadding: EdgeInsets.all(20),
       content: Text(
         text,
+        textAlign: textAlign,
         style: semiBoldText.copyWith(fontSize: 16, color: context.colors.secondaryCr),
       ),
     );

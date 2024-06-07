@@ -20,32 +20,40 @@ class CustomText extends StatelessWidget {
         var indexBreak = 0;
         var lastIndexBreak = 0;
         double maxWidth = 0;
+        double spaceDot = _textSize("...", style).width / 2;
+        double space = _textSize(data, style).width / 2;
         if (multiLine) {
-        maxWidth = constraint.maxWidth - 60;
+          maxWidth = constraint.maxWidth / 2 - spaceDot - 10;
         } else {
-        maxWidth = constraint.maxWidth - 100;
+          maxWidth = constraint.maxWidth / 2  - 25;
         }
         for (var i = 0; i < data.length; i++) {
-          if (maxWidth <=
-              _textSize(data.substring(0, i), style).width) {
-            indexBreak = i-1;
+          if (maxWidth <= _textSize(data.substring(0, i), style).width) {
+            indexBreak = i - 1;
             break;
           }
         }
-        for (var i = 0; i < data.length; i++) {
-          if (maxWidth +
-                  _textSize(data.substring(0, indexBreak), style).width <=
-              _textSize(data.substring(i), style).width ) {
-            lastIndexBreak = i;
+        print("aaaa");
+        for (var i = data.length; i > indexBreak; i--) {
+          print(_textSize(data.substring(i), style).width);
+          if (maxWidth <=
+              _textSize(data.substring(i), style).width) {
+            lastIndexBreak = i - 1;
+            break;
           }
         }
+        print("indexxx");
+        print(maxWidth);
+        print(data.substring(indexBreak));
+        print(indexBreak);
+        print(lastIndexBreak);
         if (constraint.maxWidth <= _textSize(data, style).width &&
             data.length > indexBreak) {
           String endPart = "";
           if (multiLine) {
-            endPart = data.trim().substring(data.length - indexBreak);
+            endPart = data.trim().substring(lastIndexBreak);
           } else {
-            endPart = data.trim().substring(data.length - lastIndexBreak);
+            endPart = data.trim().substring(lastIndexBreak);
           }
           var startPart = data.trim().substring(0, indexBreak);
           if (multiLine) {
@@ -70,6 +78,7 @@ class CustomText extends StatelessWidget {
               ],
             );
           } else {
+            print("else");
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               // reversed vertical direction and the child for adjusting the baseline to the bottom of column
@@ -82,7 +91,7 @@ class CustomText extends StatelessWidget {
                   textDirection: textDirection,
                 ),
                 Text(
-                  "...$endPart",
+                  "... $endPart",
                   style: style,
                   textDirection: textDirection,
                   textAlign: textAlign,
