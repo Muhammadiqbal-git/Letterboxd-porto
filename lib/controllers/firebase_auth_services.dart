@@ -21,8 +21,8 @@ class FirebaseAuthService {
         _firestore.collection("/profile").doc(user!.uid).set({
           "u_name": userName,
           "photo_path": "",
-          "follower": 0,
-          "following": 0,
+          "follower": [],
+          "following": [],
           "favorite": {},
         });
       }

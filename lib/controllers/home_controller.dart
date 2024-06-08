@@ -7,7 +7,9 @@ import 'tmdb_services.dart';
 
 class HomeController extends GetxController {
   FirebaseFirestore _db = FirebaseFirestore.instance;
+  TMDBServices _tmdbServices = TMDBServices();
   Rx<MovieData?> data = Rx<MovieData?>(null);
+  Rx<MovieData?> ratedData = Rx(null);
   Rx<bool> loading = false.obs;
   Rx<ReviewModel?> reviewData = Rx(null);
 
@@ -18,9 +20,12 @@ class HomeController extends GetxController {
   }
 
   getData() async {
-    print("getdata");
+    DateTime now = DateTime.now();
     loading.value = true;
-    data.value = await TMDBServices().getMovieOfTheMonth();
+    data.value = await _tmdbServices.getMovieOfTheMonth();
+    ratedData.value = await _tmdbServices.getMovieOfTheMonth(
+      date: DateTime(now.year, now.month-3),
+      sortBy: "vote");
     reviewData.value = await getHomeReview();
     print(data.value);
     if (data.value != null) {

@@ -21,7 +21,6 @@ class CustomText extends StatelessWidget {
         var lastIndexBreak = 0;
         double maxWidth = 0;
         double spaceDot = _textSize("...", style).width / 2;
-        double space = _textSize(data, style).width / 2;
         if (multiLine) {
           maxWidth = constraint.maxWidth / 2 - spaceDot - 10;
         } else {
@@ -33,20 +32,13 @@ class CustomText extends StatelessWidget {
             break;
           }
         }
-        print("aaaa");
         for (var i = data.length; i > indexBreak; i--) {
-          print(_textSize(data.substring(i), style).width);
           if (maxWidth <=
               _textSize(data.substring(i), style).width) {
             lastIndexBreak = i - 1;
             break;
           }
         }
-        print("indexxx");
-        print(maxWidth);
-        print(data.substring(indexBreak));
-        print(indexBreak);
-        print(lastIndexBreak);
         if (constraint.maxWidth <= _textSize(data, style).width &&
             data.length > indexBreak) {
           String endPart = "";
@@ -78,7 +70,6 @@ class CustomText extends StatelessWidget {
               ],
             );
           } else {
-            print("else");
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               // reversed vertical direction and the child for adjusting the baseline to the bottom of column

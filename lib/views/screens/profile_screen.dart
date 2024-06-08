@@ -57,9 +57,20 @@ class ProfileScreen extends GetView<ProfileController> {
                 height: 5,
               ),
               Obx(() {
-                return Text(
-                  controller.user.value?.uName ?? "No Name",
-                  style: boldText.copyWith(fontSize: 16),
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(width: 17,),
+                    Text(
+                      controller.user.value?.uName ?? "No Name",
+                      style: boldText.copyWith(fontSize: 16),
+                    ),
+                    SizedBox(width: 4,),
+                    Image.asset(
+                      "assets/icons/edit.png",
+                      width: 15,
+                    )
+                  ],
                 );
               }),
               const SizedBox(
@@ -77,7 +88,7 @@ class ProfileScreen extends GetView<ProfileController> {
                           Obx(() {
                             if (controller.user.value != null) {
                               return Text(
-                                "${controller.user.value!.follower} Followers",
+                                "${controller.user.value!.follower.length} Followers",
                                 style: normalText.copyWith(fontSize: 12),
                               );
                             }
@@ -107,7 +118,7 @@ class ProfileScreen extends GetView<ProfileController> {
                           Obx(() {
                             if (controller.user.value != null) {
                               return Text(
-                                "${controller.user.value!.following} Following",
+                                "${controller.user.value!.following.length} Following",
                                 style: normalText.copyWith(fontSize: 12),
                               );
                             }
@@ -286,7 +297,8 @@ class ProfileScreen extends GetView<ProfileController> {
             height: 15,
           ),
           Obx(() {
-            if (controller.recentState.value == RecentMovieState.loading && controller.user.value == null) {
+            if (controller.recentState.value == RecentMovieState.loading &&
+                controller.user.value == null) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
@@ -377,8 +389,8 @@ class ProfileScreen extends GetView<ProfileController> {
               return const Center(
                 child: CircularProgressIndicator(),
               );
-            } else if (controller.user.value!.recentMovie == null ||
-                controller.user.value!.recentMovie!.isEmpty) {
+            } else if (controller.user.value!.recentRev == null ||
+                controller.user.value!.recentRev!.isEmpty) {
               return const Text(
                 "No review yet",
                 style: semiBoldText,
@@ -387,8 +399,8 @@ class ProfileScreen extends GetView<ProfileController> {
               return ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: controller.user.value!.recentMovie!.length,
-                itemBuilder: (context, index) =>  CustomReviewCard(
+                itemCount: controller.user.value!.recentRev!.length,
+                itemBuilder: (context, index) => CustomReviewCard(
                   reviewData: controller.user.value!.recentRev![index],
                 ),
               );

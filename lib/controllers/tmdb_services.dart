@@ -23,13 +23,20 @@ class TMDBServices {
     return "https://image.tmdb.org/t/p/w${width ?? 185}/$pathUrl";
   }
 
-  Future<MovieData?> getMovieOfTheMonth({DateTime? date}) async {
+  Future<MovieData?> getMovieOfTheMonth(
+      {DateTime? date, String? sortBy}) async {
     dateNow = date ?? dateNow;
+    String sort = "";
     String dateGte = DateFormat("yyyy-MM").format(dateNow);
     String dateLte =
         DateFormat("yyyy-MM").format(DateTime(dateNow.year, dateNow.month + 1));
+    if (sortBy == "vote") {
+      sort = "vote_average.desc&vote_count.gte=10";
+    } else {
+      sort = "popularity.desc";
+    }
     String url =
-        "discover/movie?primary_release_date.gte=$dateGte-01&primary_release_date.lte=$dateLte-1&sort_by=popularity.desc";
+        "discover/movie?primary_release_date.gte=$dateGte-01&primary_release_date.lte=$dateLte-1&sort_by=$sort";
     try {
       Response data = await _dio.get(
         "$_mainURL$url",

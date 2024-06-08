@@ -5,8 +5,8 @@ class ProfileModel {
   final String uId;
   final String uName;
   final String photo_path;
-  final int following;
-  final int follower;
+  final List<dynamic> following;
+  final List<dynamic> follower;
   final Map<String, dynamic> favorite;
   final List<RecentMovieModel>? recentMovie;
   final List<ReviewEntityModel>? recentRev;

@@ -39,8 +39,8 @@ class ProfileController extends GetxController {
         .collection("recent")
         .orderBy("date", descending: true)
         .get();
-    inspect(recent.docs);
     ReviewModel recentReview = await getRecentReview(uId: uId);
+    print(recentReview.reviewData);
     await profileRef.get().then((value) async {
       ProfileModel data =
           ProfileModel.fromFirestore(value, recent, recentReview.reviewData, SnapshotOptions());
@@ -71,9 +71,14 @@ class ProfileController extends GetxController {
       { required String uId}) async {
     QuerySnapshot<Map<String, dynamic>> reviewData = await _db
         .collectionGroup("review")
-        .where("u_id", isEqualTo: uId)
+        .where("u_id", whereIn: [uId, "dv03efAW3Wd0oMtmRgZujvlBOD33"])
         .orderBy("date", descending: true)
         .get();
+    print("asssddd");
+    for (var data in reviewData.docs) {
+    print(data.data());
+    }
+    print(reviewData.docs);
     return ReviewModel.fromFirestore(reviewData, null);
   }
 

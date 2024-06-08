@@ -47,8 +47,8 @@ class HomeScreen extends GetView<HomeController> {
                       width: 40,
                       height: 40,
                       child: CustomImgNetwork(
-                        radius: BorderRadius.circular(50),
-                        path: _profileController.user.value!.photo_path),
+                          radius: BorderRadius.circular(50),
+                          path: _profileController.user.value!.photo_path),
                     ),
                   );
                 }
@@ -68,15 +68,13 @@ class HomeScreen extends GetView<HomeController> {
                 style: boldText.copyWith(
                     fontSize: 18, color: context.colors.whiteCr),
               ),
-              Obx(
-                 () {
-                  return Text(
-                    (_profileController.user.value?.uName) ?? "name",
-                    style: boldText.copyWith(
-                        fontSize: 18, color: context.colors.secondaryCr),
-                  );
-                }
-              ),
+              Obx(() {
+                return Text(
+                  (_profileController.user.value?.uName) ?? "name",
+                  style: boldText.copyWith(
+                      fontSize: 18, color: context.colors.secondaryCr),
+                );
+              }),
               Text(
                 "!",
                 style: boldText.copyWith(
@@ -138,6 +136,51 @@ class HomeScreen extends GetView<HomeController> {
             height: 20,
           ),
           const Text(
+            "Most Rated Film in the past 3 Month",
+            style: boldText,
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          SizedBox(
+              height: 90 + getWidth(context, 5),
+              child: Obx(() {
+                print(controller.loading);
+                if (controller.loading.value) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: context.colors.secondaryCr,
+                    ),
+                  );
+                } else {
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    itemCount: controller.ratedData.value!.results.length,
+                    addAutomaticKeepAlives: true,
+                    itemBuilder: (context, index) => Container(
+                      width: 58 + getWidth(context, 5),
+                      height: 82 + getWidth(context, 5),
+                      margin: const EdgeInsets.only(right: 10),
+                      child: InkWell(
+                        onTap: () => Get.toNamed('/movie_detail', arguments: {
+                          "id": controller.ratedData.value!.results[index].id
+                        }),
+                        child: CustomImgNetwork(
+                          path: TMDBServices().imgUrl(
+                              pathUrl: controller
+                                  .ratedData.value!.results[index].posterPath,
+                              width: 500),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+              })),
+          const SizedBox(
+            height: 20,
+          ),
+          const Text(
             "Recent Friends' Review",
             style: boldText,
           ),
@@ -154,14 +197,13 @@ class HomeScreen extends GetView<HomeController> {
                   ),
                 );
               }
-                return ListView.builder(
-                  itemCount: 2,
-                  itemBuilder: (context, index) => const CustomReviewCard(
-                    reviewData: null,
-                  ),
-                );
-              }
-            ),
+              return ListView.builder(
+                itemCount: 2,
+                itemBuilder: (context, index) => const CustomReviewCard(
+                  reviewData: null,
+                ),
+              );
+            }),
           )
         ],
       ),

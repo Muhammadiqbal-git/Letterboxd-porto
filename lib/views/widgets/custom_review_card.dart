@@ -73,9 +73,11 @@ class CustomReviewCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.baseline,
                           textBaseline: TextBaseline.alphabetic,
                           children: [
-                            Text(
-                              (reviewData?.filmInfoModel.filmTitle) ?? "Title",
-                              style: boldText.copyWith(fontSize: 12),
+                            Flexible(
+                              child: Text(
+                                (reviewData?.filmInfoModel.filmTitle) ?? "Title",
+                                style: boldText.copyWith(fontSize: 12),
+                              ),
                             ),
                             Builder(builder: (context) {
                               if (reviewData?.filmInfoModel.filmYear != null) {
