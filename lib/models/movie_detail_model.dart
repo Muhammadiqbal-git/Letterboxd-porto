@@ -5,6 +5,8 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'genre_model.dart';
+
 MovieDetail movieDetailFromJson(String str) =>
     MovieDetail.fromJson(json.decode(str));
 
@@ -174,25 +176,7 @@ class BelongsToCollection {
       };
 }
 
-class Genre {
-  int id;
-  String name;
 
-  Genre({
-    required this.id,
-    required this.name,
-  });
-
-  factory Genre.fromJson(Map<String, dynamic> json) => Genre(
-        id: json["id"],
-        name: json["name"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "name": name,
-      };
-}
 
 class ProductionCompany {
   int id;

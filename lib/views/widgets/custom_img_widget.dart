@@ -45,7 +45,7 @@ class _CustomImgNetworkState extends State<CustomImgNetwork> {
             return Skeletonizer(
               enabled: true,
               child: Skeleton.leaf(
-                child: Container(
+                child: SizedBox(
                   height: double.maxFinite,
                   width: double.maxFinite,
                   child: Icon(

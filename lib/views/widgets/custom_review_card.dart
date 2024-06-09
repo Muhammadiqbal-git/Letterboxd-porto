@@ -31,7 +31,7 @@ class CustomReviewCard extends StatelessWidget {
       child: Container(
         width: width ?? double.maxFinite,
         height: height ?? 125,
-        margin: EdgeInsets.only(bottom: 20),
+        margin: const EdgeInsets.only(bottom: 20),
         decoration: BoxDecoration(
             color: context.colors.secondaryCr.withOpacity(0.1),
             borderRadius: const BorderRadius.only(
@@ -45,7 +45,7 @@ class CustomReviewCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Skeleton.shade(
-                  child: Container(
+                  child: SizedBox(
                     width: 50,
                     height: 50,
                     child: Builder(
@@ -125,7 +125,7 @@ class CustomReviewCard extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 ImageIcon(
-                                  AssetImage("assets/icons/reply.png"),
+                                  const AssetImage("assets/icons/reply.png"),
                                   size: 10,
                                   color: context.colors.whiteCr,
                                 ),
@@ -159,10 +159,10 @@ class CustomReviewCard extends StatelessWidget {
                   ),
                 ),
                 if (withImage) ...[
-                  Spacer(
+                  const Spacer(
                     flex: 1,
                   ),
-                  Container(
+                  SizedBox(
                     height: double.maxFinite,
                     width: 77,
                     child: Builder(builder: (context) {

@@ -4,8 +4,8 @@ import 'package:letterboxd_porto_3/controllers/profile_controller.dart';
 
 class MainScreenController extends GetxController{
   Rx<int> index = 0.obs;
-  HomeController _homeController = Get.find<HomeController>();
-  ProfileController _profileController = Get.find<ProfileController>();
+  final HomeController _homeController = Get.find<HomeController>();
+  final ProfileController _profileController = Get.find<ProfileController>();
 
   @override
   void onInit() {

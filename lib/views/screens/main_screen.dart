@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:letterboxd_porto_3/controllers/main_screen_controller.dart';
 import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/style.dart';
+import 'package:letterboxd_porto_3/views/screens/discover_screen.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_drawer_opt.dart';
 import 'package:lazy_load_indexed_stack/lazy_load_indexed_stack.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_img_widget.dart';
@@ -17,7 +18,7 @@ class MainScreen extends GetView<MainScreenController> {
   ProfileController get _profileController => Get.find();
   final List<Widget> screens = const [
     HomeScreen(),
-    UnderWorkScreen(),
+    DiscoverScreen(),
     UnderWorkScreen(),
     ProfileScreen()
   ];

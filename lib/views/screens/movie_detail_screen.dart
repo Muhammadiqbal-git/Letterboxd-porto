@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:letterboxd_porto_3/controllers/movie_detail_controller.dart';
-import 'package:letterboxd_porto_3/controllers/review_controller.dart';
 import 'package:letterboxd_porto_3/controllers/tmdb_services.dart';
 import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/diagonal_clipper.dart';
@@ -144,9 +143,9 @@ class MovieDetailScreen extends GetView<MovieController> {
                       alignment: Alignment.centerLeft,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: controller.castData.value.length >= 5
+                        itemCount: controller.castData.length >= 5
                             ? 5
-                            : controller.castData.value.length,
+                            : controller.castData.length,
                         itemBuilder: (context, index) => Container(
                           height: 45,
                           width: 45,
@@ -157,7 +156,7 @@ class MovieDetailScreen extends GetView<MovieController> {
                             path: TMDBServices().imgUrl(
                                 width: 185,
                                 pathUrl: controller
-                                        .castData.value[index].profilePath ??
+                                        .castData[index].profilePath ??
                                     ""),
                           ),
                         ),

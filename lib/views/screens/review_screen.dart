@@ -33,7 +33,7 @@ class ReviewScreen extends GetView<ReviewController> {
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
             Row(
@@ -94,7 +94,7 @@ class ReviewScreen extends GetView<ReviewController> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(7),
-                            color: Color(0xffC4C4C4).withOpacity(0.35),
+                            color: const Color(0xffC4C4C4).withOpacity(0.35),
                           ),
                           child: Text(
                             DateFormat("yyyy-MM-dd")
@@ -127,7 +127,7 @@ class ReviewScreen extends GetView<ReviewController> {
                               ),
                             );
                           }),
-                          Spacer(),
+                          const Spacer(),
                           InkWell(
                             // customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                             onTap: () {
@@ -135,7 +135,7 @@ class ReviewScreen extends GetView<ReviewController> {
                             },
                             borderRadius: BorderRadius.circular(50),
                             child: Container(
-                              margin: EdgeInsets.all(4),
+                              margin: const EdgeInsets.all(4),
                               width: 24,
                               height: 24,
                               child: Image.asset(
@@ -155,7 +155,7 @@ class ReviewScreen extends GetView<ReviewController> {
                   width: 25 + getWidth(context, 10),
                 ),
                 Obx(() {
-                  return Container(
+                  return SizedBox(
                     width: 110 + getWidth(context, 2),
                     height: 170 + getWidth(context, 2),
                     child: CustomImgNetwork(
@@ -172,7 +172,8 @@ class ReviewScreen extends GetView<ReviewController> {
             ),
             Expanded(
               child: CustomForm(
-                  contentPadding: EdgeInsets.all(16),
+                  isMultiLine: true,
+                  contentPadding: const EdgeInsets.all(16),
                   inputStyle: normalText.copyWith(fontSize: 12),
                   hintText: "Write down your review ...",
                   hintStyle: normalText.copyWith(

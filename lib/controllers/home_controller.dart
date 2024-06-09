@@ -1,13 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:letterboxd_porto_3/controllers/review_controller.dart';
 import 'package:letterboxd_porto_3/models/review_snapshot_model.dart';
 import '../models/movie_list_model.dart';
 import 'tmdb_services.dart';
 
 class HomeController extends GetxController {
-  FirebaseFirestore _db = FirebaseFirestore.instance;
-  TMDBServices _tmdbServices = TMDBServices();
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final TMDBServices _tmdbServices = TMDBServices();
   Rx<MovieData?> data = Rx<MovieData?>(null);
   Rx<MovieData?> ratedData = Rx(null);
   Rx<bool> loading = false.obs;

@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
                 primaryCr: Color(0xFF1F1D36),
                 secondaryCr: Color(0xFFE9A6A6),
                 accentCr: Color(0xFF9C4A8B),
+                secondaryAccentCr: Color(0xFF3D3B54),
                 whiteCr: Color(0xFFFFFFFF))
           ]),
       getPages: [

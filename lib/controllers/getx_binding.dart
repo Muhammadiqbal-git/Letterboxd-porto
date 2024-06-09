@@ -1,5 +1,6 @@
 
 import 'package:get/get.dart';
+import 'package:letterboxd_porto_3/controllers/discover_controller.dart';
 import 'package:letterboxd_porto_3/controllers/home_controller.dart';
 import 'package:letterboxd_porto_3/controllers/main_screen_controller.dart';
 import 'package:letterboxd_porto_3/controllers/movie_detail_controller.dart';
@@ -26,7 +27,9 @@ class MainScreenBinding extends Bindings{
   void dependencies() {
     Get.lazyPut<MainScreenController>(() => MainScreenController());
     Get.lazyPut<HomeController>(() => HomeController());
+    Get.lazyPut<DiscoverController>(() => DiscoverController());
     Get.lazyPut<ProfileController>(() => ProfileController());
+
 
   }
 }

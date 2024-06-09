@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_navigation/get_navigation.dart';
 import 'package:letterboxd_porto_3/controllers/home_controller.dart';
 import 'package:letterboxd_porto_3/controllers/main_screen_controller.dart';
 import 'package:letterboxd_porto_3/controllers/profile_controller.dart';
-import 'package:letterboxd_porto_3/controllers/review_controller.dart';
 import 'package:letterboxd_porto_3/controllers/tmdb_services.dart';
 import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/style.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_img_widget.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 import '../widgets/custom_review_card.dart';
 
@@ -34,7 +31,7 @@ class HomeScreen extends GetView<HomeController> {
                     Scaffold.of(context).openDrawer();
                   },
                   child: ImageIcon(
-                    AssetImage("assets/icons/burger.png"),
+                    const AssetImage("assets/icons/burger.png"),
                     color: context.colors.whiteCr,
                   )),
               Obx(() {
@@ -100,7 +97,6 @@ class HomeScreen extends GetView<HomeController> {
           SizedBox(
               height: 90 + getWidth(context, 5),
               child: Obx(() {
-                print(controller.loading);
                 if (controller.loading.value) {
                   return Center(
                     child: CircularProgressIndicator(
@@ -145,7 +141,6 @@ class HomeScreen extends GetView<HomeController> {
           SizedBox(
               height: 90 + getWidth(context, 5),
               child: Obx(() {
-                print(controller.loading);
                 if (controller.loading.value) {
                   return Center(
                     child: CircularProgressIndicator(

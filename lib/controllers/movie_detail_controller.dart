@@ -1,8 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:letterboxd_porto_3/controllers/firebase_auth_services.dart';
-import 'package:letterboxd_porto_3/controllers/home_controller.dart';
 import 'package:letterboxd_porto_3/controllers/review_controller.dart';
 import 'package:letterboxd_porto_3/controllers/tmdb_services.dart';
 import 'package:letterboxd_porto_3/models/movie_cast_model.dart';
@@ -15,7 +11,7 @@ class MovieController extends GetxController {
   Rx<MovieState> state = Rx(MovieState.loading);
   Rx<MovieDetail?> detailData = Rx(null);
   Rx<ReviewModel?> reviewData = Rx(null);
-  Rx<List<Cast>> castData = Rx([]);
+  RxList<Cast> castData = <Cast>[].obs;
   Rx<String> director = "".obs;
 
   @override
@@ -40,7 +36,7 @@ class MovieController extends GetxController {
           }
         },
       );
-      castData.value = _cast!.cast;
+      castData.assignAll(_cast!.cast);
       director.value = _cast!.crew
           .firstWhereOrNull((element) => element.job.toLowerCase() == "director")
           ?.name ?? "Someone (no data)";

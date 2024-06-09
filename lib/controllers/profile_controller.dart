@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -40,7 +39,6 @@ class ProfileController extends GetxController {
         .orderBy("date", descending: true)
         .get();
     ReviewModel recentReview = await getRecentReview(uId: uId);
-    print(recentReview.reviewData);
     await profileRef.get().then((value) async {
       ProfileModel data =
           ProfileModel.fromFirestore(value, recent, recentReview.reviewData, SnapshotOptions());
@@ -74,11 +72,6 @@ class ProfileController extends GetxController {
         .where("u_id", whereIn: [uId, "dv03efAW3Wd0oMtmRgZujvlBOD33"])
         .orderBy("date", descending: true)
         .get();
-    print("asssddd");
-    for (var data in reviewData.docs) {
-    print(data.data());
-    }
-    print(reviewData.docs);
     return ReviewModel.fromFirestore(reviewData, null);
   }
 
@@ -86,14 +79,12 @@ class ProfileController extends GetxController {
     XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     String uId = _service.userId ?? "";
     if (image != null) {
-      print("img");
       SettableMetadata imgMetadata = SettableMetadata(
           contentType: 'image/jpeg',
           customMetadata: {'picked-file-path': image.path});
       Reference storageRef = _storage.ref("profile_images/").child("$uId.jpg");
       await storageRef.putFile(File(image.path), imgMetadata);
       await storageRef.getDownloadURL().then((value) {
-        print("sukes");
         _db.collection("/profile").doc(uId).update({"photo_path": value});
       });
       await readProfile(update: true);

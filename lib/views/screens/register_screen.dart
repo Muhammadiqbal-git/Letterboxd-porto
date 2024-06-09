@@ -132,7 +132,7 @@ class RegisterScreen extends GetView<RegisterController> {
                             Get.offNamed('/login');
                           },
                           overlayColor:
-                              MaterialStatePropertyAll(Colors.transparent),
+                              const MaterialStatePropertyAll(Colors.transparent),
                           child: Text(
                             "Login Page.",
                             style: normalText.copyWith(

@@ -11,16 +11,18 @@ class CustomForm extends StatefulWidget {
   final TextStyle? hintStyle;
   final Color? backgroundColor;
   final double? borderRadius;
+  final bool? enabled;
   final bool? isObsecure;
+  final bool? isMultiLine;
   final AssetImage? logo;
   final FocusNode? focusNode;
   final TextStyle? inputStyle;
   final TextAlign? textAlign;
   final BoxBorder? borders;
   final EdgeInsets? contentPadding;
-  final bool? enabled;
   final void Function(String)? onChanged;
   final void Function()? onEdittingComplete;
+  final Widget? endLogo;
   const CustomForm({
     super.key,
     required this.textEditingController,
@@ -32,16 +34,18 @@ class CustomForm extends StatefulWidget {
     this.hintStyle,
     this.backgroundColor,
     this.borderRadius,
+    this.enabled,
     this.isObsecure,
+    this.isMultiLine,
     this.logo,
     this.focusNode,
     this.inputStyle,
     this.textAlign,
     this.borders,
     this.contentPadding,
-    this.enabled,
     this.onChanged,
     this.onEdittingComplete,
+    this.endLogo
   });
   @override
   State<CustomForm> createState() => _CustomFormState();
@@ -49,9 +53,11 @@ class CustomForm extends StatefulWidget {
 
 class _CustomFormState extends State<CustomForm> {
   bool obscured = false;
+  bool multiLine = false;
   @override
   void initState() {
     obscured = widget.isObsecure ?? false;
+    multiLine = widget.isMultiLine?? !obscured;
     super.initState();
   }
 
@@ -62,7 +68,7 @@ class _CustomFormState extends State<CustomForm> {
       width: widget.width ?? double.maxFinite,
       alignment: Alignment.centerLeft,
       decoration: BoxDecoration(
-          color: widget.backgroundColor ?? Color(0xffC4C4C4).withOpacity(0.35),
+          color: widget.backgroundColor ?? const Color(0xffC4C4C4).withOpacity(0.35),
           borderRadius: BorderRadius.circular(widget.borderRadius ?? 30),
           border: widget.borders),
       child: Row(
@@ -76,9 +82,10 @@ class _CustomFormState extends State<CustomForm> {
               : const SizedBox(),
           Expanded(
             child: TextFormField(
+              cursorColor: context.colors.secondaryCr,
               textAlignVertical: widget.textAlignVertical ?? TextAlignVertical.center,
-              expands: obscured ? false : true,
-              maxLines: obscured ? 1 : null,
+              expands: multiLine ? true : false,
+              maxLines: multiLine ? null : 1,
               minLines: null,
               enabled: widget.enabled,
               onChanged: widget.onChanged,
@@ -102,7 +109,7 @@ class _CustomFormState extends State<CustomForm> {
           const SizedBox(width: 15),
           if (widget.isObsecure == true)
             InkWell(
-              customBorder: CircleBorder(),
+              customBorder: const CircleBorder(),
               onTap: () {
                 obscured = !obscured;
                 setState(() {});
@@ -117,7 +124,10 @@ class _CustomFormState extends State<CustomForm> {
                       color: context.colors.whiteCr.withOpacity(0.5),
                     ),
             ),
-          if (widget.isObsecure == true) const SizedBox(width: 15)
+          if (widget.isObsecure == true) const SizedBox(width: 15),
+          if (widget.endLogo != null) SizedBox(height: 24, width: 24, child: widget.endLogo,),
+          if (widget.endLogo != null) const SizedBox(width: 15),
+
         ],
       ),
     );

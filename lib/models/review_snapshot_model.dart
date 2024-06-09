@@ -37,8 +37,6 @@ class ReviewEntityModel {
     Map<String, dynamic> data,
     Map<String, dynamic>? dataFilm,
   ) {
-    print("sad");
-    print(data["film_info"]);
     return ReviewEntityModel(
       uId: data['u_id'],
       uName: data['u_name'],

@@ -6,7 +6,7 @@ import 'package:letterboxd_porto_3/controllers/firebase_auth_services.dart';
 import '../views/widgets/custom_loading_dialog.dart';
 
 class RegisterController extends GetxController {
-  FirebaseAuthService _service = FirebaseAuthService();
+  final FirebaseAuthService _service = FirebaseAuthService();
   Rx<TextEditingController> usernameText = TextEditingController().obs;
   Rx<TextEditingController> emailText = TextEditingController().obs;
   Rx<TextEditingController> passText = TextEditingController().obs;

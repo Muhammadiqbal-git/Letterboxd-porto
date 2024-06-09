@@ -1,15 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letterboxd_porto_3/controllers/firebase_auth_services.dart';
-import 'package:letterboxd_porto_3/controllers/tmdb_services.dart';
-import 'package:letterboxd_porto_3/envied_helper.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_alert_dialog.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_loading_dialog.dart';
 
 class LoginController extends GetxController {
-  FirebaseAuthService _service = FirebaseAuthService();
+  final FirebaseAuthService _service = FirebaseAuthService();
   Rx<TextEditingController> usernameText = TextEditingController().obs;
   Rx<TextEditingController> passText = TextEditingController().obs;
   Rx<User?> userData = Rx<User?>(null);

@@ -112,7 +112,7 @@ class ReviewController extends GetxController {
     }
     try {
       await batch.commit().then((value) => Get.dialog(
-            CustomAlertDialog(
+            const CustomAlertDialog(
                 textAlign: TextAlign.center,
                 text: "Rating atau review berhasil ditambahkan"),
           ).then((value) async {
