@@ -10,8 +10,8 @@ class CustomSelectContainer extends StatefulWidget {
   final EdgeInsets? margin;
   final Color? bgColor;
   final Color? selectedColor;
-  final TextStyle? textStyle;
-  final TextStyle? selectedTextStyle;
+  final TextStyle? style;
+  final TextStyle? selectedStyle;
   final Function(bool selected)? onTap;
   const CustomSelectContainer({
     super.key,
@@ -23,8 +23,8 @@ class CustomSelectContainer extends StatefulWidget {
     this.margin,
     this.bgColor,
     this.selectedColor,
-    this.textStyle,
-    this.selectedTextStyle,
+    this.style,
+    this.selectedStyle,
     this.onTap,
   });
 
@@ -34,7 +34,7 @@ class CustomSelectContainer extends StatefulWidget {
 
 class _CustomSelectContainerState extends State<CustomSelectContainer> {
   late bool selected;
-  late Color bgColor;
+  late Color bgsColor;
   late Color selectedBgColor;
   late TextStyle textStyle;
   late TextStyle selectedTextStyle;
@@ -42,27 +42,23 @@ class _CustomSelectContainerState extends State<CustomSelectContainer> {
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
-    selected = widget.selected ?? false;
-    bgColor = widget.bgColor ?? Colors.transparent;
+    bgsColor = widget.bgColor ?? Colors.transparent;
     selectedBgColor = widget.selectedColor ?? context.colors.accentCr;
-    textStyle = widget.textStyle ??
+    textStyle = widget.style ??
         normalText.copyWith(fontSize: 10, color: context.colors.secondaryCr);
-    selectedTextStyle = widget.selectedTextStyle ??
+    selectedTextStyle = widget.selectedStyle ??
         normalText.copyWith(fontSize: 10, color: context.colors.whiteCr);
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    print("built ${widget.text}");
+    selected = widget.selected ?? false;
+    // print("built ${widget.text}");
     return Padding(
       padding: widget.margin ?? const EdgeInsets.symmetric(horizontal: 2),
       child: InkWell(
         onTap: () {
-          setState(() {
-            selected = !selected;
-          });
-          print(selected);
             widget.onTap?.call(selected);
         },
         child: Ink(
@@ -70,7 +66,7 @@ class _CustomSelectContainerState extends State<CustomSelectContainer> {
           height: widget.height ?? 22,
           padding: widget.padding ?? const EdgeInsets.all(3),
           decoration: BoxDecoration(
-              color: selected ? selectedBgColor : bgColor,
+              color: selected ? selectedBgColor : bgsColor,
               borderRadius: BorderRadius.circular(7)),
           child: Text(
             widget.text,

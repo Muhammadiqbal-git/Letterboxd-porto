@@ -72,9 +72,6 @@ class MovieDetail {
   factory MovieDetail.fromJson(Map<String, dynamic> json) {
     double number = json["popularity"] ?? 0;
     String pop = "${number.toInt()}";
-    print(number >= 1000);
-    inspect(number);
-    inspect(pop);
     return MovieDetail(
       adult: json["adult"],
       backdropPath: json["backdrop_path"],

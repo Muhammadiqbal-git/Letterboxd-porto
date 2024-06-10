@@ -55,13 +55,16 @@ class TMDBServices {
         "$_mainURL$url",
         options: Options(headers: {'Authorization': 'Bearer ${Env.apiKey}'}),
       );
+      print(data.statusCode);
       if (data.statusCode == 200) {
+        print("it return");
         print(data.data);
         return MovieData.fromJson(data.data);
       }
-      print(data.data);
       return null;
     } catch (e) {
+      print("Error");
+      print(e);
       return null;
     }
   }
@@ -80,7 +83,7 @@ class TMDBServices {
     }
     String url = "search/movie?query=$text&page=$page&$release";
     try {
-      Response data = await _dio.get(url, 
+      Response data = await _dio.get("$_mainURL$url", 
         options: Options(headers: {'Authorization': 'Bearer ${Env.apiKey}'}),
       );
       if (data.statusCode == 200) {

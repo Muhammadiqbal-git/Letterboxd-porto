@@ -67,7 +67,6 @@ class LoginScreen extends GetView<LoginController> {
                         ),
                         textEditingController: controller.usernameText.value,
                         textInputAction: TextInputAction.next,
-                        
                         ),
                   ),
                   const SizedBox(

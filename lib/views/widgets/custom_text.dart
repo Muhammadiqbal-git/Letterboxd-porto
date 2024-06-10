@@ -72,6 +72,7 @@ class CustomText extends StatelessWidget {
           } else {
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               // reversed vertical direction and the child for adjusting the baseline to the bottom of column
               children: [
                 Text(
@@ -82,7 +83,7 @@ class CustomText extends StatelessWidget {
                   textDirection: textDirection,
                 ),
                 Text(
-                  "... $endPart",
+                  "... $endPart ",
                   style: style,
                   textDirection: textDirection,
                   textAlign: textAlign,

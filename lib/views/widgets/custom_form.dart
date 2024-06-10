@@ -23,30 +23,29 @@ class CustomForm extends StatefulWidget {
   final void Function(String)? onChanged;
   final void Function()? onEdittingComplete;
   final Widget? endLogo;
-  const CustomForm({
-    super.key,
-    required this.textEditingController,
-    this.textAlignVertical,
-    this.textInputAction,
-    this.width,
-    this.height,
-    this.hintText,
-    this.hintStyle,
-    this.backgroundColor,
-    this.borderRadius,
-    this.enabled,
-    this.isObsecure,
-    this.isMultiLine,
-    this.logo,
-    this.focusNode,
-    this.inputStyle,
-    this.textAlign,
-    this.borders,
-    this.contentPadding,
-    this.onChanged,
-    this.onEdittingComplete,
-    this.endLogo
-  });
+  const CustomForm(
+      {super.key,
+      required this.textEditingController,
+      this.textAlignVertical,
+      this.textInputAction,
+      this.width,
+      this.height,
+      this.hintText,
+      this.hintStyle,
+      this.backgroundColor,
+      this.borderRadius,
+      this.enabled,
+      this.isObsecure,
+      this.isMultiLine,
+      this.logo,
+      this.focusNode,
+      this.inputStyle,
+      this.textAlign,
+      this.borders,
+      this.contentPadding,
+      this.onChanged,
+      this.onEdittingComplete,
+      this.endLogo});
   @override
   State<CustomForm> createState() => _CustomFormState();
 }
@@ -57,7 +56,7 @@ class _CustomFormState extends State<CustomForm> {
   @override
   void initState() {
     obscured = widget.isObsecure ?? false;
-    multiLine = widget.isMultiLine?? !obscured;
+    multiLine = widget.isMultiLine ?? !obscured;
     super.initState();
   }
 
@@ -68,7 +67,8 @@ class _CustomFormState extends State<CustomForm> {
       width: widget.width ?? double.maxFinite,
       alignment: Alignment.centerLeft,
       decoration: BoxDecoration(
-          color: widget.backgroundColor ?? const Color(0xffC4C4C4).withOpacity(0.35),
+          color: widget.backgroundColor ??
+              const Color(0xffC4C4C4).withOpacity(0.35),
           borderRadius: BorderRadius.circular(widget.borderRadius ?? 30),
           border: widget.borders),
       child: Row(
@@ -83,12 +83,18 @@ class _CustomFormState extends State<CustomForm> {
           Expanded(
             child: TextFormField(
               cursorColor: context.colors.secondaryCr,
-              textAlignVertical: widget.textAlignVertical ?? TextAlignVertical.center,
+              textAlignVertical:
+                  widget.textAlignVertical ?? TextAlignVertical.center,
               expands: multiLine ? true : false,
               maxLines: multiLine ? null : 1,
               minLines: null,
               enabled: widget.enabled,
-              onChanged: widget.onChanged,
+              onChanged: (value) {
+                if (value.length <= 1) {
+                  setState(() {});
+                }
+                widget.onChanged?.call(value);
+              },
               onEditingComplete: widget.onEdittingComplete,
               focusNode: widget.focusNode,
               controller: widget.textEditingController,
@@ -97,13 +103,16 @@ class _CustomFormState extends State<CustomForm> {
               style: widget.inputStyle ?? normalText,
               textAlign: widget.textAlign ?? TextAlign.start,
               decoration: InputDecoration(
-                  // contentPadding: EdgeInsets.zero,
-                  contentPadding: widget.contentPadding ?? const EdgeInsets.symmetric(vertical: 10),
+                  contentPadding: widget.contentPadding ??
+                      const EdgeInsets.symmetric(vertical: 10),
                   hintText: widget.hintText,
                   hintStyle: widget.hintStyle ??
                       normalText.copyWith(fontSize: 13, color: Colors.black45),
                   isCollapsed: true,
-                  border: InputBorder.none),
+                  border: InputBorder.none,
+                  suffixIcon: _endLogo(),
+                  suffixIconConstraints:
+                      const BoxConstraints(maxHeight: 24, maxWidth: 24)),
             ),
           ),
           const SizedBox(width: 15),
@@ -125,11 +134,33 @@ class _CustomFormState extends State<CustomForm> {
                     ),
             ),
           if (widget.isObsecure == true) const SizedBox(width: 15),
-          if (widget.endLogo != null) SizedBox(height: 24, width: 24, child: widget.endLogo,),
-          if (widget.endLogo != null) const SizedBox(width: 15),
-
         ],
       ),
     );
+  }
+
+  Widget? _endLogo() {
+    if (widget.endLogo == null) {
+      return null;
+    } else if (widget.textEditingController.text.isEmpty) {
+      return InkWell(
+          onTap: () {
+            setState(() {});
+          },
+          child: widget.endLogo);
+    } else if (widget.textEditingController.text.isNotEmpty) {
+      return InkWell(
+        onTap: () {
+          widget.textEditingController.clear();
+          setState(() {});
+        },
+        child: Image.asset(
+          "assets/icons/notif.png",
+          color: context.colors.secondaryCr,
+        ),
+      );
+    } else {
+      return null;
+    }
   }
 }

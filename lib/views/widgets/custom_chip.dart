@@ -7,7 +7,8 @@ class CustomChip extends StatelessWidget {
   final Color? iconColor;
   final TextStyle? textStyle;
   final EdgeInsets? margin;
-  const CustomChip({super.key, required this.text, required this.iconAsset, this.iconColor, this.textStyle, this.margin});
+  final Function()? onTap;
+  const CustomChip({super.key, required this.text, required this.iconAsset, this.iconColor, this.textStyle, this.margin, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +27,14 @@ class CustomChip extends StatelessWidget {
           const SizedBox(
             width: 4,
           ),
-          ImageIcon(
-            iconAsset,
-            size: 10,
-            color: context.colors.accentCr,
+          InkWell(
+            onTap: onTap,
+            overlayColor: MaterialStatePropertyAll(Colors.transparent),
+            child: ImageIcon(
+              iconAsset,
+              size: 10,
+              color: context.colors.accentCr,
+            ),
           )
         ],
       ),

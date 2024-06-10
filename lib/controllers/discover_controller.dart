@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -7,6 +8,8 @@ import 'package:letterboxd_porto_3/models/genre_model.dart';
 import 'package:letterboxd_porto_3/models/movie_list_model.dart';
 import 'package:letterboxd_porto_3/models/sortby_model.dart';
 
+import '../views/widgets/option_dialog.dart';
+
 class DiscoverController extends GetxController {
   final List<SortBy> listSort = [
     SortBy(name: "Most Popular", method: "popularity.desc"),
@@ -15,30 +18,55 @@ class DiscoverController extends GetxController {
     SortBy(name: "Low Rated", method: "vote_average.asc")
   ];
   final TMDBServices _services = TMDBServices();
-  final Rx<DiscoverState> state = DiscoverState.loading.obs;
+  final Rx<DiscoverState> state = DiscoverState.initial.obs;
   final Rx<OptionState> optionState = OptionState.loading.obs;
 
   final Rx<TextEditingController> searchText = TextEditingController().obs;
-  final Rx<MovieData?> resultMovie = Rx(null);
+  final Rxn<MovieData> resultMovie = Rxn();
   final Rx<GenreListModel?> listGenre = Rx(null);
   final RxList<Genre> selectedGenre = <Genre>[].obs;
-  final Rx<SortBy?> selectedSort = Rx(null);
+  final Rxn<SortBy> selectedSort = Rxn();
+  final int _delayTime = 800;
+  final int _delayTimeGenre = 1200;
+
+  Timer? _delayTimer;
 
   @override
   void onInit() {
     // TODO: implement onInit
-    print("discovered");
-    getGenre();
+    getListGenre();
     super.onInit();
   }
 
-  getGenre() async {
+  @override
+  void onClose() {
+    print("sss");
+    searchText.value.dispose();
+    super.onClose();
+  }
+
+  getListGenre() async {
     optionState.value = OptionState.loading;
     listGenre.value = await _services.getGenreLisst();
     if (listGenre.value != null) {
       optionState.value = OptionState.done;
     } else {
       optionState.value = OptionState.error;
+    }
+  }
+
+  String getGenreName(int id) {
+    return listGenre.value?.genreData
+            .firstWhereOrNull((element) => element.id == id)
+            ?.name ??
+        "";
+  }
+
+  String getGenreListRemainder(List<int> genreIds) {
+    if (genreIds.length > 3) {
+      return "+${genreIds.length - 3}";
+    } else {
+      return "";
     }
   }
 
@@ -51,13 +79,55 @@ class DiscoverController extends GetxController {
     inspect(selectedGenre);
   }
 
-  void advanceSearch() async {
+  removeGenre(Genre data) {
+    if (selectedGenre.any((element) => element == data)) {
+      selectedGenre.remove(data);
+    }
+  }
+
+  clearGenre() {
+    selectedGenre.clear();
+    update();
+  }
+
+  bool checkGenre(Genre data) {
+    if (selectedGenre.any((element) => element == data)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  selectSort(SortBy data) async {
+    if (selectedSort.value == data) {
+      selectedSort.value = null;
+    } else {
+      selectedSort.value = data;
+    }
+  }
+
+  clearSort() {
+    selectedSort.value = null;
+  }
+
+  bool checkSort(SortBy data) {
+    if (selectedSort.value != null && selectedSort.value == data) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future advanceSearch() async {
     state.value = DiscoverState.loading;
     List genre = List.from(selectedGenre.map((e) => e.id));
     resultMovie.value = await _services.getMovieOfTheMonth(
         sortBy: selectedSort.value?.method, genreList: genre);
-    searchText.value.clear();
-    if (resultMovie.value != null) {
+    if (resultMovie.value == null) {
+      state.value = DiscoverState.error;
+    } else if (resultMovie.value!.results.isEmpty) {
+      state.value = DiscoverState.empty;
+    } else if (resultMovie.value!.results.isNotEmpty) {
       state.value = DiscoverState.done;
     } else {
       state.value = DiscoverState.error;
@@ -66,18 +136,80 @@ class DiscoverController extends GetxController {
 
   void searchByTitle() async {
     state.value = DiscoverState.loading;
-    resultMovie.value =
-        await _services.getMovieByTitle(text: searchText.value.text);
-    if (resultMovie.value != null) {
+    if (selectedGenre.isNotEmpty || selectedSort.value != null) {
+      List<Result> data;
+      await advanceSearch();
+      if (resultMovie.value != null) {
+        data = resultMovie.value!.results
+            .where((element) => element.title
+                .toLowerCase()
+                .contains(searchText.value.text.toLowerCase()))
+            .toList();
+        resultMovie.value = MovieData(
+            page: resultMovie.value!.page,
+            results: data,
+            totalPages: resultMovie.value!.totalPages,
+            totalResults: resultMovie.value!.totalResults);
+      }
+    } else {
+      resultMovie.value =
+          await _services.getMovieByTitle(text: searchText.value.text);
+      inspect(resultMovie.value);
+    }
+    if (resultMovie.value == null) {
+      state.value = DiscoverState.error;
+    } else if (resultMovie.value!.results.isNotEmpty) {
       state.value = DiscoverState.done;
+    } else if (resultMovie.value!.results.isEmpty) {
+      state.value = DiscoverState.empty;
     } else {
       state.value = DiscoverState.error;
     }
   }
 
-  void openOptionDialog() {}
+  void debounceSearch() {
+    if (_delayTimer?.isActive ?? false) {
+      _delayTimer!.cancel();
+    }
+    _delayTimer = Timer(Duration(milliseconds: _delayTime), () {
+      print("search!!");
+      if (searchText.value.text.isNotEmpty) {
+        searchByTitle();
+      } else {
+        state.value = DiscoverState.initial;
+      }
+    });
+  }
+
+  void debounceSearchByGenre() {
+    if (_delayTimer?.isActive ?? false) {
+      _delayTimer!.cancel();
+    }
+    _delayTimer = Timer(Duration(milliseconds: _delayTimeGenre), () {
+      if (searchText.value.text.isNotEmpty) {
+        searchByTitle();
+      } else if (selectedGenre.isNotEmpty || selectedSort.value != null) {
+        advanceSearch();
+      } else {
+        state.value = DiscoverState.initial;
+      }
+    });
+  }
+
+  void openOptionDialog() {
+    Get.dialog(const OptionDialog()).then((value) {
+      if (searchText.value.text.isNotEmpty) {
+        searchByTitle();
+      } else if (selectedSort.value != null || selectedGenre.isNotEmpty) {
+        advanceSearch();
+      } else {
+        resultMovie.value = null;
+        state.value = DiscoverState.initial;
+      }
+    });
+  }
 }
 
-enum DiscoverState { loading, done, error }
+enum DiscoverState { initial, empty, loading, done, error }
 
 enum OptionState { loading, done, error }

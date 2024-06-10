@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letterboxd_porto_3/controllers/discover_controller.dart';
+import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/style.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_select_container.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -53,26 +54,32 @@ class OptionDialog extends StatelessWidget {
           const SizedBox(
             height: 8,
           ),
-          Wrap(
-            direction: Axis.horizontal,
-            spacing: 13,
-            runSpacing: 6,
-            children: [
-              ..._discoverController.listSort
-                  .map(
-                    (e) => Text(
-                      e.name,
-                      style: normalText.copyWith(
-                          fontSize: 10, color: context.colors.secondaryCr),
-                    ),
-                  )
-                  .toList()
-            ],
+          Obx(() {
+              return Wrap(
+                direction: Axis.horizontal,
+                spacing: 13,
+                runSpacing: 6,
+                children: [
+                  ..._discoverController.listSort
+                      .map((e) => CustomSelectContainer(
+                            text: e.name,
+                            selected: _discoverController.checkSort(e),
+                            onTap: (selected) {
+                              _discoverController.selectSort(e);
+                            },
+                            style: normalText.copyWith(
+                                fontSize: 10, color: context.colors.secondaryCr),
+                          ))
+                      .toList()
+                ],
+              );
+            }
           ),
           const SizedBox(
             height: 15,
           ),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 "Genre",
@@ -87,10 +94,25 @@ class OptionDialog extends StatelessWidget {
                 print(_discoverController.selectedGenre.length);
                 if (_discoverController.selectedGenre.isNotEmpty) {
                   print("text");
-                  return Text(
-                    "${_discoverController.selectedGenre.length} picked",
-                    style: normalText.copyWith(
-                        fontSize: 8, color: context.colors.accentCr),
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        "${_discoverController.selectedGenre.length} picked",
+                        style: normalText.copyWith(
+                            fontSize: 8, color: context.colors.secondaryCr),
+                      ),
+                      SizedBox(
+                        width: 3,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          _discoverController.clearGenre();
+                        },
+                        child: Image.asset("assets/icons/notif.png",
+                            color: context.colors.accentCr, height: 12),
+                      )
+                    ],
                   );
                 } else {
                   print("else");
@@ -104,6 +126,7 @@ class OptionDialog extends StatelessWidget {
             height: 8,
           ),
           Obx(() {
+            print("called ${_discoverController.selectedGenre}");
             return Wrap(
               direction: Axis.horizontal,
               spacing: 13,
@@ -113,10 +136,11 @@ class OptionDialog extends StatelessWidget {
                   ..._discoverController.listGenre.value!.genreData
                       .map((e) => CustomSelectContainer(
                             text: e.name,
+                            selected: _discoverController.checkGenre(e),
                             onTap: (selected) {
                               _discoverController.selectGenre(e);
                             },
-                            textStyle: normalText.copyWith(
+                            style: normalText.copyWith(
                                 fontSize: 10,
                                 color: context.colors.secondaryCr),
                           )),
@@ -132,32 +156,23 @@ class OptionDialog extends StatelessWidget {
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20),
       actions: [
-        Container(
-          width: 55,
-          height: 28,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: context.colors.primaryCr,
-            borderRadius: BorderRadius.circular(7),
-          ),
-          child: Text(
-            "Cancel",
-            style: semiBoldText.copyWith(
-                fontSize: 12, color: context.colors.secondaryCr),
-          ),
-        ),
-        Container(
-          width: 65,
-          height: 28,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: context.colors.secondaryCr,
-            borderRadius: BorderRadius.circular(7),
-          ),
-          child: Text(
-            "Done",
-            style: semiBoldText.copyWith(
-                fontSize: 12, color: context.colors.primaryCr),
+        InkWell(
+          onTap: () {
+          Get.back();
+          },
+          child: Container(
+            width: getWidth(context, 25),
+            height: 28,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: context.colors.secondaryCr,
+              borderRadius: BorderRadius.circular(7),
+            ),
+            child: Text(
+              "Done",
+              style: semiBoldText.copyWith(
+                  fontSize: 12, color: context.colors.primaryCr),
+            ),
           ),
         )
       ],

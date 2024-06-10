@@ -120,7 +120,7 @@ class HomeScreen extends GetView<HomeController> {
                         child: CustomImgNetwork(
                           path: TMDBServices().imgUrl(
                               pathUrl: controller
-                                  .data.value!.results[index].posterPath,
+                                  .data.value!.results[index].posterPath ?? "",
                               width: 500),
                         ),
                       ),
@@ -164,7 +164,7 @@ class HomeScreen extends GetView<HomeController> {
                         child: CustomImgNetwork(
                           path: TMDBServices().imgUrl(
                               pathUrl: controller
-                                  .ratedData.value!.results[index].posterPath,
+                                  .ratedData.value!.results[index].posterPath ?? "",
                               width: 500),
                         ),
                       ),

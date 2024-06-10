@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:letterboxd_porto_3/controllers/discover_controller.dart';
+import 'package:letterboxd_porto_3/controllers/tmdb_services.dart';
 import 'package:letterboxd_porto_3/helpers/style.dart';
+import 'package:letterboxd_porto_3/models/movie_list_model.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_chip.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_form.dart';
+import 'package:letterboxd_porto_3/views/widgets/custom_img_widget.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_select_container.dart';
-import 'package:letterboxd_porto_3/views/widgets/option_dialog.dart';
+import 'package:letterboxd_porto_3/views/widgets/custom_text.dart';
 
 class DiscoverScreen extends GetView<DiscoverController> {
   const DiscoverScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    print("discover built");
-    print(controller.listGenre.value?.genreData.first.name);
     return Column(
       children: [
         Container(
@@ -77,7 +79,11 @@ class DiscoverScreen extends GetView<DiscoverController> {
                     contentPadding: EdgeInsets.zero,
                     textAlignVertical: TextAlignVertical.center,
                     borderRadius: 7,
-                    textEditingController: TextEditingController(),
+                    textInputAction: TextInputAction.done,
+                    textEditingController: controller.searchText.value,
+                    onChanged: (p0) {
+                      controller.debounceSearch();
+                    },
                     endLogo: Image.asset("assets/icons/notif.png"),
                   ),
                   const SizedBox(
@@ -92,7 +98,8 @@ class DiscoverScreen extends GetView<DiscoverController> {
                               children: [
                                 InkWell(
                                   onTap: () {
-                                    Get.dialog(OptionDialog());
+                                    FocusScope.of(context).unfocus();
+                                    controller.openOptionDialog();
                                   },
                                   child: Container(
                                     width: 97,
@@ -130,148 +137,273 @@ class DiscoverScreen extends GetView<DiscoverController> {
                                 const SizedBox(
                                   width: 5,
                                 ),
-                                const CustomSelectContainer(
-                                  selected: true,
-                                  text: "Popular",
-                                  margin: EdgeInsets.symmetric(horizontal: 5),
-                                ),
-                                const CustomChip(
-                                  text: "Adventure",
-                                  iconAsset:
-                                      AssetImage("assets/icons/notif.png"),
-                                  // textStyle: normalText.copyWith(
-                                  //     fontSize: 10, color: context.colors.secondaryCr),
-                                  // bgColor: Colors.transparent,
-                                  margin: EdgeInsets.symmetric(horizontal: 5),
-                                ),
-                                const CustomChip(
-                                  text: "Animation",
-                                  iconAsset:
-                                      AssetImage("assets/icons/notif.png"),
-                                  margin: EdgeInsets.symmetric(horizontal: 5),
+                                Flexible(
+                                  child: Obx(() {
+                                    return SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      physics:
+                                          const AlwaysScrollableScrollPhysics(),
+                                      child: Row(
+                                        children: [
+                                          if (controller.selectedSort.value !=
+                                              null)
+                                            CustomSelectContainer(
+                                              key: Key(controller.selectedSort
+                                                      .value?.name ??
+                                                  ""),
+                                              selected: controller.checkSort(
+                                                  controller
+                                                      .selectedSort.value!),
+                                              text: controller
+                                                  .selectedSort.value!.name,
+                                              onTap: (selected) {
+                                                controller.clearSort();
+                                                controller
+                                                    .debounceSearchByGenre();
+                                              },
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 5),
+                                            ),
+                                          if (controller
+                                              .selectedGenre.isNotEmpty)
+                                            ...controller.selectedGenre
+                                                .map(
+                                                  (e) => CustomChip(
+                                                    text: e.name,
+                                                    onTap: () {
+                                                      controller.removeGenre(e);
+                                                      controller
+                                                          .debounceSearchByGenre();
+                                                    },
+                                                    margin: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 2),
+                                                    iconAsset: const AssetImage(
+                                                        "assets/icons/notif.png"),
+                                                  ),
+                                                )
+                                                .toList()
+                                        ],
+                                      ),
+                                    );
+                                  }),
                                 ),
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 25,
                             ),
-                            Container(
-                              height: 82,
-                              margin: EdgeInsets.only(bottom: 12),
-                              decoration: BoxDecoration(
-                                color: context.colors.secondaryCr
-                                    .withOpacity(0.05),
-                                borderRadius: BorderRadius.circular(7),
-                              ),
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                    width: 60,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(7),
-                                        bottomLeft: Radius.circular(7),
-                                      ),
-                                      child: Image.asset(
-                                        "assets/imgs/poster1.png",
-                                        fit: BoxFit.cover,
-                                      ),
+                            Expanded(
+                              child: Obx(() {
+                                if (controller.state.value ==
+                                    DiscoverState.done) {
+                                  return ListView.builder(
+                                    itemCount: controller
+                                        .resultMovie.value!.results.length,
+                                    itemBuilder: (context, index) {
+                                      Result data = controller
+                                          .resultMovie.value!.results[index];
+                                      return Container(
+                                        height: 82,
+                                        margin:
+                                            const EdgeInsets.only(bottom: 12),
+                                        decoration: BoxDecoration(
+                                          color: context.colors.secondaryCr
+                                              .withOpacity(0.05),
+                                          borderRadius:
+                                              BorderRadius.circular(7),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 60,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                  topLeft: Radius.circular(7),
+                                                  bottomLeft:
+                                                      Radius.circular(7),
+                                                ),
+                                                child: CustomImgNetwork(
+                                                  path: TMDBServices().imgUrl(
+                                                      width: 154,
+                                                      pathUrl:
+                                                          data.posterPath ??
+                                                              ""),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Expanded(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        0, 3, 0, 9),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .baseline,
+                                                      textBaseline: TextBaseline
+                                                          .alphabetic,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Flexible(
+                                                          child: CustomText(
+                                                            data.title,
+                                                            multiLine: false,
+                                                            style: semiBoldText
+                                                                .copyWith(
+                                                                    fontSize:
+                                                                        12),
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          DateFormat("yyyy")
+                                                              .format(data
+                                                                  .releaseDate),
+                                                          style: normalText
+                                                              .copyWith(
+                                                                  fontSize: 8),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 2,
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        ...data.genreIds
+                                                            .take(3)
+                                                            .map(
+                                                              (e) => Text(
+                                                                "${controller.getGenreName(e)}. ",
+                                                                style: semiBoldText.copyWith(
+                                                                    fontSize: 8,
+                                                                    color: context
+                                                                        .colors
+                                                                        .secondaryCr),
+                                                              ),
+                                                            )
+                                                            .toList(),
+                                                        Text(
+                                                          controller
+                                                              .getGenreListRemainder(
+                                                                  data.genreIds),
+                                                          style: semiBoldText
+                                                              .copyWith(
+                                                                  fontSize: 8,
+                                                                  color: context
+                                                                      .colors
+                                                                      .secondaryCr),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 7,
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          data.popularity
+                                                              .toString(),
+                                                          style: semiBoldText
+                                                              .copyWith(
+                                                                  fontSize: 8,
+                                                                  color: context
+                                                                      .colors
+                                                                      .accentCr),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const Spacer(),
+                                                    Text(
+                                                      "Directed By Someone",
+                                                      style:
+                                                          normalText.copyWith(
+                                                              fontSize: 8),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.star_rounded,
+                                                  size: 36,
+                                                  color: Colors.red,
+                                                ),
+                                                const SizedBox(
+                                                  width: 3,
+                                                ),
+                                                Text(
+                                                  "4.4",
+                                                  style: normalText.copyWith(
+                                                      fontSize: 20,
+                                                      color: context
+                                                          .colors.secondaryCr),
+                                                )
+                                              ],
+                                            ),
+                                            const SizedBox(
+                                              width: 20,
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                } else if (controller.state.value ==
+                                    DiscoverState.initial) {
+                                  return Center(
+                                    child: Text(
+                                      "Discover some film!",
+                                      style: semiBoldText.copyWith(
+                                          fontSize: 16,
+                                          color: context.colors.secondaryCr),
+                                      textAlign: TextAlign.center,
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 3, 0, 9),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "Title Film",
-                                                style: semiBoldText.copyWith(
-                                                    fontSize: 12),
-                                              )
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 2,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "Animation. ",
-                                                style: semiBoldText.copyWith(
-                                                    fontSize: 8,
-                                                    color: context
-                                                        .colors.secondaryCr),
-                                              ),
-                                              Text(
-                                                "Family. ",
-                                                style: semiBoldText.copyWith(
-                                                    fontSize: 8,
-                                                    color: context
-                                                        .colors.secondaryCr),
-                                              ),
-                                              Text(
-                                                "Adventure. ",
-                                                style: semiBoldText.copyWith(
-                                                    fontSize: 8,
-                                                    color: context
-                                                        .colors.secondaryCr),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 7,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "100k",
-                                                style: semiBoldText.copyWith(
-                                                    fontSize: 8,
-                                                    color: context
-                                                        .colors.accentCr),
-                                              ),
-                                            ],
-                                          ),
-                                          Spacer(),
-                                          Text(
-                                            "Directed By Someone",
-                                            style: normalText.copyWith(
-                                                fontSize: 8),
-                                          ),
-                                        ],
-                                      ),
+                                  );
+                                } else if (controller.state.value ==
+                                    DiscoverState.empty) {
+                                  return Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "No specific film in our database",
+                                          style: semiBoldText.copyWith(
+                                              fontSize: 16,
+                                              color: context.colors.secondaryCr),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        Text(
+                                          "Maybe its too much filter and keyword in the same time?",
+                                          style: normalText.copyWith(
+                                              fontSize: 14,
+                                              color: context.colors.secondaryCr),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.star_rounded,
-                                        size: 36,
-                                        color: Colors.red,
-                                      ),
-                                      SizedBox(
-                                        width: 3,
-                                      ),
-                                      Text(
-                                        "4.4",
-                                        style: normalText.copyWith(
-                                            fontSize: 20,
-                                            color: context.colors.secondaryCr),
-                                      )
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    width: 20,
-                                  )
-                                ],
-                              ),
+                                  );
+                                } else {
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      color: context.colors.secondaryCr,
+                                    ),
+                                  );
+                                }
+                              }),
                             )
                           ],
                         ),
