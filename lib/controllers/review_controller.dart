@@ -68,47 +68,41 @@ class ReviewController extends GetxController {
         .doc(userId)
         .collection("recent")
         .doc("$filmId");
-
+    DocumentReference profileRef =
+        _db.collection("/profile").doc(FirebaseAuthService().userId);
+    Map<String, dynamic> profileWatchedObj = {
+      "date": selectedDate.value,
+      "rate": rate.value,
+      "poster_path": movieController.detailData.value!.posterPath
+    };
+    Map<String, dynamic> reviewObj = {
+      "u_id": _profileModel!.uId,
+      "u_name": _profileModel!.uName,
+      "photo_path": _profileModel!.photo_path,
+      "date": selectedDate.value,
+      "review": reviewText.value.text,
+      "rate": rate.value,
+      "film_info": {
+        "film_id": filmId,
+        "poster_path": movieController.detailData.value?.posterPath ?? "",
+        "backdrop_path": movieController.detailData.value?.backdropPath,
+        "title": movieController.detailData.value?.title,
+        "year_release": movieController.detailData.value?.releaseDate,
+      }
+    };
+    Map<String, dynamic> profileObj = {
+      "review_ref": [filmId],
+    };
     WriteBatch batch = _db.batch();
-    batch.set(
-        profileWatchedRef,
-        {
-          "date": selectedDate.value,
-          "review": reviewText.value.text,
-          "rate": rate.value,
-          "poster_path": movieController.detailData.value!.posterPath
-        },
-        SetOptions(merge: true));
-    if (reviewText.value.text.isNotEmpty) {
-      batch.set(
-          reviewRef,
-          {
-            "u_id": _profileModel!.uId,
-            "u_name": _profileModel!.uName,
-            "photo_path": _profileModel!.photo_path,
-            "date": selectedDate.value,
-            "review": reviewText.value.text,
-            "rate": rate.value,
-            "film_info": {
-              "poster_path": movieController.detailData.value?.posterPath ?? "",
-              "backdrop_path": movieController.detailData.value?.backdropPath,
-              "title": movieController.detailData.value?.title,
-              "year_release": movieController.detailData.value?.releaseDate,
-            }
-          },
-          SetOptions(merge: true));
-    }
+    batch.set(profileWatchedRef, profileWatchedObj, SetOptions(merge: true));
     if (fav.value) {
-      DocumentReference favoriteRef =
-          _db.collection("/profile").doc(FirebaseAuthService().userId);
-      batch.set(
-          favoriteRef,
-          {
-            "favorite": {
-              "$filmId": movieController.detailData.value!.posterPath
-            }
-          },
-          SetOptions(merge: true));
+      profileObj["favorite"] = {
+        "$filmId": movieController.detailData.value!.posterPath
+      };
+    }
+    if (reviewText.value.text.isNotEmpty) {
+      batch.set(reviewRef, reviewObj, SetOptions(merge: true));
+      batch.set(profileRef, profileObj, SetOptions(merge: true));
     }
     try {
       await batch.commit().then((value) => Get.dialog(

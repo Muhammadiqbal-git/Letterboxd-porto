@@ -1,6 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:letterboxd_porto_3/models/review_snapshot_model.dart';
 
+// class ListProfileModel{
+//   final List<ProfileModel> listProfile;
+//   ListProfileModel({required this.listProfile});
+//   factory ListProfileModel.fromFirestore(
+//     QuerySnapshot<Map<String, dynamic>> listDocs,
+//   ){
+//     final docs = listDocs.docs;
+//     return ListProfileModel(listProfile: List.from(docs.map((e) => ProfileModel.fromFirestore(snapshot, recent, recentReview, options))));
+//   }
+// }
+
 class ProfileModel {
   final String uId;
   final String uName;
@@ -10,6 +21,7 @@ class ProfileModel {
   final Map<String, dynamic> favorite;
   final List<RecentMovieModel>? recentMovie;
   final List<ReviewEntityModel>? recentRev;
+  final List<dynamic> reviewRef;
 
   ProfileModel(
       {required this.uId,
@@ -19,7 +31,8 @@ class ProfileModel {
       required this.follower,
       required this.favorite,
       required this.recentMovie,
-      required this.recentRev
+      required this.recentRev,
+      required this.reviewRef
       });
   factory ProfileModel.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -41,7 +54,8 @@ class ProfileModel {
                   (e) => RecentMovieModel.fromFirestore(e.id, e.data())),
             )
           : null,
-      recentRev:  recentReview
+      recentRev:  recentReview,
+      reviewRef: data?['review_ref'],
     );
   }
   Map<String, Object?> toFirestore() {
@@ -59,13 +73,11 @@ class RecentMovieModel {
   String id;
   DateTime? date;
   double rate;
-  String review;
   String? posterPath;
   RecentMovieModel({
     required this.id,
     required this.date,
     required this.rate,
-    required this.review,
     required this.posterPath,
   });
 
@@ -76,7 +88,6 @@ class RecentMovieModel {
             ? (data['date'] as Timestamp).toDate()
             : null,
         rate: (data['rate'] as num).toDouble(),
-        review: data['review'],
         posterPath: data['poster_path']);
   }
 }

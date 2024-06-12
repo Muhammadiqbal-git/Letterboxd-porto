@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letterboxd_porto_3/controllers/profile_controller.dart';
@@ -47,9 +49,14 @@ class ProfileScreen extends GetView<ProfileController> {
                     controller.imgPicker();
                   },
                   child: Obx(() {
-                    return CustomImgNetwork(
+                    if (controller.state.value == ProfileState.done) {
+                      return CustomImgNetwork(
                         radius: BorderRadius.circular(50),
                         path: controller.user.value!.photo_path);
+                    }
+                    return CustomImgNetwork(
+                        radius: BorderRadius.circular(50),
+                        path: "");
                   }),
                 ),
               ),
@@ -60,12 +67,16 @@ class ProfileScreen extends GetView<ProfileController> {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(width: 17,),
+                    SizedBox(
+                      width: 17,
+                    ),
                     Text(
                       controller.user.value?.uName ?? "No Name",
                       style: boldText.copyWith(fontSize: 16),
                     ),
-                    SizedBox(width: 4,),
+                    SizedBox(
+                      width: 4,
+                    ),
                     Image.asset(
                       "assets/icons/edit.png",
                       width: 15,
@@ -297,17 +308,23 @@ class ProfileScreen extends GetView<ProfileController> {
             height: 15,
           ),
           Obx(() {
-            if (controller.recentState.value == RecentMovieState.loading &&
-                controller.user.value == null) {
-              return const Center(
-                child: CircularProgressIndicator(),
+            if (controller.recentState.value == RecentMovieState.loading) {
+                  print("s");
+              return Center(
+                child: CircularProgressIndicator(
+                  color: context.colors.secondaryCr,
+                ),
               );
             } else if (controller.recentState.value == RecentMovieState.error) {
+                  print("s");
+                  print("s");
+
               return const Text(
                 "No recent movie",
                 style: semiBoldText,
               );
             } else {
+                  print("sa");
               return SizedBox(
                 height: 120,
                 child: ListView.builder(
@@ -386,8 +403,10 @@ class ProfileScreen extends GetView<ProfileController> {
           ),
           Obx(() {
             if (controller.user.value == null) {
-              return const Center(
-                child: CircularProgressIndicator(),
+              return Center(
+                child: CircularProgressIndicator(
+                  color: context.colors.secondaryCr,
+                ),
               );
             } else if (controller.user.value!.recentRev == null ||
                 controller.user.value!.recentRev!.isEmpty) {

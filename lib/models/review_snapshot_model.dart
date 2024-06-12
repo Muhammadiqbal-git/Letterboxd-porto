@@ -50,12 +50,14 @@ class ReviewEntityModel {
 }
 
 class FilmInfoModel {
+  final int? filmId;
   final String? filmPosterPath;
   final String? filmBackdropPath;
   final String? filmTitle;
   final DateTime? filmYear;
 
   FilmInfoModel({
+    this.filmId,
     this.filmPosterPath,
     this.filmBackdropPath,
     this.filmTitle,
@@ -66,6 +68,7 @@ class FilmInfoModel {
     Map<String, dynamic> data,
   ) {
     return FilmInfoModel(
+        filmId: data["film_id"],
         filmPosterPath: data["poster_path"],
         filmBackdropPath: data["backdrop_path"],
         filmTitle: data["title"],

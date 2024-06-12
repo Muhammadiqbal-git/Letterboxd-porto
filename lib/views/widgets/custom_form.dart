@@ -56,7 +56,7 @@ class _CustomFormState extends State<CustomForm> {
   @override
   void initState() {
     obscured = widget.isObsecure ?? false;
-    multiLine = widget.isMultiLine ?? !obscured;
+    multiLine = widget.isMultiLine ?? false;
     super.initState();
   }
 

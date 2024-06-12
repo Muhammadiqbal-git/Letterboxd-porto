@@ -10,7 +10,8 @@ import 'package:letterboxd_porto_3/models/sortby_model.dart';
 
 import '../views/widgets/option_dialog.dart';
 
-class DiscoverController extends GetxController {
+class DiscoverFilmController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   final List<SortBy> listSort = [
     SortBy(name: "Most Popular", method: "popularity.desc"),
     SortBy(name: "Least Popular", method: "popularity.asc"),
@@ -22,6 +23,7 @@ class DiscoverController extends GetxController {
   final Rx<OptionState> optionState = OptionState.loading.obs;
 
   final Rx<TextEditingController> searchText = TextEditingController().obs;
+  late Rx<TabController> tabController;
   final Rxn<MovieData> resultMovie = Rxn();
   final Rx<GenreListModel?> listGenre = Rx(null);
   final RxList<Genre> selectedGenre = <Genre>[].obs;
@@ -34,6 +36,12 @@ class DiscoverController extends GetxController {
   @override
   void onInit() {
     // TODO: implement onInit
+    tabController = TabController(length: 2, vsync: this).obs;
+    tabController.value.addListener(() {
+      if (tabController.value.indexIsChanging) {
+        print("index change to ${tabController.value.index}");
+      }
+    });
     getListGenre();
     super.onInit();
   }
@@ -171,6 +179,7 @@ class DiscoverController extends GetxController {
     if (_delayTimer?.isActive ?? false) {
       _delayTimer!.cancel();
     }
+    state.value = DiscoverState.loading;
     _delayTimer = Timer(Duration(milliseconds: _delayTime), () {
       print("search!!");
       if (searchText.value.text.isNotEmpty) {
@@ -185,6 +194,7 @@ class DiscoverController extends GetxController {
     if (_delayTimer?.isActive ?? false) {
       _delayTimer!.cancel();
     }
+    state.value = DiscoverState.loading;
     _delayTimer = Timer(Duration(milliseconds: _delayTimeGenre), () {
       if (searchText.value.text.isNotEmpty) {
         searchByTitle();

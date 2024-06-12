@@ -8,7 +8,6 @@ class FirebaseAuthService {
   String? get userId => _firebaseAuth.currentUser?.uid;
   String? get userEmail => _firebaseAuth.currentUser?.email;
 
-
   Future<User?> signUpEmailPass(
       String userName, String email, String pass) async {
     try {
@@ -23,7 +22,9 @@ class FirebaseAuthService {
           "photo_path": "",
           "follower": [],
           "following": [],
+          "review_ref": [],
           "favorite": {},
+          "review_count": 0,
         });
       }
       return user;

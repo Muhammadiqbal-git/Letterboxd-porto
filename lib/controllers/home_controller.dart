@@ -22,11 +22,11 @@ class HomeController extends GetxController {
     DateTime now = DateTime.now();
     loading.value = true;
     data.value = await _tmdbServices.getMovieOfTheMonth();
+    await Future.delayed(Duration(milliseconds: 1000));
     ratedData.value = await _tmdbServices.getMovieOfTheMonth(
       date: DateTime(now.year, now.month-3),
-      sortBy: "vote");
+      sortBy: "vote_average.desc");
     reviewData.value = await getHomeReview();
-    print(data.value);
     if (data.value != null) {
       loading.value = false;
     }

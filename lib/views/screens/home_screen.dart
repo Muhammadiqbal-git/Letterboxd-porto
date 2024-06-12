@@ -35,7 +35,7 @@ class HomeScreen extends GetView<HomeController> {
                     color: context.colors.whiteCr,
                   )),
               Obx(() {
-                if (_profileController.user.value != null) {
+                if (_profileController.state.value == ProfileState.done) {
                   return InkWell(
                     onTap: () {
                       Get.find<MainScreenController>().changeIndex(3);

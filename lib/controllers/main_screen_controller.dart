@@ -9,13 +9,12 @@ class MainScreenController extends GetxController{
 
   @override
   void onInit() {
-    // _homeController.getData();
     super.onInit();
   }
   void changeIndex(int i){
     index.value = i;
     if (index.value == 0) {
-      _homeController.getData();
+      // _homeController.getData();
     }
     else if(index.value == 3){
       _profileController.readProfile();

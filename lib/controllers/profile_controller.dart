@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,6 +19,8 @@ class ProfileController extends GetxController {
   Rx<ProfileModel?> user = Rx<ProfileModel?>(null);
   Rx<String?> userEmail = "".obs;
   Rx<int> favoriteLength = 1.obs;
+
+  Rx<ProfileState> state = Rx(ProfileState.loading);
   Rx<RecentMovieState> recentState = Rx(RecentMovieState.loading);
   Rx<RecentReviewState> reviewState = Rx(RecentReviewState.loading);
 
@@ -29,22 +32,30 @@ class ProfileController extends GetxController {
 
   // profile
   readProfile({bool update = false}) async {
+    print("high read profile ops run");
+    state.value = ProfileState.loading;
     recentState.value = RecentMovieState.loading;
     String uId = _service.userId ?? "";
     CollectionReference filmReviewRef = _db.collection("/film_review");
     DocumentReference<Map<String, dynamic>> profileRef =
         _db.collection("/profile").doc(uId);
-    QuerySnapshot<Map<String, dynamic>> recent = await profileRef
+    QuerySnapshot<Map<String, dynamic>> recentWatch = await profileRef
         .collection("recent")
         .orderBy("date", descending: true)
         .get();
-    ReviewModel recentReview = await getRecentReview(uId: uId);
+    QuerySnapshot<Map<String, dynamic>> recentReview =
+        await getRecentReview(uId: uId);
     await profileRef.get().then((value) async {
-      ProfileModel data =
-          ProfileModel.fromFirestore(value, recent, recentReview.reviewData, SnapshotOptions());
+      ProfileModel data = ProfileModel.fromFirestore(
+          value,
+          recentWatch,
+          ReviewModel.fromFirestore(recentReview, null).reviewData,
+          SnapshotOptions());
       user.value = data;
       userEmail.value = _service.userEmail;
-      if (recent.docs.isEmpty) {
+      state.value = ProfileState.done;
+      syncProfileData(data, profileRef, filmReviewRef);
+      if (recentWatch.docs.isEmpty) {
         recentState.value = RecentMovieState.error;
       } else {
         recentState.value = RecentMovieState.done;
@@ -53,26 +64,45 @@ class ProfileController extends GetxController {
         favoriteLength.value =
             data.favorite.length >= 3 ? 3 : data.favorite.length;
       }
-      if (update) {
-        WriteBatch batch = _db.batch();
-        for (var snapshot in recent.docs) {
-          batch.update(
-              filmReviewRef.doc(snapshot.id).collection("review").doc(uId),
-              {"u_name": data.uName, "photo_path": data.photo_path});
-        }
-        await batch.commit().then((value) => print("success"));
-      }
     });
   }
 
-  Future<ReviewModel> getRecentReview(
-      { required String uId}) async {
+  syncProfileData(ProfileModel data, DocumentReference profileRef,
+      CollectionReference filmReviewRef) async {
+    String uId = _service.userId ?? "";
+    WriteBatch batch = _db.batch();
+    bool check = false;
+    for (var element in data.recentRev!) {
+      if (data.photo_path != element.photoPath) {
+        check = true;
+      }
+    }
+    if (check) {
+      for (var filmRevId in data.reviewRef) {
+        batch.update(
+            filmReviewRef.doc("$filmRevId").collection("review").doc(uId),
+            {"u_name": data.uName, "photo_path": data.photo_path});
+      }
+    }
+    for (var filmRev in data.recentRev!) {
+      List listOfId = [];
+      if (!data.reviewRef.contains(filmRev.filmInfoModel.filmId)) {
+        listOfId.add(filmRev.filmInfoModel.filmId);
+      }
+      batch.update(profileRef, {"review_ref": FieldValue.arrayUnion(listOfId)});
+    }
+    await batch.commit().then((value) => print("success"));
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getRecentReview(
+      {required String uId}) async {
     QuerySnapshot<Map<String, dynamic>> reviewData = await _db
         .collectionGroup("review")
         .where("u_id", whereIn: [uId, "dv03efAW3Wd0oMtmRgZujvlBOD33"])
         .orderBy("date", descending: true)
         .get();
-    return ReviewModel.fromFirestore(reviewData, null);
+
+    return reviewData;
   }
 
   imgPicker() async {
@@ -91,6 +121,8 @@ class ProfileController extends GetxController {
     }
   }
 }
+
+enum ProfileState { loading, done, error }
 
 enum RecentMovieState { loading, done, error }
 

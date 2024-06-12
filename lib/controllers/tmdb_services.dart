@@ -9,7 +9,7 @@ import '../models/movie_list_model.dart';
 
 class TMDBServices {
   final String _mainURL = "https://api.themoviedb.org/3/";
-  DateTime dateNow = DateTime.now();
+  DateTime now = DateTime.now();
   final Dio _dio = Dio();
 
   ///width of poster consist of [92, 154, 185, 342, 500, 700]
@@ -33,23 +33,30 @@ class TMDBServices {
     List? genreList,
     int page = 1,
   }) async {
-    dateNow = date ?? dateNow;
+    DateTime dateNow = date ?? now;
     String sort = "";
+    String voteAvg = "";
     String genre = "";
     String dateGte = DateFormat("yyyy-MM").format(dateNow);
     String dateLte = DateFormat("yyyy-MM").format(
       DateTime(dateNow.year, dateNow.month + 1),
     );
-    if (sortBy == "vote") {
-      sort = "vote_average.desc&vote_count.gte=10";
-    } else {
+    if (sortBy == null) {
       sort = "popularity.desc";
+    } 
+    else if(sortBy.contains("vote")){
+      sort = sortBy;
+      voteAvg = "2";
+    }
+    else {
+      sort = sortBy;
     }
     if (genreList != null) {
       genre = "&with_genres=${genreList.join("%2C")}";
     }
     String url =
-        "discover/movie?page=$page&primary_release_date.gte=$dateGte-01&primary_release_date.lte=$dateLte-1&sort_by=$sort$genre";
+        "discover/movie?page=$page&primary_release_date.gte=$dateGte-01&primary_release_date.lte=$dateLte-1&sort_by=$sort$genre&vote_count.gte=$voteAvg";
+    print(url);
     try {
       Response data = await _dio.get(
         "$_mainURL$url",
@@ -78,12 +85,13 @@ class TMDBServices {
     DateTime now = DateTime.now();
     if (year != null) {
       release = "primary_release_year=$year";
-    }else{
-      release = "primary_release_year=${now.year-1}";
+    } else {
+      release = "primary_release_year=${now.year - 1}";
     }
     String url = "search/movie?query=$text&page=$page&$release";
     try {
-      Response data = await _dio.get("$_mainURL$url", 
+      Response data = await _dio.get(
+        "$_mainURL$url",
         options: Options(headers: {'Authorization': 'Bearer ${Env.apiKey}'}),
       );
       if (data.statusCode == 200) {

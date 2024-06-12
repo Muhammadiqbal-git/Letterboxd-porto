@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:letterboxd_porto_3/controllers/discover_controller.dart';
+import 'package:letterboxd_porto_3/controllers/discover_film_controller.dart';
 import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/style.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_select_container.dart';
@@ -11,7 +11,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 class OptionDialog extends StatelessWidget {
   const OptionDialog({super.key});
 
-  DiscoverController get _discoverController => Get.find<DiscoverController>();
+  DiscoverFilmController get _discoverController => Get.find<DiscoverFilmController>();
 
   @override
   Widget build(BuildContext context) {
