@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letterboxd_porto_3/controllers/profile_controller.dart';
@@ -10,7 +8,8 @@ import 'package:letterboxd_porto_3/views/widgets/custom_img_widget.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_review_card.dart';
 
 class ProfileScreen extends GetView<ProfileController> {
-  const ProfileScreen({super.key});
+  final bool isOther;
+  const ProfileScreen({super.key, this.isOther = false});
 
   @override
   Widget build(BuildContext context) {
@@ -51,12 +50,13 @@ class ProfileScreen extends GetView<ProfileController> {
                   child: Obx(() {
                     if (controller.state.value == ProfileState.done) {
                       return CustomImgNetwork(
-                        radius: BorderRadius.circular(50),
-                        path: controller.user.value!.photo_path);
+                          radius: BorderRadius.circular(50),
+                          path: controller.displayUser.value?.photo_path ?? "");
+                    } else {
+                      print("s");
+                      return CustomImgNetwork(
+                          radius: BorderRadius.circular(50), path: "");
                     }
-                    return CustomImgNetwork(
-                        radius: BorderRadius.circular(50),
-                        path: "");
                   }),
                 ),
               ),
@@ -68,19 +68,62 @@ class ProfileScreen extends GetView<ProfileController> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      width: 17,
+                      width: isOther ? 60 : 17,
                     ),
                     Text(
-                      controller.user.value?.uName ?? "No Name",
+                      controller.displayUser.value?.uName ?? "No Name",
                       style: boldText.copyWith(fontSize: 16),
                     ),
                     SizedBox(
-                      width: 4,
+                      width: isOther ? 14 : 4,
                     ),
-                    Image.asset(
-                      "assets/icons/edit.png",
-                      width: 15,
-                    )
+                    switch (isOther) {
+                      true => controller.followed.value
+                          ? InkWell(
+                              borderRadius: BorderRadius.circular(22),
+                              onTap: () {
+                                controller.unFollowProfile(
+                                    controller.displayUser.value?.uId ?? "");
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 2),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(22),
+                                    color: context.colors.accentCr),
+                                child: Text(
+                                  "Unfolow",
+                                  style: normalText.copyWith(
+                                      fontSize: 10,
+                                      color: context.colors.whiteCr),
+                                ),
+                              ),
+                            )
+                          : InkWell(
+                              borderRadius: BorderRadius.circular(22),
+                              onTap: () {
+                                controller.followProfile(
+                                    controller.displayUser.value?.uId ?? "");
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 2),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(22),
+                                    color: context.colors.secondaryCr),
+                                child: Text(
+                                  "Follow",
+                                  style: normalText.copyWith(
+                                      fontSize: 10,
+                                      color: context.colors.primaryCr),
+                                ),
+                              ),
+                            ),
+                      false => Image.asset(
+                          "assets/icons/edit.png",
+                          width: 15,
+                        )
+                    }
                   ],
                 );
               }),
@@ -97,9 +140,9 @@ class ProfileScreen extends GetView<ProfileController> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Obx(() {
-                            if (controller.user.value != null) {
+                            if (controller.displayUser.value != null) {
                               return Text(
-                                "${controller.user.value!.follower.length} Followers",
+                                "${controller.displayUser.value!.follower.length} Followers",
                                 style: normalText.copyWith(fontSize: 12),
                               );
                             }
@@ -127,9 +170,9 @@ class ProfileScreen extends GetView<ProfileController> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Obx(() {
-                            if (controller.user.value != null) {
+                            if (controller.displayUser.value != null) {
                               return Text(
-                                "${controller.user.value!.following.length} Following",
+                                "${controller.displayUser.value!.following.length} Following",
                                 style: normalText.copyWith(fontSize: 12),
                               );
                             }
@@ -159,7 +202,7 @@ class ProfileScreen extends GetView<ProfileController> {
                     children: [
                       Obx(() {
                         return Text(
-                          "${controller.user.value?.recentMovie?.length ?? "0"}",
+                          "${controller.displayUser.value?.recentMovie?.length ?? "0"}",
                           style: boldText.copyWith(
                               fontSize: 20, color: context.colors.secondaryCr),
                         );
@@ -180,7 +223,7 @@ class ProfileScreen extends GetView<ProfileController> {
                     children: [
                       Obx(() {
                         return Text(
-                          "${controller.user.value?.recentMovie?.length ?? "0"}",
+                          "${controller.displayUser.value?.recentMovie?.length ?? "0"}",
                           style: boldText.copyWith(
                               fontSize: 20, color: context.colors.accentCr),
                         );
@@ -220,7 +263,7 @@ class ProfileScreen extends GetView<ProfileController> {
                     children: [
                       Obx(() {
                         return Text(
-                          "${controller.user.value?.recentMovie?.length ?? "0"}",
+                          "${controller.displayUser.value?.recentMovie?.length ?? "0"}",
                           style: boldText.copyWith(
                               fontSize: 20, color: context.colors.accentCr),
                         );
@@ -239,31 +282,45 @@ class ProfileScreen extends GetView<ProfileController> {
               const SizedBox(
                 height: 15,
               ),
-              Text(
-                "${controller.user.value?.uName ?? ""}'s Favorite Films",
-                style: semiBoldText,
-              ),
+              Obx(() {
+                return Text(
+                  "${controller.displayUser.value?.uName ?? ""}'s Favorite Films",
+                  style: semiBoldText,
+                );
+              }),
               const SizedBox(
                 height: 10,
               ),
               SizedBox(
                 height: 90,
                 child: Obx(() {
-                  return ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: controller.favoriteLength.value,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) => Container(
-                      width: 60,
-                      margin: EdgeInsets.only(right: index == 3 ? 0 : 10),
-                      child: CustomImgNetwork(
-                          path: TMDBServices().imgUrl(
-                              width: 154,
-                              pathUrl: controller.user.value?.favorite.values
-                                      .elementAtOrNull(index) ??
-                                  "")),
-                    ),
-                  );
+                  if (controller.state.value == ProfileState.loading) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: context.colors.secondaryCr,
+                      ),
+                    );
+                  } else if (controller.favoriteLength.value >= 1) {
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: controller.favoriteLength.value,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) => Container(
+                        width: 60,
+                        margin: EdgeInsets.only(right: index == 3 ? 0 : 10),
+                        child: CustomImgNetwork(
+                            path: TMDBServices().imgUrl(
+                                width: 154,
+                                pathUrl: controller.displayUser.value?.favorite.values
+                                        .elementAtOrNull(index) ??
+                                    "")),
+                      ),
+                    );
+                  } else {
+                    return Center(
+                      child: Text("No favorite film yet"),
+                    );
+                  }
                 }),
               ),
               const SizedBox(
@@ -293,7 +350,7 @@ class ProfileScreen extends GetView<ProfileController> {
             children: [
               Obx(() {
                 return Text(
-                  "${controller.user.value?.uName ?? "Name"}'s Recent Watched",
+                  "${controller.displayUser.value?.uName ?? "Name"}'s Recent Watched",
                   style: semiBoldText.copyWith(fontSize: 12),
                 );
               }),
@@ -309,28 +366,23 @@ class ProfileScreen extends GetView<ProfileController> {
           ),
           Obx(() {
             if (controller.recentState.value == RecentMovieState.loading) {
-                  print("s");
               return Center(
                 child: CircularProgressIndicator(
                   color: context.colors.secondaryCr,
                 ),
               );
             } else if (controller.recentState.value == RecentMovieState.error) {
-                  print("s");
-                  print("s");
-
               return const Text(
                 "No recent movie",
                 style: semiBoldText,
               );
             } else {
-                  print("sa");
               return SizedBox(
                 height: 120,
                 child: ListView.builder(
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
-                  itemCount: controller.user.value!.recentMovie!.length,
+                  itemCount: controller.displayUser.value!.recentMovie!.length,
                   itemBuilder: (context, index) => Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -341,7 +393,7 @@ class ProfileScreen extends GetView<ProfileController> {
                         child: CustomImgNetwork(
                           path: TMDBServices().imgUrl(
                               width: 154,
-                              pathUrl: controller.user.value!
+                              pathUrl: controller.displayUser.value!
                                       .recentMovie![index].posterPath ??
                                   ""),
                         ),
@@ -351,7 +403,7 @@ class ProfileScreen extends GetView<ProfileController> {
                       ),
                       Row(
                         children: List.generate(
-                            controller.user.value!.recentMovie![index].rate
+                            controller.displayUser.value!.recentMovie![index].rate
                                 .toInt(),
                             (index) => const Icon(Icons.star,
                                 size: 10, color: Colors.red)),
@@ -387,7 +439,7 @@ class ProfileScreen extends GetView<ProfileController> {
             children: [
               Obx(() {
                 return Text(
-                  "${controller.user.value?.uName ?? "Name"}'s Recent Reviews",
+                  "${controller.displayUser.value?.uName ?? "Name"}'s Recent Reviews",
                   style: semiBoldText.copyWith(fontSize: 12),
                 );
               }),
@@ -402,14 +454,14 @@ class ProfileScreen extends GetView<ProfileController> {
             height: 20,
           ),
           Obx(() {
-            if (controller.user.value == null) {
+            if (controller.displayUser.value == null) {
               return Center(
                 child: CircularProgressIndicator(
                   color: context.colors.secondaryCr,
                 ),
               );
-            } else if (controller.user.value!.recentRev == null ||
-                controller.user.value!.recentRev!.isEmpty) {
+            } else if (controller.displayUser.value!.recentRev == null ||
+                controller.displayUser.value!.recentRev!.isEmpty) {
               return const Text(
                 "No review yet",
                 style: semiBoldText,
@@ -418,9 +470,9 @@ class ProfileScreen extends GetView<ProfileController> {
               return ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: controller.user.value!.recentRev!.length,
+                itemCount: controller.displayUser.value!.recentRev!.length,
                 itemBuilder: (context, index) => CustomReviewCard(
-                  reviewData: controller.user.value!.recentRev![index],
+                  reviewData: controller.displayUser.value!.recentRev![index],
                 ),
               );
             }

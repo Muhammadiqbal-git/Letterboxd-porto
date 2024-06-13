@@ -21,8 +21,8 @@ class DiscoverPeopleController extends GetxController {
     Query<Map<String, dynamic>> profileRef = _db
         .collection("/profile")
         .orderBy("u_name")
-        .startAt([_discoverFilmController.searchText.value.text]).endAt(
-            ["${_discoverFilmController.searchText.value.text}\uf8ff"]);
+        .startAt([_discoverFilmController.searchText.value.text.toLowerCase()]).endAt(
+            ["${_discoverFilmController.searchText.value.text.toLowerCase()}\uf8ff"]);
     var data = await profileRef.get();
     listPeople.value = data.docs
         .map(

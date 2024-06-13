@@ -1,16 +1,48 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:letterboxd_porto_3/models/review_snapshot_model.dart';
 
-// class ListProfileModel{
-//   final List<ProfileModel> listProfile;
-//   ListProfileModel({required this.listProfile});
-//   factory ListProfileModel.fromFirestore(
-//     QuerySnapshot<Map<String, dynamic>> listDocs,
-//   ){
-//     final docs = listDocs.docs;
-//     return ListProfileModel(listProfile: List.from(docs.map((e) => ProfileModel.fromFirestore(snapshot, recent, recentReview, options))));
-//   }
-// }
+class NotificationModel {
+  final List<NotificationEntityModel> listNotif;
+  NotificationModel({required this.listNotif});
+  factory NotificationModel.fromFirestore(
+      QuerySnapshot<Map<String, dynamic>> snapshot) {
+    final data = snapshot.docs;
+    {
+      return NotificationModel(
+          listNotif: List.from(
+              data.map((e) => NotificationEntityModel.fromFirestore(e))));
+    }
+  }
+}
+
+class NotificationEntityModel {
+  final String docId;
+  final DateTime date;
+  final String event;
+  final String? photoPath;
+  final String uName;
+  final bool read;
+  NotificationEntityModel(
+      {
+      required this.docId,  
+      required this.date,
+      required this.event,
+      required this.photoPath,
+      required this.read,
+      required this.uName});
+  factory NotificationEntityModel.fromFirestore(
+      QueryDocumentSnapshot<Map<String, dynamic>> docSnapshot) {
+    final data = docSnapshot.data();
+    final id = docSnapshot.id;
+    return NotificationEntityModel(
+        docId: id,
+        date: (data["date"] as Timestamp).toDate(),
+        event: data["event"],
+        photoPath: data["photo_path"] ?? "",
+        read: data["read"],
+        uName: data["u_name"]);
+  }
+}
 
 class ProfileModel {
   final String uId;
@@ -32,8 +64,7 @@ class ProfileModel {
       required this.favorite,
       required this.recentMovie,
       required this.recentRev,
-      required this.reviewRef
-      });
+      required this.reviewRef});
   factory ProfileModel.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
       QuerySnapshot<Map<String, dynamic>>? recent,
@@ -45,7 +76,7 @@ class ProfileModel {
       uId: snapshot.id,
       uName: data?['u_name'],
       photo_path: data?['photo_path'],
-      following: data?['follower'],
+      following: data?['following'],
       follower: data?['follower'],
       favorite: data?['favorite'],
       recentMovie: rec != null
@@ -54,7 +85,7 @@ class ProfileModel {
                   (e) => RecentMovieModel.fromFirestore(e.id, e.data())),
             )
           : null,
-      recentRev:  recentReview,
+      recentRev: recentReview,
       reviewRef: data?['review_ref'],
     );
   }

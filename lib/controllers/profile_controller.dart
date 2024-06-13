@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
@@ -15,43 +16,147 @@ class ProfileController extends GetxController {
   final FirebaseAuthService _service = FirebaseAuthService();
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final ImagePicker _picker = ImagePicker();
+  final String _uId = FirebaseAuthService().userId ?? "";
 
-  Rx<ProfileModel?> user = Rx<ProfileModel?>(null);
+  Rxn<ProfileModel> displayUser = Rxn<ProfileModel>();
+  Rxn<NotificationModel> notif = Rxn<NotificationModel>();
+  Rxn<ProfileModel> cacheUser = Rxn<ProfileModel>();
   Rx<String?> userEmail = "".obs;
-  Rx<int> favoriteLength = 1.obs;
-
+  Rx<int> favoriteLength = 0.obs;
+  Rx<bool> followed = false.obs;
   Rx<ProfileState> state = Rx(ProfileState.loading);
   Rx<RecentMovieState> recentState = Rx(RecentMovieState.loading);
   Rx<RecentReviewState> reviewState = Rx(RecentReviewState.loading);
+  late Query<Map<String, dynamic>> collection;
+  late StreamSubscription notif_listener;
 
   @override
   void onInit() {
+    collection = _db
+        .collection("/profile")
+        .doc(_uId)
+        .collection("notification")
+        .orderBy("date", descending: true);
+    notif_listener = collection.snapshots().listen((event) {
+      notif.value = NotificationModel.fromFirestore(event);
+    });
     readProfile();
     super.onInit();
   }
 
+  @override
+  void onClose() {
+    notif_listener.cancel();
+  }
+
+  readNotif(String docId) async {
+    DocumentReference docRef = _db
+        .collection("/profile")
+        .doc(_uId)
+        .collection("notification")
+        .doc(docId);
+    await docRef.update({"read": true});
+  }
+
+  addNotif() async {
+    if (displayUser.value != null && cacheUser.value != null) {
+      DocumentReference notifRef =
+          _db.collection("/profile").doc(displayUser.value!.uId).collection("notification").doc();
+      await notifRef.set({
+        "date" : DateTime.now(),
+        "event" : "following you",
+        "photo_path": cacheUser.value!.photo_path,
+        "read": false,
+        "u_name": cacheUser.value!.uName
+      }).then((value) => print("follow notif added"));
+    }
+  }
+
   // profile
-  readProfile({bool update = false}) async {
-    print("high read profile ops run");
+  readProfile({bool update = false}) {
+    // state.value = ProfileState.loading;
+    if (cacheUser.value != null) {
+      print("this");
+      state.value = ProfileState.loading;
+      displayUser.value = cacheUser.value;
+      cacheUser.value = null;
+      state.value = ProfileState.done;
+    } else {
+      fetchData(_uId);
+    }
+  }
+
+  readOtherProfile(String otherId) {
     state.value = ProfileState.loading;
+    if (cacheUser.value == null && displayUser.value != null) {
+      cacheUser.value = displayUser.value;
+    }
+    if (cacheUser.value != null) {
+      followed.value = cacheUser.value!.following.contains(otherId);
+      print("already following ? ${followed.value}");
+    }
+    fetchData(otherId);
+  }
+
+  followProfile(String otherId) {
+    if (cacheUser.value != null) {
+      followed.value = true;
+      cacheUser.value!.following.add(otherId);
+      addNotif();
+      followFun(otherId, false);
+    }
+  }
+
+  unFollowProfile(String otherId) {
+    if (cacheUser.value != null) {
+      followed.value = false;
+      if (cacheUser.value!.following.contains(otherId)) {
+        cacheUser.value!.following.remove(otherId);
+        followFun(otherId, true);
+      }
+    }
+  }
+
+  followFun(String otherId, bool unfollow) async {
+    WriteBatch batch = _db.batch();
+    DocumentReference profileRef = _db.collection("/profile").doc(_uId);
+    DocumentReference otherProfileRef = _db.collection("/profile").doc(otherId);
+    if (!unfollow) {
+      batch.update(profileRef, {
+        "following": FieldValue.arrayUnion([otherId])
+      });
+      batch.update(otherProfileRef, {
+        "follower": FieldValue.arrayUnion([_uId])
+      });
+    } else {
+      batch.update(profileRef, {
+        "following": FieldValue.arrayRemove([otherId])
+      });
+      batch.update(otherProfileRef, {
+        "follower": FieldValue.arrayRemove([_uId])
+      });
+    }
+    await batch.commit().then((value) => print("followed success"));
+  }
+
+  fetchData(String id) async {
     recentState.value = RecentMovieState.loading;
-    String uId = _service.userId ?? "";
     CollectionReference filmReviewRef = _db.collection("/film_review");
     DocumentReference<Map<String, dynamic>> profileRef =
-        _db.collection("/profile").doc(uId);
+        _db.collection("/profile").doc(id);
     QuerySnapshot<Map<String, dynamic>> recentWatch = await profileRef
         .collection("recent")
         .orderBy("date", descending: true)
         .get();
     QuerySnapshot<Map<String, dynamic>> recentReview =
-        await getRecentReview(uId: uId);
+        await getRecentReview(uId: id);
     await profileRef.get().then((value) async {
       ProfileModel data = ProfileModel.fromFirestore(
           value,
           recentWatch,
           ReviewModel.fromFirestore(recentReview, null).reviewData,
           SnapshotOptions());
-      user.value = data;
+      displayUser.value = data;
       userEmail.value = _service.userEmail;
       state.value = ProfileState.done;
       syncProfileData(data, profileRef, filmReviewRef);
@@ -69,7 +174,6 @@ class ProfileController extends GetxController {
 
   syncProfileData(ProfileModel data, DocumentReference profileRef,
       CollectionReference filmReviewRef) async {
-    String uId = _service.userId ?? "";
     WriteBatch batch = _db.batch();
     bool check = false;
     for (var element in data.recentRev!) {
@@ -80,7 +184,7 @@ class ProfileController extends GetxController {
     if (check) {
       for (var filmRevId in data.reviewRef) {
         batch.update(
-            filmReviewRef.doc("$filmRevId").collection("review").doc(uId),
+            filmReviewRef.doc("$filmRevId").collection("review").doc(_uId),
             {"u_name": data.uName, "photo_path": data.photo_path});
       }
     }
@@ -98,7 +202,7 @@ class ProfileController extends GetxController {
       {required String uId}) async {
     QuerySnapshot<Map<String, dynamic>> reviewData = await _db
         .collectionGroup("review")
-        .where("u_id", whereIn: [uId, "dv03efAW3Wd0oMtmRgZujvlBOD33"])
+        .where("u_id", whereIn: [uId])
         .orderBy("date", descending: true)
         .get();
 
@@ -107,17 +211,17 @@ class ProfileController extends GetxController {
 
   imgPicker() async {
     XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    String uId = _service.userId ?? "";
+
     if (image != null) {
       SettableMetadata imgMetadata = SettableMetadata(
           contentType: 'image/jpeg',
           customMetadata: {'picked-file-path': image.path});
-      Reference storageRef = _storage.ref("profile_images/").child("$uId.jpg");
+      Reference storageRef = _storage.ref("profile_images/").child("$_uId.jpg");
       await storageRef.putFile(File(image.path), imgMetadata);
       await storageRef.getDownloadURL().then((value) {
-        _db.collection("/profile").doc(uId).update({"photo_path": value});
+        _db.collection("/profile").doc(_uId).update({"photo_path": value});
       });
-      await readProfile(update: true);
+      readProfile(update: true);
     }
   }
 }

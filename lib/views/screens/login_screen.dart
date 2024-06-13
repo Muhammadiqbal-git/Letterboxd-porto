@@ -19,8 +19,10 @@ class LoginScreen extends GetView<LoginController> {
         fit: StackFit.expand,
         alignment: Alignment.center,
         children: [
-          Positioned(
-            top: 0,
+          AnimatedPositioned(
+            curve: Curves.easeOut,
+            duration: Duration(milliseconds: 200),
+            top: 0 - (MediaQuery.of(context).viewInsets.bottom/2),
             height: getHeight(context, 38) + 20,
             width: getWidth(context, 100),
             child: ClipPath(
@@ -31,33 +33,37 @@ class LoginScreen extends GetView<LoginController> {
                   alignment: Alignment.topLeft,
                 )),
           ),
-          Positioned(
-              top: getHeight(context, 28),
+          AnimatedPositioned(
+              curve: Curves.easeOut,
+              duration: Duration(milliseconds: 200),
+              top: getHeight(context, 28) -
+                  (MediaQuery.of(context).viewInsets.bottom / 2),
               right: 40,
               left: 40,
-              child: Column(
-                children: [
-                  SvgPicture.asset("assets/imgs/logo.svg"),
-                  SizedBox(
-                    height: getHeight(context, 5),
-                  ),
-                  Text(
-                    "Login",
-                    style: boldText.copyWith(fontSize: 22),
-                  ),
-                  const SizedBox(
-                    height: 3,
-                  ),
-                  const Text(
-                    "Please sign in to continue",
-                    style: normalText,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  // CustomForm(textEditingController: textEditingController)
-                  Obx(
-                    () => CustomForm(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SvgPicture.asset("assets/imgs/logo.svg"),
+                    SizedBox(
+                      height: getHeight(context, 5),
+                    ),
+                    Text(
+                      "Login",
+                      style: boldText.copyWith(fontSize: 22),
+                    ),
+                    const SizedBox(
+                      height: 3,
+                    ),
+                    const Text(
+                      "Please sign in to continue",
+                      style: normalText,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    // CustomForm(textEditingController: textEditingController)
+                    Obx(
+                      () => CustomForm(
                         hintText: "Email",
                         hintStyle: normalText.copyWith(
                           color: context.colors.whiteCr.withOpacity(0.5),
@@ -67,13 +73,13 @@ class LoginScreen extends GetView<LoginController> {
                         ),
                         textEditingController: controller.usernameText.value,
                         textInputAction: TextInputAction.next,
-                        ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Obx(
-                    () => CustomForm(
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Obx(
+                      () => CustomForm(
                         hintText: "Password",
                         hintStyle: normalText.copyWith(
                           color: context.colors.whiteCr.withOpacity(0.5),
@@ -84,66 +90,68 @@ class LoginScreen extends GetView<LoginController> {
                         ),
                         textEditingController: controller.passText.value,
                         textInputAction: TextInputAction.done,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: InkWell(
+                        overlayColor:
+                            const MaterialStatePropertyAll(Colors.transparent),
+                        child: Text(
+                          "Forgot Password?",
+                          style: normalText.copyWith(
+                              fontSize: 12, color: context.colors.secondaryCr),
                         ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: InkWell(
-                      overlayColor:
-                          const MaterialStatePropertyAll(Colors.transparent),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    CustomButton(
+                      onTap: () {
+                        controller.login();
+                      },
+                      width: 80 + getWidth(context, 10),
                       child: Text(
-                        "Forgot Password?",
-                        style: normalText.copyWith(
-                            fontSize: 12, color: context.colors.secondaryCr),
+                        "Login",
+                        style:
+                            boldText.copyWith(color: context.colors.primaryCr),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  CustomButton(
-                    onTap: () {
-                      controller.login();
-                    },
-                    width: 80 + getWidth(context, 10),
-                    child: Text(
-                      "Login",
-                      style: boldText.copyWith(color: context.colors.primaryCr),
+                    const SizedBox(
+                      height: 15,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Don't have an account? Please ",
-                        style: normalText.copyWith(
-                            fontSize: 12, color: context.colors.secondaryCr),
-                      ),
-                      InkWell(
-                          onTap: () {
-                            Get.offNamed('/register');
-                          },
-                          overlayColor:
-                              MaterialStatePropertyAll(Colors.transparent),
-                          child: Text(
-                            "Sign Up ",
-                            style: normalText.copyWith(
-                                fontSize: 12, color: context.colors.accentCr),
-                          )),
-                      Text(
-                        "first",
-                        style: normalText.copyWith(
-                            fontSize: 12, color: context.colors.secondaryCr),
-                      ),
-                    ],
-                  )
-                ],
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Don't have an account? Please ",
+                          style: normalText.copyWith(
+                              fontSize: 12, color: context.colors.secondaryCr),
+                        ),
+                        InkWell(
+                            onTap: () {
+                              Get.offNamed('/register');
+                            },
+                            overlayColor:
+                                MaterialStatePropertyAll(Colors.transparent),
+                            child: Text(
+                              "Sign Up ",
+                              style: normalText.copyWith(
+                                  fontSize: 12, color: context.colors.accentCr),
+                            )),
+                        Text(
+                          "first",
+                          style: normalText.copyWith(
+                              fontSize: 12, color: context.colors.secondaryCr),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ))
         ],
       ),

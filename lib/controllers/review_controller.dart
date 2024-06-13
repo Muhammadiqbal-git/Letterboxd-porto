@@ -119,6 +119,9 @@ class ReviewController extends GetxController {
     }
   }
 
+  addNotif()async{
+    
+  }
   Future<ReviewModel> getRecentReview({required int filmId}) async {
     QuerySnapshot<Map<String, dynamic>> reviewData = await _db
         .collection("/film_review")

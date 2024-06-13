@@ -40,7 +40,7 @@ class RegisterController extends GetxController {
     loading.value = true;
     // await Future.delayed(Duration(seconds: 2));
     userData.value = await _service.signUpEmailPass(
-        usernameText.value.text, emailText.value.text, passText.value.text);
+        usernameText.value.text.toLowerCase(), emailText.value.text, passText.value.text);
     loading.value = false;
     if (userData.value != null) {
       Get.toNamed('/home');

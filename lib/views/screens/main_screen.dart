@@ -4,6 +4,7 @@ import 'package:letterboxd_porto_3/controllers/main_screen_controller.dart';
 import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/style.dart';
 import 'package:letterboxd_porto_3/views/screens/discover_screen.dart';
+import 'package:letterboxd_porto_3/views/screens/notification_screen.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_drawer_opt.dart';
 import 'package:lazy_load_indexed_stack/lazy_load_indexed_stack.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_img_widget.dart';
@@ -19,7 +20,7 @@ class MainScreen extends GetView<MainScreenController> {
   final List<Widget> screens = const [
     HomeScreen(),
     DiscoverScreen(),
-    UnderWorkScreen(),
+    NotificationScreen(),
     ProfileScreen()
   ];
 
@@ -44,6 +45,7 @@ class MainScreen extends GetView<MainScreenController> {
             child: BottomNavigationBar(
               currentIndex: controller.index.value,
               onTap: (value) {
+                FocusScope.of(context).unfocus();
                 controller.changeIndex(value);
               },
               backgroundColor: context.colors.primaryCr,
@@ -91,7 +93,7 @@ class MainScreen extends GetView<MainScreenController> {
                     height: 40,
                     child: CustomImgNetwork(
                         radius: BorderRadius.circular(50),
-                        path: _profileController.user.value?.photo_path ?? "")),
+                        path: _profileController.displayUser.value?.photo_path ?? "")),
                 const SizedBox(
                   width: 10,
                 ),
@@ -99,7 +101,7 @@ class MainScreen extends GetView<MainScreenController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _profileController.user.value?.uName ?? "name",
+                      _profileController.displayUser.value?.uName ?? "name",
                       style: boldText.copyWith(
                           fontSize: 14, color: context.colors.secondaryCr),
                     ),
@@ -130,7 +132,7 @@ class MainScreen extends GetView<MainScreenController> {
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        "${(_profileController.user.value?.follower) ?? "0"} Follower",
+                        "${(_profileController.displayUser.value?.follower) ?? "0"} Follower",
                         style: normalText.copyWith(
                             fontSize: 10, color: context.colors.whiteCr),
                         overflow: TextOverflow.ellipsis,
@@ -151,7 +153,7 @@ class MainScreen extends GetView<MainScreenController> {
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        "${(_profileController.user.value?.following) ?? "0"} Following",
+                        "${(_profileController.displayUser.value?.following) ?? "0"} Following",
                         style: normalText.copyWith(
                             fontSize: 10, color: context.colors.whiteCr),
                         overflow: TextOverflow.ellipsis,

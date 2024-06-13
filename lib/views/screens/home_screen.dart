@@ -45,7 +45,8 @@ class HomeScreen extends GetView<HomeController> {
                       height: 40,
                       child: CustomImgNetwork(
                           radius: BorderRadius.circular(50),
-                          path: _profileController.user.value!.photo_path),
+                          path:
+                              _profileController.displayUser.value?.photo_path ?? ""),
                     ),
                   );
                 }
@@ -67,7 +68,7 @@ class HomeScreen extends GetView<HomeController> {
               ),
               Obx(() {
                 return Text(
-                  (_profileController.user.value?.uName) ?? "name",
+                  (_profileController.displayUser.value?.uName) ?? "name",
                   style: boldText.copyWith(
                       fontSize: 18, color: context.colors.secondaryCr),
                 );
@@ -120,7 +121,8 @@ class HomeScreen extends GetView<HomeController> {
                         child: CustomImgNetwork(
                           path: TMDBServices().imgUrl(
                               pathUrl: controller
-                                  .data.value!.results[index].posterPath ?? "",
+                                      .data.value!.results[index].posterPath ??
+                                  "",
                               width: 500),
                         ),
                       ),
@@ -163,8 +165,9 @@ class HomeScreen extends GetView<HomeController> {
                         }),
                         child: CustomImgNetwork(
                           path: TMDBServices().imgUrl(
-                              pathUrl: controller
-                                  .ratedData.value!.results[index].posterPath ?? "",
+                              pathUrl: controller.ratedData.value!
+                                      .results[index].posterPath ??
+                                  "",
                               width: 500),
                         ),
                       ),
@@ -191,13 +194,18 @@ class HomeScreen extends GetView<HomeController> {
                     reviewData: controller.reviewData.value!.reviewData[index],
                   ),
                 );
+              } else if (controller.loading.value) {
+                return Center(
+                  child: CircularProgressIndicator(color: context.colors.secondaryCr,),
+                );
+              } else {
+                return Center(
+                  child: Text(
+                    "No recent review",
+                    style: semiBoldText,
+                  ),
+                );
               }
-              return ListView.builder(
-                itemCount: 2,
-                itemBuilder: (context, index) => const CustomReviewCard(
-                  reviewData: null,
-                ),
-              );
             }),
           )
         ],

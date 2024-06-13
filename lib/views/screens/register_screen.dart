@@ -19,8 +19,10 @@ class RegisterScreen extends GetView<RegisterController> {
         fit: StackFit.expand,
         alignment: Alignment.center,
         children: [
-          Positioned(
-            top: 0,
+          AnimatedPositioned(
+            duration: Duration(milliseconds: 200),
+            curve: Curves.easeIn,
+            top: 0 - (MediaQuery.of(context).viewInsets.bottom / 1.7),
             height: getHeight(context, 38) + 20,
             width: getWidth(context, 100),
             child: ClipPath(
@@ -31,8 +33,10 @@ class RegisterScreen extends GetView<RegisterController> {
                   alignment: Alignment.topLeft,
                 )),
           ),
-          Positioned(
-              top: getHeight(context, 28),
+          AnimatedPositioned(
+            duration: Duration(milliseconds: 200),
+            curve: Curves.easeIn,
+              top: getHeight(context, 28) - (MediaQuery.of(context).viewInsets.bottom / 1.7),
               right: 40,
               left: 40,
               child: Column(
