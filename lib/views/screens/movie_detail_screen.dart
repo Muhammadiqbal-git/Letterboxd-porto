@@ -16,7 +16,6 @@ class MovieDetailScreen extends GetView<MovieController> {
   const MovieDetailScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    print(controller.state.value);
     return Scaffold(
       backgroundColor: context.colors.primaryCr,
       body: Stack(
@@ -469,9 +468,7 @@ class _LeftSection extends GetView<MovieController> {
 
   @override
   Widget build(BuildContext context) {
-    print('left built');
     return Obx(() {
-      print('obx built');
       return Skeletonizer(
         enabled: controller.state.value == MovieState.loading,
         child: Column(

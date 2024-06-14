@@ -3,7 +3,6 @@
 //     final movieDetail = movieDetailFromJson(jsonString);
 
 import 'dart:convert';
-import 'dart:developer';
 
 import 'genre_model.dart';
 

@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:letterboxd_porto_3/controllers/discover_film_controller.dart';
@@ -14,7 +12,7 @@ class DiscoverPeopleController extends GetxController {
   final DiscoverFilmController _discoverFilmController =
       Get.find<DiscoverFilmController>();
   Timer? _delayTimer;
-  int _delayTime = 800;
+  final int _delayTime = 800;
 
   searchByName() async {
     state.value = DiscoverPeopleState.loading;
@@ -45,7 +43,6 @@ class DiscoverPeopleController extends GetxController {
     }
     state.value = DiscoverPeopleState.loading;
     _delayTimer = Timer(Duration(milliseconds: _delayTime), () {
-      print("search people!!");
       if (_discoverFilmController.searchText.value.text.isNotEmpty) {
         searchByName();
       } else {

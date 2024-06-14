@@ -21,7 +21,7 @@ class LoginScreen extends GetView<LoginController> {
         children: [
           AnimatedPositioned(
             curve: Curves.easeOut,
-            duration: Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 200),
             top: 0 - (MediaQuery.of(context).viewInsets.bottom/2),
             height: getHeight(context, 38) + 20,
             width: getWidth(context, 100),
@@ -35,7 +35,7 @@ class LoginScreen extends GetView<LoginController> {
           ),
           AnimatedPositioned(
               curve: Curves.easeOut,
-              duration: Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 200),
               top: getHeight(context, 28) -
                   (MediaQuery.of(context).viewInsets.bottom / 2),
               right: 40,
@@ -137,7 +137,7 @@ class LoginScreen extends GetView<LoginController> {
                               Get.offNamed('/register');
                             },
                             overlayColor:
-                                MaterialStatePropertyAll(Colors.transparent),
+                                const MaterialStatePropertyAll(Colors.transparent),
                             child: Text(
                               "Sign Up ",
                               style: normalText.copyWith(

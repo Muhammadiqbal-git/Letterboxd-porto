@@ -126,7 +126,6 @@ class ReviewScreen extends GetView<ReviewController> {
                             Obx(() {
                               return Row(children: [
                                 ...List.generate(5, (index) {
-                                  print(controller.rate.value);
                                   return InkWell(
                                     onTap: () {
                                       controller.rate.value = index + 1;

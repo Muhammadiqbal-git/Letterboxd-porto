@@ -47,7 +47,7 @@ class NotificationEntityModel {
 class ProfileModel {
   final String uId;
   final String uName;
-  final String photo_path;
+  final String photoPath;
   final List<dynamic> following;
   final List<dynamic> follower;
   final Map<String, dynamic> favorite;
@@ -58,7 +58,7 @@ class ProfileModel {
   ProfileModel(
       {required this.uId,
       required this.uName,
-      required this.photo_path,
+      required this.photoPath,
       required this.following,
       required this.follower,
       required this.favorite,
@@ -75,7 +75,7 @@ class ProfileModel {
     return ProfileModel(
       uId: snapshot.id,
       uName: data?['u_name'],
-      photo_path: data?['photo_path'],
+      photoPath: data?['photo_path'],
       following: data?['following'],
       follower: data?['follower'],
       favorite: data?['favorite'],
@@ -92,7 +92,7 @@ class ProfileModel {
   Map<String, Object?> toFirestore() {
     return {
       'u_name': uName,
-      'photo_path': photo_path,
+      'photo_path': photoPath,
       'following': following,
       'follower': follower,
       'favorite': favorite,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letterboxd_porto_3/controllers/movie_detail_controller.dart';
+import 'package:letterboxd_porto_3/controllers/profile_controller.dart';
 import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:letterboxd_porto_3/models/profile_model.dart';
@@ -11,6 +12,7 @@ import 'firebase_auth_services.dart';
 class ReviewController extends GetxController {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   MovieController movieController = Get.find<MovieController>();
+  final ProfileController _profileController = Get.find<ProfileController>();
   ProfileModel? _profileModel;
   Rx<DateTime> selectedDate = DateTime.now().obs;
   Rx<int> rate = 1.obs;
@@ -19,13 +21,10 @@ class ReviewController extends GetxController {
 
   @override
   onInit() async {
-    DocumentSnapshot<Map<String, dynamic>> profileSnapshot = await _db
-        .collection("/profile")
-        .doc(FirebaseAuthService().userId)
-        .get();
-    _profileModel = ProfileModel.fromFirestore(
-        profileSnapshot, null, null, SnapshotOptions());
-    super.onInit();
+    if (_profileController.user != null) {
+      _profileModel = _profileController.user;
+      super.onInit();
+    }
   }
 
   Future<void> datePicker(BuildContext context) async {
@@ -53,7 +52,6 @@ class ReviewController extends GetxController {
 
   addReview() async {
     if (_profileModel == null) {
-      print("profile model null");
       return;
     }
     String userId = FirebaseAuthService().userId!;
@@ -78,7 +76,7 @@ class ReviewController extends GetxController {
     Map<String, dynamic> reviewObj = {
       "u_id": _profileModel!.uId,
       "u_name": _profileModel!.uName,
-      "photo_path": _profileModel!.photo_path,
+      "photo_path": _profileModel!.photoPath,
       "date": selectedDate.value,
       "review": reviewText.value.text,
       "rate": rate.value,
@@ -101,6 +99,7 @@ class ReviewController extends GetxController {
       };
     }
     if (reviewText.value.text.isNotEmpty) {
+      reviewNotif(batch);
       batch.set(reviewRef, reviewObj, SetOptions(merge: true));
       batch.set(profileRef, profileObj, SetOptions(merge: true));
     }
@@ -115,13 +114,26 @@ class ReviewController extends GetxController {
             Get.back();
           }));
     } catch (e) {
-      print("error while performing batch write to firestore: \n$e");
     }
   }
 
-  addNotif()async{
-    
+  reviewNotif(WriteBatch batch) async {
+    for (var followerId in _profileModel!.follower) {
+      final profileRef = _db
+          .collection("/profile")
+          .doc(followerId)
+          .collection("notification")
+          .doc();
+      batch.set(profileRef, {
+        "date": DateTime.now(),
+        "event": "Post a review, check it out!",
+        "photo_path": _profileModel!.photoPath,
+        "read": false,
+        "u_name": _profileModel!.uName
+      });
+    }
   }
+
   Future<ReviewModel> getRecentReview({required int filmId}) async {
     QuerySnapshot<Map<String, dynamic>> reviewData = await _db
         .collection("/film_review")

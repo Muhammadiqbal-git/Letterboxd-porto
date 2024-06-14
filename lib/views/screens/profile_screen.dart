@@ -51,9 +51,8 @@ class ProfileScreen extends GetView<ProfileController> {
                     if (controller.state.value == ProfileState.done) {
                       return CustomImgNetwork(
                           radius: BorderRadius.circular(50),
-                          path: controller.displayUser.value?.photo_path ?? "");
+                          path: controller.displayUser.value?.photoPath ?? "");
                     } else {
-                      print("s");
                       return CustomImgNetwork(
                           radius: BorderRadius.circular(50), path: "");
                     }
@@ -317,7 +316,7 @@ class ProfileScreen extends GetView<ProfileController> {
                       ),
                     );
                   } else {
-                    return Center(
+                    return const Center(
                       child: Text("No favorite film yet"),
                     );
                   }

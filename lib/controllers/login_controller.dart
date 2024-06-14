@@ -52,6 +52,5 @@ class LoginController extends GetxController {
     if (userData.value != null) {
       Get.toNamed('/home');
     }
-    print(userData);
   }
 }

@@ -29,7 +29,7 @@ class CustomChip extends StatelessWidget {
           ),
           InkWell(
             onTap: onTap,
-            overlayColor: MaterialStatePropertyAll(Colors.transparent),
+            overlayColor: const MaterialStatePropertyAll(Colors.transparent),
             child: ImageIcon(
               iconAsset,
               size: 10,

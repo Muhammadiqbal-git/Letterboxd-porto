@@ -28,6 +28,7 @@ class HomeScreen extends GetView<HomeController> {
             children: [
               InkWell(
                   onTap: () {
+                    FocusScope.of(context).unfocus();
                     Scaffold.of(context).openDrawer();
                   },
                   child: ImageIcon(
@@ -46,7 +47,7 @@ class HomeScreen extends GetView<HomeController> {
                       child: CustomImgNetwork(
                           radius: BorderRadius.circular(50),
                           path:
-                              _profileController.displayUser.value?.photo_path ?? ""),
+                              _profileController.user?.photoPath ?? ""),
                     ),
                   );
                 }
@@ -68,7 +69,7 @@ class HomeScreen extends GetView<HomeController> {
               ),
               Obx(() {
                 return Text(
-                  (_profileController.displayUser.value?.uName) ?? "name",
+                  (_profileController.user?.uName) ?? "name",
                   style: boldText.copyWith(
                       fontSize: 18, color: context.colors.secondaryCr),
                 );
@@ -199,7 +200,7 @@ class HomeScreen extends GetView<HomeController> {
                   child: CircularProgressIndicator(color: context.colors.secondaryCr,),
                 );
               } else {
-                return Center(
+                return const Center(
                   child: Text(
                     "No recent review",
                     style: semiBoldText,

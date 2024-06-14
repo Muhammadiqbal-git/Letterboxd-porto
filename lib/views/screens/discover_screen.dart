@@ -59,11 +59,11 @@ class DiscoverScreen extends GetView<DiscoverFilmController> {
                     indicatorSize: TabBarIndicatorSize.tab,
                     indicatorColor: Colors.transparent,
                     dividerColor: Colors.transparent,
-                    tabs: [
-                      const Tab(
+                    tabs: const [
+                      Tab(
                         text: "Film",
                       ),
-                      const Tab(
+                      Tab(
                         text: "People",
                       )
                     ],
@@ -150,7 +150,7 @@ class DiscoverScreen extends GetView<DiscoverFilmController> {
                     Get.to(
                       () => Scaffold(
                         backgroundColor: context.colors.primaryCr,
-                        body: ProfileScreen(isOther: true,),
+                        body: const ProfileScreen(isOther: true,),
                       ),
                     );
                   },
@@ -170,7 +170,7 @@ class DiscoverScreen extends GetView<DiscoverFilmController> {
                           child: CustomImgNetwork(
                               radius: BorderRadius.circular(50),
                               path: _peopleController
-                                  .listPeople[index].photo_path),
+                                  .listPeople[index].photoPath),
                         ),
                         const SizedBox(
                           width: 10,
@@ -430,7 +430,7 @@ class DiscoverScreen extends GetView<DiscoverFilmController> {
                                   width: 3,
                                 ),
                                 Text(
-                                  "${(data.voteAverage / 2).toStringAsFixed(1)}",
+                                  (data.voteAverage / 2).toStringAsFixed(1),
                                   style: normalText.copyWith(
                                       fontSize: 20,
                                       color: context.colors.secondaryCr),

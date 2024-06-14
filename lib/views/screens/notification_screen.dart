@@ -29,7 +29,7 @@ class NotificationScreen extends GetView<ProfileController> {
               borderRadius: BorderRadius.circular(7),
               child: Obx(() {
                 if (controller.notif.value == null) {
-                  return Center(
+                  return const Center(
                     child: Text(
                       "No notification yet",
                       style: semiBoldText,
@@ -37,7 +37,7 @@ class NotificationScreen extends GetView<ProfileController> {
                   );
                 } else {
                   return ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: 17, vertical: 22),
+                    padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 22),
                     itemCount: controller.notif.value!.listNotif.length,
                     itemBuilder: (context, index) {
                       var data = controller.notif.value!.listNotif[index];
@@ -76,7 +76,7 @@ class NotificationScreen extends GetView<ProfileController> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "${data.uName}",
+                                      data.uName,
                                       style: normalText.copyWith(fontSize: 12),
                                     ),
                                     const SizedBox(
@@ -85,15 +85,15 @@ class NotificationScreen extends GetView<ProfileController> {
                                     Row(
                                       children: [
                                         Text(
-                                          "${data.event}",
+                                          data.event,
                                           style: normalText.copyWith(
                                               fontSize: 10,
                                               color: context.colors.whiteCr
                                                   .withOpacity(0.8)),
                                         ),
-                                        Spacer(),
+                                        const Spacer(),
                                         Text(
-                                          DateFormat("H:mm d-MM-y").format(data.date),
+                                          DateFormat("HH:mm d-MM-y").format(data.date),
                                           style: normalText.copyWith(
                                               fontSize: 9,
                                               color: context.colors.whiteCr

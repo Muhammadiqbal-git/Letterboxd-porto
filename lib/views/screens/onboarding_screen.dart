@@ -60,7 +60,6 @@ class OnboardingScreen extends StatelessWidget {
                 ),
                 CustomButton(
                   onTap: () {
-                    print("a");
                     Get.toNamed('/login');
                   },
                   width: 100 + getWidth(context, 10),

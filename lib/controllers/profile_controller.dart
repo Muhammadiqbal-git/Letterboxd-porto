@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -28,7 +27,14 @@ class ProfileController extends GetxController {
   Rx<RecentMovieState> recentState = Rx(RecentMovieState.loading);
   Rx<RecentReviewState> reviewState = Rx(RecentReviewState.loading);
   late Query<Map<String, dynamic>> collection;
-  late StreamSubscription notif_listener;
+  late StreamSubscription notifListener;
+  ProfileModel? get user{
+    if (cacheUser.value != null) {
+      return cacheUser.value;
+    }else{
+      return displayUser.value;
+    }
+  }
 
   @override
   void onInit() {
@@ -37,7 +43,7 @@ class ProfileController extends GetxController {
         .doc(_uId)
         .collection("notification")
         .orderBy("date", descending: true);
-    notif_listener = collection.snapshots().listen((event) {
+    notifListener = collection.snapshots().listen((event) {
       notif.value = NotificationModel.fromFirestore(event);
     });
     readProfile();
@@ -46,7 +52,7 @@ class ProfileController extends GetxController {
 
   @override
   void onClose() {
-    notif_listener.cancel();
+    notifListener.cancel();
   }
 
   readNotif(String docId) async {
@@ -58,17 +64,17 @@ class ProfileController extends GetxController {
     await docRef.update({"read": true});
   }
 
-  addNotif() async {
+  addNotif(String otherId) async {
     if (displayUser.value != null && cacheUser.value != null) {
       DocumentReference notifRef =
-          _db.collection("/profile").doc(displayUser.value!.uId).collection("notification").doc();
+          _db.collection("/profile").doc(otherId).collection("notification").doc();
       await notifRef.set({
         "date" : DateTime.now(),
         "event" : "following you",
-        "photo_path": cacheUser.value!.photo_path,
+        "photo_path": cacheUser.value!.photoPath,
         "read": false,
         "u_name": cacheUser.value!.uName
-      }).then((value) => print("follow notif added"));
+      });
     }
   }
 
@@ -76,7 +82,6 @@ class ProfileController extends GetxController {
   readProfile({bool update = false}) {
     // state.value = ProfileState.loading;
     if (cacheUser.value != null) {
-      print("this");
       state.value = ProfileState.loading;
       displayUser.value = cacheUser.value;
       cacheUser.value = null;
@@ -93,7 +98,6 @@ class ProfileController extends GetxController {
     }
     if (cacheUser.value != null) {
       followed.value = cacheUser.value!.following.contains(otherId);
-      print("already following ? ${followed.value}");
     }
     fetchData(otherId);
   }
@@ -102,7 +106,7 @@ class ProfileController extends GetxController {
     if (cacheUser.value != null) {
       followed.value = true;
       cacheUser.value!.following.add(otherId);
-      addNotif();
+      addNotif(otherId);
       followFun(otherId, false);
     }
   }
@@ -136,7 +140,7 @@ class ProfileController extends GetxController {
         "follower": FieldValue.arrayRemove([_uId])
       });
     }
-    await batch.commit().then((value) => print("followed success"));
+    await batch.commit();
   }
 
   fetchData(String id) async {
@@ -177,7 +181,7 @@ class ProfileController extends GetxController {
     WriteBatch batch = _db.batch();
     bool check = false;
     for (var element in data.recentRev!) {
-      if (data.photo_path != element.photoPath) {
+      if (data.photoPath != element.photoPath) {
         check = true;
       }
     }
@@ -185,7 +189,7 @@ class ProfileController extends GetxController {
       for (var filmRevId in data.reviewRef) {
         batch.update(
             filmReviewRef.doc("$filmRevId").collection("review").doc(_uId),
-            {"u_name": data.uName, "photo_path": data.photo_path});
+            {"u_name": data.uName, "photo_path": data.photoPath});
       }
     }
     for (var filmRev in data.recentRev!) {
@@ -195,7 +199,7 @@ class ProfileController extends GetxController {
       }
       batch.update(profileRef, {"review_ref": FieldValue.arrayUnion(listOfId)});
     }
-    await batch.commit().then((value) => print("success"));
+    await batch.commit();
   }
 
   Future<QuerySnapshot<Map<String, dynamic>>> getRecentReview(

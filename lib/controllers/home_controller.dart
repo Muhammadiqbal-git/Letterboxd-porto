@@ -21,11 +21,10 @@ class HomeController extends GetxController {
   }
 
   getData() async {
-    print("getData");
     DateTime now = DateTime.now();
     loading.value = true;
     data.value = await _tmdbServices.getMovieOfTheMonth();
-    await Future.delayed(Duration(milliseconds: 1000));
+    await Future.delayed(const Duration(milliseconds: 1000));
     ratedData.value = await _tmdbServices.getMovieOfTheMonth(
         date: DateTime(now.year, now.month - 3), sortBy: "vote_average.desc");
     profileFunction();
@@ -35,12 +34,9 @@ class HomeController extends GetxController {
   }
 
   profileFunction() async {
-    if (_profileController.cacheUser.value != null) {
+    if (_profileController.user != null) {
       reviewData.value =
-          await getHomeReview(_profileController.cacheUser.value!.following);
-    } else {
-      reviewData.value =
-          await getHomeReview(_profileController.displayUser.value!.following);
+          await getHomeReview(_profileController.user!.following);
     }
   }
 

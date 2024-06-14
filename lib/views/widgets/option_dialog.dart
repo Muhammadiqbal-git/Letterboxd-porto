@@ -1,12 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letterboxd_porto_3/controllers/discover_film_controller.dart';
 import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/style.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_select_container.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 class OptionDialog extends StatelessWidget {
   const OptionDialog({super.key});
@@ -90,10 +87,7 @@ class OptionDialog extends StatelessWidget {
                 width: 7,
               ),
               Obx(() {
-                print("asss");
-                print(_discoverController.selectedGenre.length);
                 if (_discoverController.selectedGenre.isNotEmpty) {
-                  print("text");
                   return Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -102,7 +96,7 @@ class OptionDialog extends StatelessWidget {
                         style: normalText.copyWith(
                             fontSize: 8, color: context.colors.secondaryCr),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 3,
                       ),
                       InkWell(
@@ -115,9 +109,8 @@ class OptionDialog extends StatelessWidget {
                     ],
                   );
                 } else {
-                  print("else");
 
-                  return SizedBox.shrink();
+                  return const SizedBox.shrink();
                 }
               })
             ],
@@ -126,7 +119,6 @@ class OptionDialog extends StatelessWidget {
             height: 8,
           ),
           Obx(() {
-            print("called ${_discoverController.selectedGenre}");
             return Wrap(
               direction: Axis.horizontal,
               spacing: 13,
@@ -146,7 +138,7 @@ class OptionDialog extends StatelessWidget {
                           )),
                 if (_discoverController.optionState.value ==
                     OptionState.loading)
-                  Center(
+                  const Center(
                     child: CircularProgressIndicator(),
                   )
               ],

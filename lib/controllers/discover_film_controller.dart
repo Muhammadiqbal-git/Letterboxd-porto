@@ -35,11 +35,9 @@ class DiscoverFilmController extends GetxController
 
   @override
   void onInit() {
-    // TODO: implement onInit
     tabController = TabController(length: 2, vsync: this).obs;
     tabController.value.addListener(() {
       if (tabController.value.indexIsChanging) {
-        print("index change to ${tabController.value.index}");
       }
     });
     getListGenre();
@@ -48,7 +46,6 @@ class DiscoverFilmController extends GetxController
 
   @override
   void onClose() {
-    print("sss");
     searchText.value.dispose();
     super.onClose();
   }
@@ -181,7 +178,6 @@ class DiscoverFilmController extends GetxController
     }
     state.value = DiscoverState.loading;
     _delayTimer = Timer(Duration(milliseconds: _delayTime), () {
-      print("search!!");
       if (searchText.value.text.isNotEmpty) {
         searchByTitle();
       } else {

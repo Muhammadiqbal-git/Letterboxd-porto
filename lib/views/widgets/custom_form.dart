@@ -82,7 +82,7 @@ class _CustomFormState extends State<CustomForm> {
               : const SizedBox(),
           Expanded(
             child: TextFormField(
-              scrollPhysics: ClampingScrollPhysics(),
+              scrollPhysics: const ClampingScrollPhysics(),
               cursorColor: context.colors.secondaryCr,
               textAlignVertical:
                   widget.textAlignVertical ?? TextAlignVertical.center,

@@ -12,7 +12,6 @@ import 'package:letterboxd_porto_3/views/widgets/custom_img_widget.dart';
 import '../../controllers/profile_controller.dart';
 import 'home_screen.dart';
 import 'profile_screen.dart';
-import 'under_work.dart';
 
 class MainScreen extends GetView<MainScreenController> {
   const MainScreen({super.key});
@@ -26,7 +25,6 @@ class MainScreen extends GetView<MainScreenController> {
 
   @override
   Widget build(BuildContext context) {
-    print("main built");
     return SafeArea(
       child: Obx(() {
         return Scaffold(
@@ -45,7 +43,7 @@ class MainScreen extends GetView<MainScreenController> {
             child: BottomNavigationBar(
               currentIndex: controller.index.value,
               onTap: (value) {
-                FocusScope.of(context).unfocus();
+                WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
                 controller.changeIndex(value);
               },
               backgroundColor: context.colors.primaryCr,
@@ -93,7 +91,7 @@ class MainScreen extends GetView<MainScreenController> {
                     height: 40,
                     child: CustomImgNetwork(
                         radius: BorderRadius.circular(50),
-                        path: _profileController.displayUser.value?.photo_path ?? "")),
+                        path: _profileController.user?.photoPath ?? "")),
                 const SizedBox(
                   width: 10,
                 ),
@@ -101,7 +99,7 @@ class MainScreen extends GetView<MainScreenController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _profileController.displayUser.value?.uName ?? "name",
+                      _profileController.user?.uName ?? "name",
                       style: boldText.copyWith(
                           fontSize: 14, color: context.colors.secondaryCr),
                     ),
@@ -132,7 +130,7 @@ class MainScreen extends GetView<MainScreenController> {
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        "${(_profileController.displayUser.value?.follower) ?? "0"} Follower",
+                        "${(_profileController.user?.follower.length) ?? "0"} Follower",
                         style: normalText.copyWith(
                             fontSize: 10, color: context.colors.whiteCr),
                         overflow: TextOverflow.ellipsis,
@@ -153,7 +151,7 @@ class MainScreen extends GetView<MainScreenController> {
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        "${(_profileController.displayUser.value?.following) ?? "0"} Following",
+                        "${(_profileController.user?.following.length) ?? "0"} Following",
                         style: normalText.copyWith(
                             fontSize: 10, color: context.colors.whiteCr),
                         overflow: TextOverflow.ellipsis,

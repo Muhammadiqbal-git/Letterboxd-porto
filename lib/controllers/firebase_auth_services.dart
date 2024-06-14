@@ -29,8 +29,6 @@ class FirebaseAuthService {
       }
       return user;
     } catch (e) {
-      print("error terjadi saat signin");
-      print(e);
       return null;
     }
   }
@@ -41,8 +39,6 @@ class FirebaseAuthService {
           .signInWithEmailAndPassword(email: email, password: pass);
       return userCredential.user;
     } catch (e) {
-      print("error terjadi saat login");
-      print(e);
       return null;
     }
   }

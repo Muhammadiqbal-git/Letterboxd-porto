@@ -41,7 +41,6 @@ class _CustomSelectContainerState extends State<CustomSelectContainer> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     bgsColor = widget.bgColor ?? Colors.transparent;
     selectedBgColor = widget.selectedColor ?? context.colors.accentCr;
     textStyle = widget.style ??

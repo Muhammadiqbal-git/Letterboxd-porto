@@ -56,22 +56,16 @@ class TMDBServices {
     }
     String url =
         "discover/movie?page=$page&primary_release_date.gte=$dateGte-01&primary_release_date.lte=$dateLte-1&sort_by=$sort$genre&vote_count.gte=$voteAvg";
-    print(url);
     try {
       Response data = await _dio.get(
         "$_mainURL$url",
         options: Options(headers: {'Authorization': 'Bearer ${Env.apiKey}'}),
       );
-      print(data.statusCode);
       if (data.statusCode == 200) {
-        print("it return");
-        print(data.data);
         return MovieData.fromJson(data.data);
       }
       return null;
     } catch (e) {
-      print("Error");
-      print(e);
       return null;
     }
   }
@@ -99,8 +93,6 @@ class TMDBServices {
       }
       return null;
     } catch (e) {
-      print("error");
-      print(e);
       return null;
     }
   }
@@ -114,13 +106,10 @@ class TMDBServices {
         options: Options(headers: {'Authorization': 'Bearer ${Env.apiKey}'}),
       );
       if (data.statusCode == 200) {
-        print(data.data);
         return MovieDetail.fromJson(data.data);
       }
       return null;
     } catch (e) {
-      print("errors");
-      print(e);
       return null;
     }
   }
@@ -138,8 +127,6 @@ class TMDBServices {
       }
       return null;
     } catch (e) {
-      print("error");
-      print(e);
       return null;
     }
   }
@@ -156,8 +143,6 @@ class TMDBServices {
       }
       return null;
     } catch (e) {
-      print("error genre");
-      print(e);
       return null;
     }
   }

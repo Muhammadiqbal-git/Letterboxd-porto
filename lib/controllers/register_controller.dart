@@ -36,7 +36,6 @@ class RegisterController extends GetxController {
   }
 
   void register() async {
-    print(emailText.value.text);
     loading.value = true;
     // await Future.delayed(Duration(seconds: 2));
     userData.value = await _service.signUpEmailPass(

@@ -58,7 +58,7 @@ class _CustomImgNetworkState extends State<CustomImgNetwork> {
           }
         },
         errorBuilder: (context, error, stackTrace) {
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         },
       ),
     );
