@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:letterboxd_porto_3/helpers/app_color.dart';
 import 'package:letterboxd_porto_3/controllers/getx_binding.dart';
 import 'package:letterboxd_porto_3/helpers/firebase_options.dart';
+import 'views/screens/favorite_screen.dart';
 import 'views/screens/movie_detail_screen.dart';
 import 'views/screens/login_screen.dart';
 import 'views/screens/main_screen.dart';
@@ -66,6 +67,11 @@ class MyApp extends StatelessWidget {
           name: '/add_review',
           binding: ReviewBinding(),
           page: () => const ReviewScreen(),
+        ),
+        GetPage(
+          name: '/favorite',
+          binding: FavoriteBinding(),
+          page: () => const FavoriteScreen(),
         )
       ],
     );

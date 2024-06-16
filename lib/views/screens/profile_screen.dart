@@ -4,6 +4,7 @@ import 'package:letterboxd_porto_3/controllers/profile_controller.dart';
 import 'package:letterboxd_porto_3/controllers/tmdb_services.dart';
 import 'package:letterboxd_porto_3/helpers/dimension.dart';
 import 'package:letterboxd_porto_3/helpers/style.dart';
+import 'package:letterboxd_porto_3/views/widgets/custom_img_bg_widget.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_img_widget.dart';
 import 'package:letterboxd_porto_3/views/widgets/custom_review_card.dart';
 
@@ -17,16 +18,31 @@ class ProfileScreen extends GetView<ProfileController> {
       fit: StackFit.expand,
       alignment: Alignment.center,
       children: [
-        Positioned(
-          top: 0,
-          width: getWidth(context, 100),
-          height: getHeight(context, 15) + 40,
-          child: Image.asset(
-            "assets/imgs/onboarding.png",
-            fit: BoxFit.cover,
-            alignment: Alignment.topCenter,
-          ),
-        ),
+        Obx(() {
+          if (controller.state.value == ProfileState.done) {
+            print("does it");
+            return Positioned(
+                top: 0,
+                width: getWidth(context, 100),
+                height: getHeight(context, 15) + 40,
+                child: InkWell(
+                  onTap: () {
+                    if (!isOther) {
+                      controller.imgBackgroundPicker();
+                    }
+                  },
+                  child: CustomImgBgNetwork(
+                      path: controller.displayUser.value!.bgPath),
+                ));
+          }
+          return Positioned(
+              top: 0,
+              width: getWidth(context, 100),
+              height: getHeight(context, 15) + 40,
+              child: Container(
+                color: context.colors.whiteCr.withOpacity(0.8),
+              ));
+        }),
         Positioned(
           top: getHeight(context, 15),
           left: 0,
@@ -45,7 +61,9 @@ class ProfileScreen extends GetView<ProfileController> {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(50),
                   onTap: () {
-                    controller.imgPicker();
+                    if (!isOther) {
+                      controller.imgPicker();
+                    }
                   },
                   child: Obx(() {
                     if (controller.state.value == ProfileState.done) {
@@ -262,7 +280,7 @@ class ProfileScreen extends GetView<ProfileController> {
                     children: [
                       Obx(() {
                         return Text(
-                          "${controller.displayUser.value?.recentMovie?.length ?? "0"}",
+                          "${controller.displayUser.value?.recentRev?.length ?? "0"}",
                           style: boldText.copyWith(
                               fontSize: 20, color: context.colors.accentCr),
                         );
@@ -299,25 +317,38 @@ class ProfileScreen extends GetView<ProfileController> {
                         color: context.colors.secondaryCr,
                       ),
                     );
-                  } else if (controller.favoriteLength.value >= 1) {
-                    return ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: controller.favoriteLength.value,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) => Container(
-                        width: 60,
-                        margin: EdgeInsets.only(right: index == 3 ? 0 : 10),
-                        child: CustomImgNetwork(
-                            path: TMDBServices().imgUrl(
-                                width: 154,
-                                pathUrl: controller.displayUser.value?.favorite.values
-                                        .elementAtOrNull(index) ??
-                                    "")),
-                      ),
-                    );
+                  } else if (controller.state.value == ProfileState.done) {
+                    if (controller.favoriteLength.value == 0) {
+                      return Center(
+                        child: Text(
+                          "No favorite film yet",
+                          style: semiBoldText.copyWith(fontSize: 12),
+                        ),
+                      );
+                    } else {
+                      return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: controller.favoriteLength.value,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) => Container(
+                          width: 60,
+                          margin: EdgeInsets.only(right: index == 4 ? 0 : 10),
+                          child: CustomImgNetwork(
+                              path: TMDBServices().imgUrl(
+                                  width: 154,
+                                  pathUrl: controller
+                                          .displayUser.value?.topFav.values
+                                          .elementAtOrNull(index) ??
+                                      "")),
+                        ),
+                      );
+                    }
                   } else {
-                    return const Center(
-                      child: Text("No favorite film yet"),
+                    return Center(
+                      child: Text(
+                        "No favorite film yet",
+                        style: semiBoldText.copyWith(fontSize: 12),
+                      ),
                     );
                   }
                 }),
@@ -334,6 +365,29 @@ class ProfileScreen extends GetView<ProfileController> {
             ],
           ),
         ),
+        if (isOther)
+          Positioned(
+            top: 8,
+            left: 20,
+            child: SafeArea(
+              child: Material(
+                borderRadius: BorderRadius.circular(50),
+                color: context.colors.primaryCr,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(50),
+                  onTap: () => Get.back(),
+                  child: Ink(
+                    height: 30,
+                    width: 30,
+                    child: Icon(
+                      Icons.arrow_back,
+                      color: context.colors.whiteCr,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -371,9 +425,9 @@ class ProfileScreen extends GetView<ProfileController> {
                 ),
               );
             } else if (controller.recentState.value == RecentMovieState.error) {
-              return const Text(
+              return Text(
                 "No recent movie",
-                style: semiBoldText,
+                style: semiBoldText.copyWith(fontSize: 12),
               );
             } else {
               return SizedBox(
@@ -402,7 +456,8 @@ class ProfileScreen extends GetView<ProfileController> {
                       ),
                       Row(
                         children: List.generate(
-                            controller.displayUser.value!.recentMovie![index].rate
+                            controller
+                                .displayUser.value!.recentMovie![index].rate
                                 .toInt(),
                             (index) => const Icon(Icons.star,
                                 size: 10, color: Colors.red)),
@@ -461,9 +516,9 @@ class ProfileScreen extends GetView<ProfileController> {
               );
             } else if (controller.displayUser.value!.recentRev == null ||
                 controller.displayUser.value!.recentRev!.isEmpty) {
-              return const Text(
+              return Text(
                 "No review yet",
-                style: semiBoldText,
+                style: semiBoldText.copyWith(fontSize: 12),
               );
             } else {
               return ListView.builder(

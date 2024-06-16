@@ -22,7 +22,7 @@ class MovieDetailScreen extends GetView<MovieController> {
         children: [
           Positioned(
             top: 0,
-            height: getHeight(context, 30),
+            height: getHeight(context, 28),
             width: getWidth(context, 100),
             child: ClipPath(
               clipper: DiagonalClipper(),
@@ -243,7 +243,7 @@ class MovieDetailScreen extends GetView<MovieController> {
           ),
           // BACK BUTTON
           Positioned(
-            top: 5,
+            top: 8,
             left: 20,
             child: SafeArea(
               child: Material(

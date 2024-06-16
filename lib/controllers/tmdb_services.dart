@@ -106,10 +106,12 @@ class TMDBServices {
         options: Options(headers: {'Authorization': 'Bearer ${Env.apiKey}'}),
       );
       if (data.statusCode == 200) {
+        print("why");
         return MovieDetail.fromJson(data.data);
       }
       return null;
     } catch (e) {
+      print(e);
       return null;
     }
   }

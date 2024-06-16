@@ -23,10 +23,18 @@ class MovieController extends GetxController {
   getDetail(int id) async {
     state.value = MovieState.loading;
     detailData.value = await _services.getMovieDetail(id: id);
+    print("sad");
+    print(detailData.value?.title);
     reviewData.value = await ReviewController().getRecentReview(filmId: id);
+    print("aaaa");
+
     // print(reviewData.value!.reviewData[0].photoPath);
     _cast = await _services.getMovieCast(id: id);
+    print(_cast?.cast);
+    print("aaaass");
+
     if (detailData.value != null && _cast != null) {
+      print("awww");
       _cast!.cast.sort(
         (a, b) {
           if (a.popularity < b.popularity) {
@@ -38,8 +46,10 @@ class MovieController extends GetxController {
       );
       castData.assignAll(_cast!.cast);
       director.value = _cast!.crew
-          .firstWhereOrNull((element) => element.job.toLowerCase() == "director")
-          ?.name ?? "Someone (no data)";
+              .firstWhereOrNull(
+                  (element) => element.job.toLowerCase() == "director")
+              ?.name ??
+          "Someone (no data)";
       state.value = MovieState.done;
     } else {
       state.value = MovieState.error;

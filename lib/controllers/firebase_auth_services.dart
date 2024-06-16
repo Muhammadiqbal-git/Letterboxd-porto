@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:letterboxd_porto_3/exceptions/error.dart';
 
 class FirebaseAuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -23,11 +24,16 @@ class FirebaseAuthService {
           "follower": [],
           "following": [],
           "review_ref": [],
-          "favorite": {},
+          "top_fav": {},
           "review_count": 0,
         });
       }
       return user;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == "network-request-failed") {
+        throw NetworkError(e.message ?? "");
+      }
+      return null;
     } catch (e) {
       return null;
     }
@@ -38,8 +44,18 @@ class FirebaseAuthService {
       UserCredential userCredential = await _firebaseAuth
           .signInWithEmailAndPassword(email: email, password: pass);
       return userCredential.user;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == "network-request-failed") {
+        print("error?");
+        throw NetworkError(e.message ?? "");
+      }
+      return null;
     } catch (e) {
       return null;
     }
+  }
+
+  logOut() async{
+    await _firebaseAuth.signOut().then((value) => print("logout sukes"));
   }
 }

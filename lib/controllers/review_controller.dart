@@ -56,6 +56,8 @@ class ReviewController extends GetxController {
     }
     String userId = FirebaseAuthService().userId!;
     int filmId = movieController.detailData.value!.id;
+    WriteBatch batch = _db.batch();
+    DocumentReference profileRef = _db.collection("/profile").doc(userId);
     DocumentReference reviewRef = _db
         .collection("/film_review")
         .doc("$filmId")
@@ -66,8 +68,9 @@ class ReviewController extends GetxController {
         .doc(userId)
         .collection("recent")
         .doc("$filmId");
-    DocumentReference profileRef =
-        _db.collection("/profile").doc(FirebaseAuthService().userId);
+    CollectionReference profileFavRef =
+        _db.collection("/profile").doc(userId).collection("favorite");
+    AggregateQuerySnapshot favoriteLength = await profileFavRef.count().get();
     Map<String, dynamic> profileWatchedObj = {
       "date": selectedDate.value,
       "rate": rate.value,
@@ -88,21 +91,34 @@ class ReviewController extends GetxController {
         "year_release": movieController.detailData.value?.releaseDate,
       }
     };
-    Map<String, dynamic> profileObj = {
-      "review_ref": [filmId],
+    Map<String, dynamic> favObj = {
+      "film_id": filmId,
+      "title": movieController.detailData.value?.title,
+      "poster_path": movieController.detailData.value?.posterPath ?? "",
+      "director": movieController.director.value,
+      "year_release": movieController.detailData.value?.releaseDate,
+      "genre": List.from(movieController.detailData.value?.genres
+              .map((e) => e.name)
+              .toList() ??
+          []),
+      "order": (favoriteLength.count ?? 0) + 1
     };
-    WriteBatch batch = _db.batch();
-    batch.set(profileWatchedRef, profileWatchedObj, SetOptions(merge: true));
+    Map<String, dynamic> profileObj = {};
     if (fav.value) {
-      profileObj["favorite"] = {
-        "$filmId": movieController.detailData.value!.posterPath
-      };
+      if ((favoriteLength.count ?? 0) <= 4) {
+        profileObj["top_fav"] = {
+          "$filmId": movieController.detailData.value!.posterPath
+        };
+      }
+      batch.set(profileFavRef.doc("$filmId"), favObj, SetOptions(merge: true));
     }
     if (reviewText.value.text.isNotEmpty) {
       reviewNotif(batch);
       batch.set(reviewRef, reviewObj, SetOptions(merge: true));
-      batch.set(profileRef, profileObj, SetOptions(merge: true));
+      profileObj["review_ref"] = FieldValue.arrayUnion([filmId]);
     }
+    batch.set(profileWatchedRef, profileWatchedObj, SetOptions(merge: true));
+    batch.set(profileRef, profileObj, SetOptions(merge: true));
     try {
       await batch.commit().then((value) => Get.dialog(
             const CustomAlertDialog(
@@ -114,6 +130,11 @@ class ReviewController extends GetxController {
             Get.back();
           }));
     } catch (e) {
+      print(e);
+      Get.dialog(const CustomAlertDialog(
+          textAlign: TextAlign.center,
+          text:
+              "Terjadi error saat menambah rating atau review. coba lagi nanti"));
     }
   }
 
@@ -129,7 +150,8 @@ class ReviewController extends GetxController {
         "event": "Post a review, check it out!",
         "photo_path": _profileModel!.photoPath,
         "read": false,
-        "u_name": _profileModel!.uName
+        "u_name": _profileModel!.uName,
+        "u_id": _profileModel!.uId
       });
     }
   }

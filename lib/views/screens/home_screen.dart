@@ -28,7 +28,11 @@ class HomeScreen extends GetView<HomeController> {
             children: [
               InkWell(
                   onTap: () {
-                    FocusScope.of(context).unfocus();
+                    if (FocusScope.of(context).hasFocus &&
+                        !FocusScope.of(context).hasPrimaryFocus) {
+                      FocusScope.of(context).unfocus();
+                      FocusManager.instance.primaryFocus?.unfocus();
+                    }
                     Scaffold.of(context).openDrawer();
                   },
                   child: ImageIcon(
@@ -46,8 +50,7 @@ class HomeScreen extends GetView<HomeController> {
                       height: 40,
                       child: CustomImgNetwork(
                           radius: BorderRadius.circular(50),
-                          path:
-                              _profileController.user?.photoPath ?? ""),
+                          path: _profileController.user?.photoPath ?? ""),
                     ),
                   );
                 }
@@ -197,13 +200,15 @@ class HomeScreen extends GetView<HomeController> {
                 );
               } else if (controller.loading.value) {
                 return Center(
-                  child: CircularProgressIndicator(color: context.colors.secondaryCr,),
+                  child: CircularProgressIndicator(
+                    color: context.colors.secondaryCr,
+                  ),
                 );
               } else {
-                return const Center(
+                return Center(
                   child: Text(
                     "No recent review",
-                    style: semiBoldText,
+                    style: semiBoldText.copyWith(fontSize: 12),
                   ),
                 );
               }

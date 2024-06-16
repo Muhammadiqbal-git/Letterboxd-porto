@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:letterboxd_porto_3/controllers/firebase_auth_services.dart';
@@ -28,10 +29,10 @@ class ProfileController extends GetxController {
   Rx<RecentReviewState> reviewState = Rx(RecentReviewState.loading);
   late Query<Map<String, dynamic>> collection;
   late StreamSubscription notifListener;
-  ProfileModel? get user{
+  ProfileModel? get user {
     if (cacheUser.value != null) {
       return cacheUser.value;
-    }else{
+    } else {
       return displayUser.value;
     }
   }
@@ -66,14 +67,18 @@ class ProfileController extends GetxController {
 
   addNotif(String otherId) async {
     if (displayUser.value != null && cacheUser.value != null) {
-      DocumentReference notifRef =
-          _db.collection("/profile").doc(otherId).collection("notification").doc();
+      DocumentReference notifRef = _db
+          .collection("/profile")
+          .doc(otherId)
+          .collection("notification")
+          .doc();
       await notifRef.set({
-        "date" : DateTime.now(),
-        "event" : "following you",
+        "date": DateTime.now(),
+        "event": "following you",
         "photo_path": cacheUser.value!.photoPath,
         "read": false,
-        "u_name": cacheUser.value!.uName
+        "u_name": cacheUser.value!.uName,
+        "u_id": cacheUser.value!.uId
       });
     }
   }
@@ -84,6 +89,9 @@ class ProfileController extends GetxController {
     if (cacheUser.value != null) {
       state.value = ProfileState.loading;
       displayUser.value = cacheUser.value;
+      favoriteLength.value = displayUser.value!.topFav.length >= 4
+          ? 4
+          : displayUser.value!.topFav.length;
       cacheUser.value = null;
       state.value = ProfileState.done;
     } else {
@@ -92,6 +100,9 @@ class ProfileController extends GetxController {
   }
 
   readOtherProfile(String otherId) {
+    if (otherId.isEmpty) {
+      return;
+    }
     state.value = ProfileState.loading;
     if (cacheUser.value == null && displayUser.value != null) {
       cacheUser.value = displayUser.value;
@@ -144,6 +155,8 @@ class ProfileController extends GetxController {
   }
 
   fetchData(String id) async {
+    state.value = ProfileState.loading;
+    favoriteLength.value = 0;
     recentState.value = RecentMovieState.loading;
     CollectionReference filmReviewRef = _db.collection("/film_review");
     DocumentReference<Map<String, dynamic>> profileRef =
@@ -169,9 +182,8 @@ class ProfileController extends GetxController {
       } else {
         recentState.value = RecentMovieState.done;
       }
-      if (data.favorite.isNotEmpty) {
-        favoriteLength.value =
-            data.favorite.length >= 3 ? 3 : data.favorite.length;
+      if (data.topFav.isNotEmpty) {
+        favoriteLength.value = data.topFav.length >= 4 ? 4 : data.topFav.length;
       }
     });
   }
@@ -215,7 +227,6 @@ class ProfileController extends GetxController {
 
   imgPicker() async {
     XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-
     if (image != null) {
       SettableMetadata imgMetadata = SettableMetadata(
           contentType: 'image/jpeg',
@@ -227,6 +238,29 @@ class ProfileController extends GetxController {
       });
       readProfile(update: true);
     }
+  }
+
+  imgBackgroundPicker() async {
+    XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      SettableMetadata imgMetadata = SettableMetadata(
+          contentType: 'image/jpeg',
+          customMetadata: {'picked-file-path': image.path});
+      Reference storageRef =
+          _storage.ref("background_images/").child("$_uId.jpg");
+      await storageRef.putFile(File(image.path), imgMetadata);
+      await storageRef.getDownloadURL().then((value) {
+        _db.collection("/profile").doc(_uId).update({"bg_path": value});
+      });
+      readProfile(update: true);
+    }
+  }
+
+  logOut() {
+    _service.logOut();
+    Get.back();
+    Get.back();
+    print("sign out");
   }
 }
 

@@ -43,7 +43,11 @@ class MainScreen extends GetView<MainScreenController> {
             child: BottomNavigationBar(
               currentIndex: controller.index.value,
               onTap: (value) {
-                WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+                if (FocusScope.of(context).hasFocus &&
+                    !FocusScope.of(context).hasPrimaryFocus) {
+                  FocusScope.of(context).unfocus();
+                  FocusManager.instance.primaryFocus?.unfocus();
+                }
                 controller.changeIndex(value);
               },
               backgroundColor: context.colors.primaryCr,
@@ -104,7 +108,7 @@ class MainScreen extends GetView<MainScreenController> {
                           fontSize: 14, color: context.colors.secondaryCr),
                     ),
                     Text(
-                      _profileController.userEmail.value?? "email@gmail.com",
+                      _profileController.userEmail.value ?? "email@gmail.com",
                       style:
                           normalText.copyWith(fontSize: 12, color: Colors.grey),
                     ),
@@ -116,52 +120,51 @@ class MainScreen extends GetView<MainScreenController> {
           const SizedBox(
             height: 20,
           ),
-          Obx( () {
-              return Row(
-                children: [
-                  Expanded(
-                    flex: 10,
-                    child: Container(
-                      height: 24,
-                      decoration: BoxDecoration(
-                        border:
-                            Border.all(color: context.colors.accentCr, width: 2),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        "${(_profileController.user?.follower.length) ?? "0"} Follower",
-                        style: normalText.copyWith(
-                            fontSize: 10, color: context.colors.whiteCr),
-                        overflow: TextOverflow.ellipsis,
-                      ),
+          Obx(() {
+            return Row(
+              children: [
+                Expanded(
+                  flex: 10,
+                  child: Container(
+                    height: 24,
+                    decoration: BoxDecoration(
+                      border:
+                          Border.all(color: context.colors.accentCr, width: 2),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      "${(_profileController.user?.follower.length) ?? "0"} Follower",
+                      style: normalText.copyWith(
+                          fontSize: 10, color: context.colors.whiteCr),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const Spacer(
-                    flex: 1,
-                  ),
-                  Expanded(
-                    flex: 10,
-                    child: Container(
-                      height: 24,
-                      decoration: BoxDecoration(
-                        border:
-                            Border.all(color: context.colors.accentCr, width: 2),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        "${(_profileController.user?.following.length) ?? "0"} Following",
-                        style: normalText.copyWith(
-                            fontSize: 10, color: context.colors.whiteCr),
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                ),
+                const Spacer(
+                  flex: 1,
+                ),
+                Expanded(
+                  flex: 10,
+                  child: Container(
+                    height: 24,
+                    decoration: BoxDecoration(
+                      border:
+                          Border.all(color: context.colors.accentCr, width: 2),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      "${(_profileController.user?.following.length) ?? "0"} Following",
+                      style: normalText.copyWith(
+                          fontSize: 10, color: context.colors.whiteCr),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                ],
-              );
-            }
-          ),
+                ),
+              ],
+            );
+          }),
           const SizedBox(
             height: 20,
           ),
@@ -202,16 +205,23 @@ class MainScreen extends GetView<MainScreenController> {
             ),
             text: "list",
           ),
-          const CustomDrawerOption(
+          CustomDrawerOption(
+            onTap: () {
+              Get.toNamed('/favorite');
+            },
             icon: AssetImage(
               "assets/icons/like.png",
             ),
-            text: "Likes",
+            text: "Favorite",
+            textColor: context.colors.whiteCr,
           ),
           const SizedBox(
             height: 20,
           ),
           CustomDrawerOption(
+            onTap: () {
+              Get.find<ProfileController>().logOut();
+            },
             icon: const AssetImage(
               "assets/icons/logout.png",
             ),

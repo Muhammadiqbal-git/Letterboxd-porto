@@ -91,7 +91,9 @@ class DiscoverScreen extends GetView<DiscoverFilmController> {
                       _peopleController.debounceSearch();
                     }
                   },
-                  endLogo: Image.asset("assets/icons/notif.png"),
+                  endLogo: Image.asset(
+                    "assets/icons/discover.png",
+                  ),
                 ),
                 const SizedBox(
                   height: 12,
@@ -144,13 +146,21 @@ class DiscoverScreen extends GetView<DiscoverFilmController> {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(7),
                   onTap: () {
-                    FocusScope.of(context).unfocus();
+                    if (FocusScope.of(context).hasFocus &&
+                        !FocusScope.of(context).hasPrimaryFocus) {
+                      // FocusScope.of(context).unfocus();
+                      FocusManager.instance.primaryFocus?.unfocus();
+                    }
                     Get.find<ProfileController>().readOtherProfile(
                         _peopleController.listPeople[index].uId);
                     Get.to(
                       () => Scaffold(
                         backgroundColor: context.colors.primaryCr,
-                        body: const ProfileScreen(isOther: true,),
+                        body: const SafeArea(
+                          child: ProfileScreen(
+                            isOther: true,
+                          ),
+                        ),
                       ),
                     );
                   },
@@ -244,10 +254,9 @@ class DiscoverScreen extends GetView<DiscoverFilmController> {
                       style: normalText.copyWith(
                           fontSize: 12, color: context.colors.secondaryCr),
                     ),
-                    ImageIcon(
-                      const AssetImage("assets/icons/notif.png"),
-                      size: 20,
-                      color: context.colors.secondaryCr,
+                    Image.asset(
+                      "assets/icons/filter.png",
+                      height: 18,
                     )
                   ],
                 ),
@@ -287,7 +296,7 @@ class DiscoverScreen extends GetView<DiscoverFilmController> {
                                 margin:
                                     const EdgeInsets.symmetric(horizontal: 2),
                                 iconAsset:
-                                    const AssetImage("assets/icons/notif.png"),
+                                    const AssetImage("assets/icons/x_mark.png"),
                               ),
                             )
                             .toList()
@@ -320,10 +329,14 @@ class DiscoverScreen extends GetView<DiscoverFilmController> {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(7),
                         onTap: () {
-                          FocusScope.of(context).unfocus();
-                          Get.toNamed('/movie_detail', arguments: {
-                            "id": data.id
-                          });
+                          if (FocusScope.of(context).hasFocus &&
+                              !FocusScope.of(context).hasPrimaryFocus) {
+                            FocusScope.of(context).unfocus();
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          }
+                          print(data.id);
+                          Get.toNamed('/movie_detail',
+                              arguments: {"id": data.id});
                         },
                         child: Row(
                           children: [
@@ -336,7 +349,8 @@ class DiscoverScreen extends GetView<DiscoverFilmController> {
                                 ),
                                 child: CustomImgNetwork(
                                   path: TMDBServices().imgUrl(
-                                      width: 154, pathUrl: data.posterPath ?? ""),
+                                      width: 154,
+                                      pathUrl: data.posterPath ?? ""),
                                 ),
                               ),
                             ),
@@ -353,20 +367,22 @@ class DiscoverScreen extends GetView<DiscoverFilmController> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.baseline,
                                       textBaseline: TextBaseline.alphabetic,
-                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       children: [
                                         Flexible(
                                           child: CustomText(
                                             data.title,
                                             multiLine: false,
-                                            style:
-                                                semiBoldText.copyWith(fontSize: 12),
+                                            style: semiBoldText.copyWith(
+                                                fontSize: 12),
                                           ),
                                         ),
                                         Text(
                                           DateFormat("yyyy")
                                               .format(data.releaseDate),
-                                          style: normalText.copyWith(fontSize: 8),
+                                          style:
+                                              normalText.copyWith(fontSize: 8),
                                         ),
                                       ],
                                     ),
@@ -382,17 +398,18 @@ class DiscoverScreen extends GetView<DiscoverFilmController> {
                                                 "${controller.getGenreName(e)}. ",
                                                 style: semiBoldText.copyWith(
                                                     fontSize: 8,
-                                                    color:
-                                                        context.colors.secondaryCr),
+                                                    color: context
+                                                        .colors.secondaryCr),
                                               ),
                                             )
                                             .toList(),
                                         Text(
-                                          controller
-                                              .getGenreListRemainder(data.genreIds),
+                                          controller.getGenreListRemainder(
+                                              data.genreIds),
                                           style: semiBoldText.copyWith(
                                               fontSize: 8,
-                                              color: context.colors.secondaryCr),
+                                              color:
+                                                  context.colors.secondaryCr),
                                         ),
                                       ],
                                     ),
@@ -409,7 +426,7 @@ class DiscoverScreen extends GetView<DiscoverFilmController> {
                                           width: 3,
                                         ),
                                         Image.asset(
-                                          "assets/icons/notif.png",
+                                          "assets/icons/view.png",
                                           height: 10,
                                           color: context.colors.accentCr,
                                         )

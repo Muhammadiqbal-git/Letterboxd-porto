@@ -24,7 +24,6 @@ class HomeController extends GetxController {
     DateTime now = DateTime.now();
     loading.value = true;
     data.value = await _tmdbServices.getMovieOfTheMonth();
-    await Future.delayed(const Duration(milliseconds: 1000));
     ratedData.value = await _tmdbServices.getMovieOfTheMonth(
         date: DateTime(now.year, now.month - 3), sortBy: "vote_average.desc");
     profileFunction();
@@ -44,6 +43,7 @@ class HomeController extends GetxController {
     if (listId.isEmpty) {
       return null;
     }
+    print(listId);
     QuerySnapshot<Map<String, dynamic>> reviewData = await _db
         .collectionGroup("review")
         .where("u_id", whereIn: listId)

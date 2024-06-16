@@ -35,7 +35,7 @@ class CustomReviewCard extends StatelessWidget {
         decoration: BoxDecoration(
             color: context.colors.secondaryCr.withOpacity(0.1),
             borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(14),
+                topLeft: Radius.circular(24),
                 topRight: Radius.circular(7),
                 bottomLeft: Radius.circular(7),
                 bottomRight: Radius.circular(7))),
@@ -48,13 +48,11 @@ class CustomReviewCard extends StatelessWidget {
                   child: SizedBox(
                     width: 50,
                     height: 50,
-                    child: Builder(
-                      builder: (context) {
-                        return CustomImgNetwork(
-                            radius: BorderRadius.circular(50),
-                            path: reviewData?.photoPath ?? "");
-                      }
-                    ),
+                    child: Builder(builder: (context) {
+                      return CustomImgNetwork(
+                          radius: BorderRadius.circular(50),
+                          path: reviewData?.photoPath ?? "");
+                    }),
                   ),
                 ),
                 const SizedBox(
@@ -65,9 +63,9 @@ class CustomReviewCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                       const SizedBox(
-                          height: 5,
-                        ),
+                      const SizedBox(
+                        height: 5,
+                      ),
                       if (withImage)
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -75,7 +73,8 @@ class CustomReviewCard extends StatelessWidget {
                           children: [
                             Flexible(
                               child: Text(
-                                (reviewData?.filmInfoModel.filmTitle) ?? "Title",
+                                (reviewData?.filmInfoModel.filmTitle) ??
+                                    "Title",
                                 style: boldText.copyWith(fontSize: 12),
                               ),
                             ),
@@ -99,11 +98,13 @@ class CustomReviewCard extends StatelessWidget {
                         const SizedBox(
                           height: 3,
                         ),
-
                       Row(
                         children: [
                           Text("Review by ",
-                              style: semiBoldText.copyWith(fontSize: 12, color: context.colors.whiteCr.withOpacity(0.6))),
+                              style: semiBoldText.copyWith(
+                                  fontSize: 10,
+                                  color:
+                                      context.colors.whiteCr.withOpacity(0.6))),
                           Text(
                             reviewData?.uName ?? "Nama",
                             style: semiBoldText.copyWith(
@@ -113,9 +114,11 @@ class CustomReviewCard extends StatelessWidget {
                           const SizedBox(
                             width: 2,
                           ),
-                          Text(
-                            "****",
-                            style: semiBoldText.copyWith(fontSize: 12),
+                          Row(
+                            children: List.generate(
+                                (reviewData?.rate ?? 0).toInt(),
+                                (index) => const Icon(Icons.star,
+                                    size: 10, color: Colors.red)),
                           ),
                           const SizedBox(
                             width: 2,
@@ -141,6 +144,9 @@ class CustomReviewCard extends StatelessWidget {
                             ),
                           )
                         ],
+                      ),
+                      const SizedBox(
+                        height: 4,
                       ),
                       Text(
                         reviewData?.reviewText ?? "lorem ipsum",
@@ -169,7 +175,9 @@ class CustomReviewCard extends StatelessWidget {
                       return CustomImgNetwork(
                           path: TMDBServices().imgUrl(
                               width: 154,
-                              pathUrl: reviewData?.filmInfoModel.filmPosterPath ?? ""));
+                              pathUrl:
+                                  reviewData?.filmInfoModel.filmPosterPath ??
+                                      ""));
                     }),
                   )
                 ],

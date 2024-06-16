@@ -2,6 +2,7 @@
 import 'package:get/get.dart';
 import 'package:letterboxd_porto_3/controllers/discover_film_controller.dart';
 import 'package:letterboxd_porto_3/controllers/discover_people_controller.dart';
+import 'package:letterboxd_porto_3/controllers/favorite_controller.dart';
 import 'package:letterboxd_porto_3/controllers/home_controller.dart';
 import 'package:letterboxd_porto_3/controllers/main_screen_controller.dart';
 import 'package:letterboxd_porto_3/controllers/movie_detail_controller.dart';
@@ -35,7 +36,6 @@ class MainScreenBinding extends Bindings{
 
   }
 }
-
 class MovieDetailBinding extends Bindings{
   @override
   void dependencies() {
@@ -47,5 +47,11 @@ class ReviewBinding extends Bindings{
   @override
   void dependencies() {
     Get.lazyPut<ReviewController>(() => ReviewController(),);
+  }
+}
+class FavoriteBinding extends Bindings{
+  @override
+  void dependencies() {
+    Get.lazyPut<FavoriteController>(() => FavoriteController(),);
   }
 }

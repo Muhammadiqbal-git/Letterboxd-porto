@@ -103,8 +103,8 @@ class OptionDialog extends StatelessWidget {
                         onTap: () {
                           _discoverController.clearGenre();
                         },
-                        child: Image.asset("assets/icons/notif.png",
-                            color: context.colors.accentCr, height: 12),
+                        child: Image.asset("assets/icons/x_mark.png",
+                            color: context.colors.accentCr, height: 9),
                       )
                     ],
                   );

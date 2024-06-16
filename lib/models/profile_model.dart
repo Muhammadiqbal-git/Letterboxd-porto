@@ -17,14 +17,15 @@ class NotificationModel {
 
 class NotificationEntityModel {
   final String docId;
+  final String uId;
   final DateTime date;
   final String event;
   final String? photoPath;
   final String uName;
   final bool read;
   NotificationEntityModel(
-      {
-      required this.docId,  
+      {required this.docId,
+      required this.uId,
       required this.date,
       required this.event,
       required this.photoPath,
@@ -36,6 +37,7 @@ class NotificationEntityModel {
     final id = docSnapshot.id;
     return NotificationEntityModel(
         docId: id,
+        uId: data["u_id"] ?? "",
         date: (data["date"] as Timestamp).toDate(),
         event: data["event"],
         photoPath: data["photo_path"] ?? "",
@@ -48,9 +50,10 @@ class ProfileModel {
   final String uId;
   final String uName;
   final String photoPath;
+  final String bgPath;
   final List<dynamic> following;
   final List<dynamic> follower;
-  final Map<String, dynamic> favorite;
+  final Map<String, dynamic> topFav;
   final List<RecentMovieModel>? recentMovie;
   final List<ReviewEntityModel>? recentRev;
   final List<dynamic> reviewRef;
@@ -59,9 +62,10 @@ class ProfileModel {
       {required this.uId,
       required this.uName,
       required this.photoPath,
+      required this.bgPath,
       required this.following,
       required this.follower,
-      required this.favorite,
+      required this.topFav,
       required this.recentMovie,
       required this.recentRev,
       required this.reviewRef});
@@ -75,10 +79,11 @@ class ProfileModel {
     return ProfileModel(
       uId: snapshot.id,
       uName: data?['u_name'],
-      photoPath: data?['photo_path'],
+      photoPath: data?['photo_path'] ?? "",
+      bgPath: data?['bg_path'] ?? "",
       following: data?['following'],
       follower: data?['follower'],
-      favorite: data?['favorite'],
+      topFav: data?['top_fav'] ?? {},
       recentMovie: rec != null
           ? List<RecentMovieModel>.from(
               rec.map<RecentMovieModel>(
@@ -95,16 +100,16 @@ class ProfileModel {
       'photo_path': photoPath,
       'following': following,
       'follower': follower,
-      'favorite': favorite,
+      'top_fav': topFav,
     };
   }
 }
 
 class RecentMovieModel {
-  String id;
-  DateTime? date;
-  double rate;
-  String? posterPath;
+  final String id;
+  final DateTime? date;
+  final double rate;
+  final String? posterPath;
   RecentMovieModel({
     required this.id,
     required this.date,
@@ -120,6 +125,37 @@ class RecentMovieModel {
             : null,
         rate: (data['rate'] as num).toDouble(),
         posterPath: data['poster_path']);
+  }
+}
+
+class FavoriteModel {
+  final int filmId;
+  final String? posterPath;
+  final List<String> genreName;
+  final String director;
+  final String title;
+  final DateTime releaseDate;
+  int order;
+  FavoriteModel(
+      {required this.filmId,
+      required this.posterPath,
+      required this.genreName,
+      required this.director,
+      required this.title,
+      required this.order,
+      required this.releaseDate,
+      });
+  factory FavoriteModel.fromFirestore(
+      QueryDocumentSnapshot<Map<String, dynamic>> docSnapshot) {
+    return FavoriteModel(
+        filmId: docSnapshot["film_id"],
+        posterPath: docSnapshot["poster_path"],
+        genreName: docSnapshot["genre"].cast<String>(),
+        director: docSnapshot["director"],
+        order: docSnapshot["order"],
+        title: docSnapshot["title"],
+        releaseDate: (docSnapshot["year_release"] as Timestamp).toDate()
+        );
   }
 }
 // class Favorite{

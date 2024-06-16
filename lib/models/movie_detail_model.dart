@@ -73,7 +73,7 @@ class MovieDetail {
     String pop = "${number.toInt()}";
     return MovieDetail(
       adult: json["adult"],
-      backdropPath: json["backdrop_path"],
+      backdropPath: json["backdrop_path"] ?? "",
       belongsToCollection: json["belongs_to_collection"] == null
           ? null
           : BelongsToCollection.fromJson(json["belongs_to_collection"]),
@@ -146,8 +146,8 @@ class MovieDetail {
 class BelongsToCollection {
   int id;
   String name;
-  String posterPath;
-  String backdropPath;
+  String? posterPath;
+  String? backdropPath;
 
   BelongsToCollection({
     required this.id,
@@ -160,8 +160,8 @@ class BelongsToCollection {
       BelongsToCollection(
         id: json["id"],
         name: json["name"],
-        posterPath: json["poster_path"],
-        backdropPath: json["backdrop_path"],
+        posterPath: json["poster_path"] ?? "",
+        backdropPath: json["backdrop_path"] ?? "",
       );
 
   Map<String, dynamic> toJson() => {
@@ -190,7 +190,7 @@ class ProductionCompany {
   factory ProductionCompany.fromJson(Map<String, dynamic> json) =>
       ProductionCompany(
         id: json["id"],
-        logoPath: json["logo_path"],
+        logoPath: json["logo_path"] ?? "",
         name: json["name"],
         originCountry: json["origin_country"],
       );

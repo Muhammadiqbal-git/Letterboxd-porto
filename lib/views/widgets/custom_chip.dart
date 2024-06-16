@@ -32,7 +32,7 @@ class CustomChip extends StatelessWidget {
             overlayColor: const MaterialStatePropertyAll(Colors.transparent),
             child: ImageIcon(
               iconAsset,
-              size: 10,
+              size: 9,
               color: context.colors.accentCr,
             ),
           )

@@ -52,6 +52,7 @@ dependencies:
   envied_generator: ^0.5.4+1
   build_runner: ^2.4.9
   image_picker: ^1.0.8
+  cached_network_image: ^3.3.1
   
   
 

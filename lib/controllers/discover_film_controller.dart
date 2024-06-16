@@ -67,7 +67,7 @@ class DiscoverFilmController extends GetxController
         "";
   }
 
-  String getGenreListRemainder(List<int> genreIds) {
+  String getGenreListRemainder(List genreIds) {
     if (genreIds.length > 3) {
       return "+${genreIds.length - 3}";
     } else {

@@ -156,7 +156,8 @@ class _CustomFormState extends State<CustomForm> {
           setState(() {});
         },
         child: Image.asset(
-          "assets/icons/notif.png",
+          "assets/icons/x_mark.png",
+          height: 18,
           color: context.colors.secondaryCr,
         ),
       );
